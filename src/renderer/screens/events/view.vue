@@ -7,7 +7,7 @@
   margin-left -30px
   margin-right -30px
   padding 0px 15px 10px
-  border-bottom 1px solid #e6e6e6
+  border-bottom 1px solid var(--border-color)
 .event-grid-item
   width 33.3333%
   padding 10px 15px
@@ -142,8 +142,7 @@
             <el-table-column prop="phoneNumber" label="Phone" width="110px" sortable="custom"></el-table-column>
             <el-table-column width="40">
               <template slot-scope="scope">
-                <!-- <el-dropdown @command="dispatchTableRowActions"> -->
-                <el-dropdown trigger="click">
+                <el-dropdown trigger="click" @command="participantsTableRowDispatchActions">
                   <span class="el-dropdown-link">
                     <i class="el-icon-setting"></i>
                   </span>
@@ -288,6 +287,8 @@ export default {
     participantsSetPageSize() {
     },
     participantsSetPageCurrent() {
+    },
+    participantsTableRowDispatchActions() {
     }
   }
 }

@@ -3,6 +3,11 @@ import axios from "axios"
 import "ionicons/dist/css/ionicons.min.css"
 import "./design/index.styl"
 import {
+  Select,
+  Option,
+  Switch,
+  DatePicker,
+  Dialog,
   Button,
   Container,
   Aside,
@@ -24,13 +29,20 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  Pagination
+  Pagination,
+  Loading,
+  Notification
 } from "element-ui"
 
 import App from "./App"
 import router from "./router"
 import store from "./store"
 
+Vue.use(Select)
+Vue.use(Option)
+Vue.use(Switch)
+Vue.use(DatePicker)
+Vue.use(Dialog)
 Vue.use(Container)
 Vue.use(Aside)
 Vue.use(Header)
@@ -53,6 +65,10 @@ Vue.use(Dropdown)
 Vue.use(DropdownMenu)
 Vue.use(DropdownItem)
 Vue.use(Pagination)
+Vue.use(Loading.directive)
+
+Vue.prototype.$loading = Loading.service
+Vue.prototype.$notify = Notification
 
 if(!process.env.IS_WEB) {
   Vue.use(require("vue-electron"))

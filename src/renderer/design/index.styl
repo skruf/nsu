@@ -2,8 +2,76 @@
 @tailwind components
 @tailwind utilities
 
+@import "./config"
+@import "./table"
+@import "./navigation"
+@import "./layout"
+
 body
-  font-family "system-ui"
-  font-size 14px
-  line-height 28px
-  color #3c4b62
+  font-family var(--font-family)
+  font-size var(--text-size)
+  line-height var(--text-height)
+  color var(--text-color)
+
+h1, h2, h3
+  color var(--title-color)
+
+h3
+  font-size inherit
+  font-weight 600
+
+.el-input,
+.el-button,
+.el-input__inner,
+.el-tabs__item
+  font-size var(--text-size)
+
+.el-button--mini,
+.el-button--small
+  font-size 0.8rem
+
+.el-button--text, a
+  color var(--primary-color)
+
+a
+  text-decoration none
+
+.v-modal
+  opacity 0.85
+  background-color #ececec
+.el-dialog
+  box-shadow none
+  border-radius 3px
+  margin-top 10vh !important
+.el-dialog__body
+  padding-top 10px
+
+.el-button--primary,
+.el-switch.is-checked .el-switch__core
+  border-color var(--primary-color)
+  background-color var(--primary-color)
+
+.el-tabs__item.is-active,
+.el-menu-item.is-active,
+.el-switch__label.is-active
+  color var(--primary-color)
+
+.el-tabs__active-bar
+  background-color var(--primary-color)
+
+.el-dropdown-menu__item:focus,
+.el-dropdown-menu__item:not(.is-disabled):hover
+  background-color var(--primary-alt-color)
+  color var(--primary-color)
+
+.el-menu-item:focus,
+.el-menu-item:hover
+  background-color var(--primary-alt-color)
+
+.el-input__inner
+  border-radius var(--border-radius)
+  border-color var(--border-color)
+
+.el-button
+  border-radius var(--border-radius)
+  font-weight 300

@@ -1,0 +1,20 @@
+.table-controls
+  display flex
+  justify-content space-between
+.table-controls-actions.disabled
+  opacity 0.5
+  pointer-events none
+  cursor no-drop
+.el-table
+  &, thead
+    font inherit
+    color inherit
+.table-clickable
+  .el-table__row
+    cursor pointer
+.el-pagination
+  margin-top 20px
+
+.el-table td,
+.el-table th.is-leaf
+  border-color var(--border-color)

@@ -25,8 +25,9 @@
             <i class="menu-icon ion-logo-ionic"></i>
             <span>Events</span>
           </template>
-          <el-menu-item index="1-1" @click="navTo('/events')">Upcoming</el-menu-item>
-          <el-menu-item index="1-2">History</el-menu-item>
+          <el-menu-item index="1-1" @click="navTo('/events')">All</el-menu-item>
+          <el-menu-item index="1-2" @click="navTo('/events?filter=upcoming')">Upcoming</el-menu-item>
+          <el-menu-item index="1-3" @click="navTo('/events?filter=history')">History</el-menu-item>
         </el-submenu>
         <el-menu-item index="2">
           <i class="menu-icon ion-ios-people"></i>

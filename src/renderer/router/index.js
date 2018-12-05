@@ -6,18 +6,18 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: "/",
-      name: "events",
-      component: require("@/screens/events").default
+      path: "/events",
+      name: "ListEventsScreen",
+      component: require("@/screens/events/ListEventsScreen").default
     },
     {
-      path: "/events/view",
-      name: "eventsView",
-      component: require("@/screens/events/view").default
+      path: "/events/:eventId",
+      name: "ViewEventScreen",
+      component: require("@/screens/events/ViewEventScreen").default
     },
     {
       path: "*",
-      redirect: "/"
+      redirect: "/events"
     }
   ]
 })

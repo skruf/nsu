@@ -41,3 +41,25 @@ export const find = (collection, query = {}) => {
     })
   })
 }
+
+export const findOne = (collection, query = {}) => {
+  return new Promise((resolve, reject) => {
+    db[collection].findOne(query, (err, result) => {
+      if(err) {
+        return reject(err)
+      }
+      resolve(result)
+    })
+  })
+}
+
+export const remove = (collection, query = {}, options = {}) => {
+  return new Promise((resolve, reject) => {
+    db[collection].remove(query, options, (err, count) => {
+      if(err) {
+        return reject(err)
+      }
+      resolve(count)
+    })
+  })
+}

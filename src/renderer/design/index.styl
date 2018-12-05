@@ -20,6 +20,24 @@ h3
   font-size inherit
   font-weight 600
 
+.el-notification__content
+  text-align left
+  font-size 0.8rem
+
+.el-date-editor .el-range-input,
+.el-input__inner
+  &::placeholder
+    color var(--muted-color)
+
+.dangerous-confirmation
+  .el-button--primary
+    &
+      background-color var(--dangerous-color)
+      border-color var(--dangerous-color)
+    &:focus, &:hover
+      background-color var(--dangerous-alt-color)
+      border-color var(--dangerous-alt-color)
+
 .el-input,
 .el-button,
 .el-input__inner,

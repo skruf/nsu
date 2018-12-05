@@ -1,92 +1,97 @@
-import { insert, find } from "@/db"
-
-// const upcomingFixture = [
-//   {
-//     _id: 0,
-//     title: "Skedsmo Championships",
-//     date: "10.12.19",
-//     category: "Club",
-//     branch: "50m",
-//     organizer: "Skedsmo Civile Skydeselskab",
-//     area: "Korpåsen, Lillestrøm",
-//     participants: "5",
-//     approbated: "Y"
-//   },
-//   {
-//     _id: 1,
-//     title: "NM skive 2018",
-//     date: "30.03.18",
-//     category: "NM",
-//     branch: "25M + 50M",
-//     organizer: "Norsksvartkruttunion",
-//     area: "Finnsnes, Troms",
-//     participants: "63",
-//     approbated: "N"
-//   },
-//   {
-//     _id: 2,
-//     title: "NM Langhold 2018",
-//     date: "14.11.18",
-//     category: "NM",
-//     branch: "100M",
-//     organizer: "Norsksvartkruttunion",
-//     area: "Tørrmoen, Brandval",
-//     participants: "194",
-//     approbated: "Y"
-//   }
-// ]
+import { insert, find, findOne, remove } from "@/db"
 
 const initialState = {
-  fetchIsLoading: false,
+  listIsLoading: false,
+  selectIsLoading: false,
   createIsLoading: false,
-  upcoming: [],
-  upcomingCount: 0,
-  upcomingSearchFilter: ""
+  removeIsLoading: false,
+  list: [],
+  selected: {},
+  count: 0,
+  searchFilter: ""
 }
 
 const state = () => initialState
 
 const mutations = {
-  SET_FETCH_LOADING(state, loading) {
-    state.fetchIsLoading = loading
+  SET_LIST_LOADING(state, loading) {
+    state.listIsLoading = loading
+  },
+  SET_SELECT_LOADING(state, loading) {
+    state.selectIsLoading = loading
   },
   SET_CREATE_LOADING(state, loading) {
     state.createIsLoading = loading
   },
-  SET_UPCOMING_EVENTS(state, events) {
-    state.upcoming = events
-    state.upcomingCount = state.upcoming.length
+  SET_REMOVE_LOADING(state, loading) {
+    state.removeIsLoading = loading
   },
-  ADD_UPCOMING_EVENT(state, event) {
-    state.upcoming.push(event)
-    state.upcomingCount = state.upcoming.length
+  SET_LIST_EVENTS(state, events) {
+    state.list = events
+    state.count = state.list.length
   },
-  SET_UPCOMING_SEARCH_FILTER(state, search) {
-    state.upcomingSearchFilter = search
+  SET_SELECTED_EVENT(state, event) {
+    state.selected = event
+  },
+  ADD_EVENT(state, event) {
+    state.list.push(event)
+    state.count += 1
+  },
+  REMOVE_EVENT(state, event) {
+    state.list.splice(state.list.findIndex(({ _id }) => event._id === _id), 1)
+    state.count -= 1
+    if(state.selected && state.selected._id === event._id) {
+      state.selected = {}
+    }
+  },
+  SET_SEARCH_FILTER(state, search) {
+    state.searchFilter = search
   }
 }
 
 const actions = {
-  async setUpcomingAsync({ commit }) {
-    commit("SET_FETCH_LOADING", true)
+  async listAsync({ commit }) {
+    commit("SET_LIST_LOADING", true)
     const events = await find("events")
-    commit("SET_UPCOMING_EVENTS", events)
-    commit("SET_FETCH_LOADING", false)
+    commit("SET_LIST_EVENTS", events)
+    commit("SET_LIST_LOADING", false)
   },
-
-  async createEventAsync({ commit }, event) {
+  async selectAsync({ commit }, query) {
+    commit("SET_SELECT_LOADING", true)
+    const event = await findOne("events", query)
+    commit("SET_SELECTED_EVENT", event)
+    commit("SET_SELECT_LOADING", false)
+  },
+  async createAsync({ commit }, event) {
     commit("SET_CREATE_LOADING", true)
-    await insert("events", event)
-    commit("ADD_UPCOMING_EVENT", event)
+    delete event.dates
+    const createdEvent = await insert("events", event)
+    commit("ADD_EVENT", createdEvent)
     commit("SET_CREATE_LOADING", false)
+  },
+  async removeAsync({ commit }, event) {
+    commit("SET_REMOVE_LOADING", true)
+    await remove("events", { _id: event._id })
+    commit("REMOVE_EVENT", event)
+    commit("SET_REMOVE_LOADING", false)
   }
 }
 
+const filterByUpcoming = (event) => {
+  // return event.startsAt > new Date()
+  return true
+}
+
 const getters = {
-  upcoming: ({ upcoming }) => upcoming,
-  upcomingCount: ({ upcomingCount }) => upcomingCount,
-  fetchIsLoading: ({ fetchIsLoading }) => fetchIsLoading,
-  createIsLoading: ({ createIsLoading }) => createIsLoading
+  events: ({ list }) => list,
+  count: ({ count }) => count,
+  upcoming: ({ list }) => list.filter(filterByUpcoming),
+  upcomingCount: ({ list }) => list.filter(filterByUpcoming).length,
+  selected: ({ selected }) => selected,
+  listIsLoading: ({ listIsLoading }) => listIsLoading,
+  selectIsLoading: ({ selectIsLoading }) => selectIsLoading,
+  createIsLoading: ({ createIsLoading }) => createIsLoading,
+  removeIsLoading: ({ removeIsLoading }) => removeIsLoading
 }
 
 export default {

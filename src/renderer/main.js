@@ -1,8 +1,11 @@
 import Vue from "vue"
 import axios from "axios"
+import vueMoment from "vue-moment"
+
 import "ionicons/dist/css/ionicons.min.css"
 import "./design/index.styl"
 import {
+  Tooltip,
   Select,
   Option,
   Switch,
@@ -31,13 +34,15 @@ import {
   DropdownItem,
   Pagination,
   Loading,
-  Notification
+  Notification,
+  MessageBox
 } from "element-ui"
 
 import App from "./App"
 import router from "./router"
 import store from "./store"
 
+Vue.use(Tooltip)
 Vue.use(Select)
 Vue.use(Option)
 Vue.use(Switch)
@@ -69,6 +74,9 @@ Vue.use(Loading.directive)
 
 Vue.prototype.$loading = Loading.service
 Vue.prototype.$notify = Notification
+Vue.prototype.$confirm = MessageBox.confirm
+
+Vue.use(vueMoment)
 
 if(!process.env.IS_WEB) {
   Vue.use(require("vue-electron"))

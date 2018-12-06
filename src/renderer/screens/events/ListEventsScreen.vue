@@ -4,18 +4,31 @@
 <template>
   <el-container class="screen" id="events-screen">
     <el-header height="auto">
-      <h1 class="text-4xl">Upcoming events</h1>
+      <h1 class="text-4xl">
+        <template v-if="fetchModeIsUpcoming">Upcoming</template>
+        <template v-else-if="fetchModeIsHistory">Past</template>
+        <template v-else>All</template>
+        events
+      </h1>
     </el-header>
 
     <div class="breadcrumb-bar">
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/events' }">Events</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/events' }">Upcoming</el-breadcrumb-item>
+        <el-breadcrumb-item>
+          <template v-if="fetchModeIsUpcoming">Upcoming</template>
+          <template v-else-if="fetchModeIsHistory">History</template>
+          <template v-else>All</template>
+        </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
 
     <el-main>
-      <filter-form v-model="eventsSearchFilter" @submit="listEventsAsync" />
+      <filter-form
+        v-model="eventsSearchFilter"
+        @submit="submitListEventsSearchFilterAsync"
+        placeholder="Search for an event by title or club"
+      />
 
       <div class="table-controls">
         <div class="table-controls-actions" :class="{ 'disabled': !eventsUpcomingHasSelection }">
@@ -39,32 +52,33 @@
       </div>
 
       <div v-loading="eventsListIsLoading || eventsRemoveIsLoading">
+        <!-- :default-sort="defaultSort" -->
         <el-table
           :data="eventsUpcoming"
           @selection-change="eventsUpcomingSelectionChange"
           @row-click="eventsUpcomingRowClick"
-          @sort-change="eventsUpcomingSetSorting"
+          @sort-change="setEventsUpcomingSorting"
           :sort-by="eventsUpcomingSortBy"
           row-key="_id"
           class="table-clickable"
           empty-text
         >
           <el-table-column type="selection" width="30"></el-table-column>
-          <el-table-column prop="startsAt" label="Starts" width="90px" sortable="custom">
+          <el-table-column prop="startsAt" label="Starts" width="90px" sortable="custom" :sort-orders="sortOrders">
             <template slot-scope="scope">
               <date-with-tooltip :date="scope.row.startsAt" />
             </template>
           </el-table-column>
-          <el-table-column prop="title" label="Title" sortable="custom"></el-table-column>
-          <el-table-column prop="organizer" label="Organizer" sortable="custom"></el-table-column>
-          <el-table-column prop="area" label="Area" sortable="custom"></el-table-column>
-          <el-table-column prop="category" label="Category" width="120px" sortable="custom"></el-table-column>
-          <el-table-column prop="branch" label="Branch" width="110px" sortable="custom"></el-table-column>
+          <el-table-column prop="title" label="Title" sortable="custom" :sort-orders="sortOrders"></el-table-column>
+          <el-table-column prop="organizer" label="Organizer" sortable="custom" :sort-orders="sortOrders"></el-table-column>
+          <el-table-column prop="area" label="Area" sortable="custom" :sort-orders="sortOrders"></el-table-column>
+          <el-table-column prop="category" label="Category" width="120px" sortable="custom" :sort-orders="sortOrders"></el-table-column>
+          <el-table-column prop="branch" label="Branch" width="110px" sortable="custom" :sort-orders="sortOrders"></el-table-column>
           <el-table-column width="40">
             <template slot-scope="scope">
               <el-dropdown trigger="click" @command="eventsUpcomingTableRowDispatchActions">
                 <span class="el-dropdown-link">
-                  <i class="el-icon-setting"></i>
+                  <i class="table-button el-icon-setting"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
@@ -87,8 +101,8 @@
 
         <el-pagination
           layout="total, sizes, prev, pager, next"
-          @size-change="eventsUpcomingSetPageSize"
-          @current-change="eventsUpcomingSetPageCurrent"
+          @size-change="setEventsUpcomingPageSize"
+          @current-change="setEventsUpcomingPageCurrent"
           :page-size="eventsUpcomingPageSize"
           :current-page="eventsUpcomingPageCurrent"
           :page-sizes="[ 15, 30, 45, 60 ]"
@@ -121,18 +135,22 @@ export default {
     DateWithTooltip
   },
 
-  async created() {
-    // this.$route.query.filter
-    await this.listEventsAsync()
+  watch: {
+    "$route.query.filter": {
+      immediate: true,
+      handler: async function(mode) {
+        this.setEventsFetchMode(mode)
+        await this.listEventsAsync()
+      }
+    }
   },
 
   data: () => ({
     mode: "all",
     eventsShowCreateDialog: false,
-    eventsUpcomingPageSize: 15,
-    eventsUpcomingPageCurrent: 1,
-    eventsUpcomingSortBy: "title",
-    eventsUpcomingSelection: []
+    eventsUpcomingSelection: [],
+    defaultSort: { prop: "startsAt", order: "descending" },
+    sortOrders: [ "ascending", "descending" ]
   }),
 
   computed: {
@@ -141,26 +159,46 @@ export default {
       eventsUpcomingCount: "events/upcomingCount",
       eventsListIsLoading: "events/listIsLoading",
       eventsCreateIsLoading: "events/createIsLoading",
-      eventsRemoveIsLoading: "events/removeIsLoading"
+      eventsRemoveIsLoading: "events/removeIsLoading",
+
+      eventsUpcomingSortBy: "events/sortBy",
+      eventsUpcomingPageSize: "events/pageSize",
+      eventsUpcomingPageCurrent: "events/pageCurrent",
+
+      eventsFetchMode: "events/fetchMode"
     }),
     eventsUpcomingHasSelection() {
       return this.eventsUpcomingSelection.length > 0
     },
     eventsSearchFilter: {
-      get() { return this.$store.state.events.searchFilter },
+      get() { return this.$store.state.events.searchFilterValue },
       set(search) { this.setEventsSearchFilter(search) }
+    },
+    fetchModeIsUpcoming() {
+      return this.eventsFetchMode === "upcoming"
+    },
+    fetchModeIsHistory() {
+      return this.eventsFetchMode === "history"
     }
   },
 
   methods: {
     ...mapMutations({
-      setEventsSearchFilter: "events/SET_SEARCH_FILTER"
+      setEventsSearchFilter: "events/SET_SEARCH_FILTER",
+      setEventsFetchMode: "events/SET_FETCH_MODE"
     }),
     ...mapActions({
       listEventsAsync: "events/listAsync",
       createEventAsync: "events/createAsync",
-      removeEventAsync: "events/removeAsync"
+      removeEventAsync: "events/removeAsync",
+      setEventsUpcomingSorting: "events/setSorting",
+      setEventsUpcomingPageSize: "events/setPageSize",
+      setEventsUpcomingPageCurrent: "events/setPageCurrent"
     }),
+
+    async submitListEventsSearchFilterAsync(search) {
+      await this.listEventsAsync()
+    },
 
     eventsOpenCreateDialog() {
       this.eventsShowCreateDialog = true
@@ -218,20 +256,16 @@ export default {
     },
 
     eventsUpcomingRowClick(event, e) {
-      if(e.target.className.includes("cell")) {
-        this.$router.push(`/events/${event._id}`)
+      if(e.target.className.includes("table-button")) {
+        return
       }
+      this.$router.push(`/events/${event._id}`)
     },
 
-    eventsUpcomingTableDispatchActions({ handler, payload }) {},
-    eventsUpcomingSelectionChange() {},
-
-    eventsUpcomingSetSorting() {
+    eventsUpcomingTableDispatchActions({ handler, payload }) {
     },
-
-    eventsUpcomingSetPageSize() {
-    },
-    eventsUpcomingSetPageCurrent() {
+    eventsUpcomingSelectionChange(events) {
+      this.eventsUpcomingSelection = events
     }
   }
 }

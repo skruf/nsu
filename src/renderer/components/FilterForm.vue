@@ -8,7 +8,14 @@
 
 <template>
   <el-form ref="form" class="filter-form" @submit.prevent.native="submit">
-    <el-input v-model="v" @input="input" placeholder="Enter search words.." :clearable="true"></el-input>
+    <el-input
+      v-model="v"
+      @input="input"
+      @clear="submit"
+      :placeholder="placeholder"
+      :clearable="true"
+    ></el-input>
+
     <el-button native-type="submit" type="primary">Search</el-button>
   </el-form>
 </template>
@@ -16,7 +23,17 @@
 <script>
 export default {
   name: "FilterForm",
-  prop: [ "value" ],
+  props: {
+    value: { type: String, default: "" },
+    placeholder: { type: String, default: "Enter search words.." }
+  },
+  watch: {
+    value(v) {
+      if(v === "") {
+        this.submit()
+      }
+    }
+  },
   data: function() {
     return {
       v: this.value

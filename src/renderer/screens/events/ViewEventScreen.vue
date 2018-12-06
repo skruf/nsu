@@ -67,7 +67,7 @@
           <h3 class="event-grid-item-key">Area:</h3>
           <p class="event-grid-item-value">{{ eventSelected.area }}</p>
         </div>
-        <div class="event-grid-item">
+        <div class="event-grid-item" v-if="eventSelected.lat && eventSelected.lng">
           <h3 class="event-grid-item-key">Lat/Lng:</h3>
           <p class="event-grid-item-value">{{ eventSelected.lat }} {{ eventSelected.lng }}</p>
         </div>

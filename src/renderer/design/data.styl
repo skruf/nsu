@@ -1,0 +1,41 @@
+.table-controls
+  display flex
+  justify-content space-between
+.table-controls-actions.disabled
+  opacity 0.5
+  pointer-events none
+  cursor no-drop
+.el-table
+  &, thead
+    font inherit
+    color inherit
+.table-clickable
+  .el-table__row
+    cursor pointer
+.el-pagination
+  margin-top 20px
+
+.el-table td,
+.el-table th.is-leaf,
+.el-table--border::after,
+.el-table--group::after,
+.el-table::before
+  border-color var(--border-color)
+
+.info-grid
+  display flex
+  flex-wrap wrap
+  margin-top -10px
+  margin-bottom 10px
+  margin-left -30px
+  margin-right -30px
+  padding 0px 15px 10px
+  border-bottom 1px solid var(--border-color)
+.info-grid_item
+  min-width 33.3333%
+  padding 10px 15px
+  display flex
+.info-grid_item_key
+  min-width 90px
+.info-grid_item_value
+  margin-left 10px

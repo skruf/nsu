@@ -1,0 +1,18 @@
+[
+  {
+    "_id": 0,
+    "title": "World Championship"
+  },
+  {
+    "_id": 1,
+    "title": "European Championship"
+  },
+  {
+    "_id": 2,
+    "title": "Norwegian Championship"
+  },
+  {
+    "_id": 3,
+    "title": "Club event"
+  }
+]

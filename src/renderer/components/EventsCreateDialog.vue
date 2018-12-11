@@ -115,17 +115,17 @@ const formStub = {
 }
 
 const categories = [
-  { _id: 0, title: 'World Championship' },
-  { _id: 1, title: 'European Championship' },
-  { _id: 2, title: 'Norwegian Championship' },
-  { _id: 3, title: 'Club event' }
+  { _id: 0, title: "World Championship" },
+  { _id: 1, title: "European Championship" },
+  { _id: 2, title: "Norwegian Championship" },
+  { _id: 3, title: "Club event" }
 ]
 
 const clubs = [
-  { _id: 0, title: 'Skedsmo Civile Skydeselskab' },
-  { _id: 1, title: 'Norske Officerers Pistolklubb' },
-  { _id: 2, title: 'Oslo Vestre Sportsskyttere' },
-  { _id: 3, title: 'OKTS Svartkruttgruppa' }
+  { _id: 0, title: "Skedsmo Civile Skydeselskab" },
+  { _id: 1, title: "Norske Officerers Pistolklubb" },
+  { _id: 2, title: "Oslo Vestre Sportsskyttere" },
+  { _id: 3, title: "OKTS Svartkruttgruppa" }
 ]
 
 // const formStub = {

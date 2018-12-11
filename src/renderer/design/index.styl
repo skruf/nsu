@@ -3,7 +3,7 @@
 @tailwind utilities
 
 @import "./config"
-@import "./table"
+@import "./data"
 @import "./navigation"
 @import "./layout"
 
@@ -12,17 +12,31 @@ body
   font-size var(--text-size)
   line-height var(--text-height)
   color var(--text-color)
+  background-color var(--bg-color)
+  font-weight var(--font-weight)
 
-h1, h2, h3
+.h1, .h2, .h3, .h4
   color var(--title-color)
 
-h3
-  font-size inherit
+.h2
+  font-size 27px
+
+.h3
+  font-size 21px
   font-weight 600
+
+.h4
+  font-weight 600
+  font-size inherit
+
+.el-tag
+  border none
+  margin-top 15px
+  color var(--primary-color)
 
 .el-notification__content
   text-align left
-  font-size 0.8rem
+  font-size 0.85rem
 
 .el-date-editor .el-range-input,
 .el-input__inner
@@ -42,7 +56,8 @@ h3
 .el-button,
 .el-input__inner,
 .el-tabs__item
-  font-size var(--text-size)
+  font-size 0.85rem
+  // font-size var(--text-size)
 
 .el-button--mini,
 .el-button--small
@@ -60,7 +75,8 @@ a
 .el-dialog
   box-shadow none
   border-radius 3px
-  margin-top 10vh !important
+  &:not(.is-fullscreen)
+    margin-top 10vh !important
 .el-dialog__body
   padding-top 10px
 
@@ -70,7 +86,6 @@ a
   background-color var(--primary-color)
 
 .el-tabs__item.is-active,
-.el-menu-item.is-active,
 .el-switch__label.is-active
   color var(--primary-color)
 
@@ -81,10 +96,6 @@ a
 .el-dropdown-menu__item:not(.is-disabled):hover
   background-color var(--primary-alt-color)
   color var(--primary-color)
-
-.el-menu-item:focus,
-.el-menu-item:hover
-  background-color var(--primary-alt-color)
 
 .el-input__inner
   border-radius var(--border-radius)

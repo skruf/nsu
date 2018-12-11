@@ -35,11 +35,15 @@ import {
   Pagination,
   Loading,
   Notification,
-  MessageBox
+  MessageBox,
+  Collapse,
+  CollapseItem,
+  Tag,
+  Tree
 } from "element-ui"
 
 import App from "./App"
-import router from "./router"
+import router from "./screens"
 import store from "./store"
 
 Vue.use(Tooltip)
@@ -71,6 +75,10 @@ Vue.use(DropdownMenu)
 Vue.use(DropdownItem)
 Vue.use(Pagination)
 Vue.use(Loading.directive)
+Vue.use(Collapse)
+Vue.use(CollapseItem)
+Vue.use(Tag)
+Vue.use(Tree)
 
 Vue.prototype.$loading = Loading.service
 Vue.prototype.$notify = Notification

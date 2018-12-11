@@ -1,0 +1,40 @@
+[
+  {
+    "_id": 0,
+    "number": 1,
+    "name": "Miquelet",
+    "pictureUrl": "https://norsksvartkruttunion.no/wp-content/uploads/2014/03/Miquelet.png",
+    "target": "200 meters fransk militær geværskive",
+    "position": "Stående",
+    "loadingRod": "Tillatt, maks. 10 cm",
+    "cleaning": "Ikke tillatt",
+    "distance": "50 meter",
+    "team": "Nr. 9 Gustav Adolph (O) nr. 31 Halikko (R)",
+    "condition": "Orginal & Replika",
+    "type": "Glattløpet militær flinlåsmuskett",
+    "sights": "I original tro utførelse, intet baksikte",
+    "trigger": "Orginal ikke snellert",
+    "calibre": "13.5mm / 0.5315\"",
+    "bullet": "Rund",
+    "contestants": []
+  },
+  {
+    "_id": 1,
+    "number": 2,
+    "name": "Maximilian",
+    "pictureUrl": "https://norsksvartkruttunion.no/wp-content/uploads/2014/03/Miquelet.png",
+    "target": "ISSF 50 meters pistolskive",
+    "position": "Liggende",
+    "loadingRod": "Tillatt",
+    "cleaning": "Tillatt",
+    "distance": "100 meter",
+    "team": "Nr. 26 Wedgnock (O), Nr. 19 Luca (R)",
+    "condition": "Orginal & Replika",
+    "type": "Fri flinlåsrifle",
+    "sights": "Tidsriktige. Disse kan være originale modeller i replika utførelse, også diopter",
+    "trigger": "Snellert tillatt",
+    "calibre": "Fritt",
+    "bullet": "Rund",
+    "contestants": []
+  }
+]

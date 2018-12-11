@@ -1,0 +1,22 @@
+[
+  {
+    "_id": 0,
+    "firstName": "Ola",
+    "lastName": "Dunk",
+    "club": "Skedsmo Civile Skydeselskab",
+    "emailAddress": "ola@dunk.no",
+    "country": "Norway",
+    "phoneNumber": "4044404",
+    "clubId": 0
+  },
+  {
+    "_id": 1,
+    "firstName": "Per",
+    "lastName": "Arne",
+    "club": "Skedsmo Civile Skydeselskab",
+    "emailAddress": "per@arne.no",
+    "country": "Norway",
+    "phoneNumber": "9045423",
+    "clubId": 0
+  }
+]

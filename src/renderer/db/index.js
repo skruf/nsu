@@ -1,6 +1,7 @@
 import Collection from "nedb"
 import path from "path"
 import { remote } from "electron"
+import { setTimestamps } from "@/utils"
 
 const createOrGetCollection = (name) => {
   const collection = new Collection({
@@ -12,18 +13,13 @@ const createOrGetCollection = (name) => {
 }
 
 const db = {
+  clubs: createOrGetCollection("clubs"),
+  members: createOrGetCollection("members"),
   events: createOrGetCollection("events"),
-  clubs: createOrGetCollection("clubs")
+  participants: createOrGetCollection("participants")
 }
 
-const setTimestamps = (doc) => {
-  const date = new Date()
-  doc.createdAt = date
-  doc.updatedAt = date
-  return doc
-}
-
-const query = (collection, method, filter, options) => {
+const query = (collection, method, filter = {}, options = {}) => {
   if(options.search && options.search.value) {
     const $or = []
 
@@ -35,8 +31,6 @@ const query = (collection, method, filter, options) => {
       $and: [ filter, { $or } ]
     }
   }
-
-  // console.log("query")
 
   const operation = db[collection][method](filter)
 
@@ -71,8 +65,8 @@ export const find = (collection, filter = {}, options = {}) => {
   return new Promise(async (resolve, reject) => {
     try {
       const results = await query(collection, "find", filter, options)
-      // const count = await query(collection, "count", filter, options)
-      resolve({ [collection]: results, count: 5 })
+      const count = await query(collection, "count")
+      resolve({ [collection]: results, count })
     } catch(e) {
       reject(e)
     }

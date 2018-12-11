@@ -7,6 +7,8 @@
 .logo
   max-width 100px
   padding 14px 0
+  margin-top 10px
+  margin-bottom 10px
 
 </style>
 
@@ -28,18 +30,22 @@
           <el-menu-item index="1-1" @click="navTo('/events')">All</el-menu-item>
           <el-menu-item index="1-2" @click="navTo('/events?filter=upcoming')">Upcoming</el-menu-item>
           <el-menu-item index="1-3" @click="navTo('/events?filter=history')">History</el-menu-item>
+          <el-menu-item index="1-4" @click="navTo('/events/categories')" disabled>Categories</el-menu-item>
         </el-submenu>
-        <el-menu-item index="2">
+
+        <el-menu-item index="2" @click="navTo('/records')" disabled>
+          <i class="menu-icon ion-ios-nuclear"></i>
+          <span>Classes</span>
+        </el-menu-item>
+
+        <el-menu-item index="3" @click="navTo('/clubs')">
           <i class="menu-icon ion-ios-people"></i>
           <span>Clubs</span>
         </el-menu-item>
-        <el-menu-item index="3">
+
+        <el-menu-item index="4" @click="navTo('/records')" disabled>
           <i class="menu-icon ion-ios-star"></i>
           <span>Records</span>
-        </el-menu-item>
-        <el-menu-item index="4">
-          <i class="menu-icon ion-ios-nuclear"></i>
-          <span>Armory</span>
         </el-menu-item>
       </el-menu>
     </el-aside>

@@ -24,7 +24,7 @@
     </div>
 
     <el-main>
-      <filter-form
+      <search-form
         v-model="eventsSearchFilter"
         @submit="eventsSubmitSearchFilterAsync"
         placeholder="Search for an event by title or club"
@@ -117,7 +117,7 @@
 
 <script>
 import { mapActions, mapMutations, mapState } from "vuex"
-import FilterForm from "@/components/FilterForm"
+import SearchForm from "@/components/SearchForm"
 import EventsCreateDialog from "@/components/EventsCreateDialog"
 import DateWithTooltip from "@/components/DateWithTooltip"
 
@@ -125,7 +125,7 @@ export default {
   name: "EventsListScreen",
 
   components: {
-    FilterForm,
+    SearchForm,
     EventsCreateDialog,
     DateWithTooltip
   },

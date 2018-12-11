@@ -4,14 +4,14 @@
 
 <template>
   <div class="clubs-members pt-2">
-    <filter-form
-      v-model="membersSarchFilter"
-      @submit="membersFetchMany"
+    <search-form
+      v-model="clubsMembersSearchFilter"
+      @submit="clubsMembersSetSearchFilterAsync"
       placeholder="Search for members by first or last name"
     />
 
-    <div class="table-actions" :class="{ 'disabled': !membersHasSelection }">
-      <el-dropdown trigger="click" @command="membersTableDispatchActions">
+    <div class="table-actions" :class="{ 'disabled': !clubsMembersHasSelection }">
+      <el-dropdown trigger="click" @command="clubsMembersTableDispatchActions">
         <el-button type="text" size="small">
           Actions <i class="el-icon-arrow-down el-icon--left"></i>
         </el-button>
@@ -25,24 +25,24 @@
 
     <el-table
       :data="clubsMembersList"
-      @selection-change="membersSelectionChange"
-      @row-click="membersRowClick"
-      @sort-change="membersSetSorting"
-      :sort-by="membersSortBy"
+      @selection-change="clubsMembersSelectionChange"
+      @row-click="clubsMembersRowClick"
+      @sort-change="clubsMembersSetSortingAsync"
+      :sort-by="clubsMembersSortBy"
       row-key="_id"
       class="table-clickable"
       empty-text
     >
       <el-table-column type="selection" width="30"></el-table-column>
-      <el-table-column prop="name" label="Name" sortable="custom">
+      <el-table-column prop="name" label="Name" sortable="custom" :sort-orders="clubsMembersSortOrders">
         <template slot-scope="scope">
           {{ scope.row.firstName }} {{ scope.row.lastName }}
         </template>
       </el-table-column>
-      <el-table-column prop="emailAddress" label="Email" sortable="custom"></el-table-column>
+      <el-table-column prop="emailAddress" label="Email" sortable="custom" :sort-orders="clubsMembersSortOrders"></el-table-column>
       <el-table-column width="40">
         <template slot-scope="scope">
-          <el-dropdown trigger="click" @command="membersTableRowDispatchActions">
+          <el-dropdown trigger="click" @command="clubsMembersTableRowDispatchActions">
             <span class="el-dropdown-link">
               <i class="el-icon-setting"></i>
             </span>
@@ -64,25 +64,25 @@
 
     <el-pagination
       layout="total, sizes, prev, pager, next"
-      @size-change="membersSetPageSize"
-      @current-change="membersSetPageCurrent"
-      :page-size="membersPageSize"
-      :current-page="membersPageCurrent"
+      @size-change="clubsMembersSetPageSize"
+      @current-change="clubsMembersSetPageCurrent"
+      :page-size="clubsMembersPageSize"
+      :current-page="clubsMembersPageCurrent"
       :page-sizes="[ 15, 30, 45, 60 ]"
-      :total="membersCount"
+      :total="clubsMembersCount"
     ></el-pagination>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex"
-import FilterForm from "@/components/FilterForm"
+import { mapActions, mapState, mapMutations } from "vuex"
+import SearchForm from "@/components/SearchForm"
 
 export default {
   name: "ClubsMembers",
 
   components: {
-    FilterForm
+    SearchForm
   },
 
   props: {
@@ -90,45 +90,54 @@ export default {
   },
 
   data: () => ({
-    membersSarchFilter: "",
-    membersPageSize: 15,
-    membersPageCurrent: 1,
-    membersSortBy: "_id",
-    membersSelection: [],
-    membersCount: 6
+    clubsMembersSelection: [],
+    clubsMembersSortOrders: [ "descending", "ascending" ]
   }),
 
   async created() {
-    await this.clubsMembersListAsync({ clubId: this.clubId })
+    this.clubsMembersSetListFilter({ clubId: this.clubId })
+    await this.clubsMembersListAsync()
   },
 
   computed: {
     ...mapState("clubs/members", {
-      clubsMembersList: "list"
+      clubsMembersList: "list",
+      clubsMembersCount: "count",
+      clubsMembersPageSize: "pageSize",
+      clubsMembersPageCurrent: "pageCurrent",
+      clubsMembersSortBy: "sortBy"
     }),
-    membersHasSelection() {
-      return this.membersSelection.length > 0
+    clubsMembersHasSelection() {
+      return this.clubsMembersSelection.length > 0
+    },
+    clubsMembersSearchFilter: {
+      get() { return this.$store.state.clubs.searchFilterValue },
+      set(search) { this.clubsMembersSetSearchFilter(search) }
     }
   },
 
   methods: {
-    ...mapActions("clubs/members", {
-      clubsMembersListAsync: "listAsync"
+    ...mapMutations("clubs/members", {
+      clubsMembersSetListFilter: "SET_LIST_FILTER",
+      clubsMembersSetSearchFilter: "SET_SEARCH_FILTER"
     }),
-
-    membersTableDispatchActions() {},
+    ...mapActions("clubs/members", {
+      clubsMembersListAsync: "listAsync",
+      clubsMembersSetPageSize: "setPageSizeAsync",
+      clubsMembersSetPageCurrent: "setPageCurrentAsync",
+      clubsMembersSetSortingAsync: "setSortingAsync",
+      clubsMembersSetSearchFilterAsync: "setSearchFilterAsync"
+    }),
     clubsMembersOpenCreateOrAddDialog() {
       this.$emit("clubsMembersOpenCreateOrAddDialog")
     },
-    membersSelectionChange(members) {
-      this.membersSelection = members
+    clubsMembersSelectionChange(members) {
+      this.clubsMembersSelection = members
     },
-    membersRowClick() {},
-    membersSetSorting() {},
-    membersFetchMany() {},
-    membersSetPageSize() {},
-    membersSetPageCurrent() {},
-    membersTableRowDispatchActions() {}
+
+    clubsMembersRowClick() {},
+    clubsMembersTableDispatchActions() {},
+    clubsMembersTableRowDispatchActions() {}
   }
 }
 </script>

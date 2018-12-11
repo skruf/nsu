@@ -3,7 +3,7 @@
 
 <template>
   <div>
-    <filter-form v-model="participantsSarchFilter" @submit="participantsFetchMany" />
+    <search-form v-model="participantsSarchFilter" @submit="participantsFetchMany" />
 
     <div class="table-controls">
       <div class="table-controls-actions" :class="{ 'disabled': !participantsHasSelection }">
@@ -80,12 +80,12 @@
 </template>
 
 <script>
-import FilterForm from "@/components/FilterForm"
+import SearchForm from "@/components/SearchForm"
 
 export default {
   name: "ParticipantsTable",
 
-  components: { FilterForm },
+  components: { SearchForm },
 
   data: () => ({
     participants: [

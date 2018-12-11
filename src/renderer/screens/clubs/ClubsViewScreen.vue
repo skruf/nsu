@@ -93,7 +93,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex"
-import FilterForm from "@/components/FilterForm"
+import SearchForm from "@/components/SearchForm"
 import ClubsMembers from "@/components/ClubsMembers"
 import ClubsMembersCreateOrAddDialog from "@/components/ClubsMembersCreateOrAddDialog"
 
@@ -101,7 +101,7 @@ export default {
   name: "ClubsViewScreen",
 
   components: {
-    FilterForm,
+    SearchForm,
     ClubsMembers,
     ClubsMembersCreateOrAddDialog
   },

@@ -4,7 +4,7 @@
 
 <template>
   <div class="events-participants pt-4">
-    <filter-form
+    <search-form
       v-model="eventsParticipantsSarchFilter"
       @submit="eventsParticipantsFetchMany"
       placeholder="Search for participant by first or last name"
@@ -76,13 +76,13 @@
 
 <script>
 import { mapActions, mapState } from "vuex"
-import FilterForm from "@/components/FilterForm"
+import SearchForm from "@/components/SearchForm"
 
 export default {
   name: "EventsParticipants",
 
   components: {
-    FilterForm
+    SearchForm
   },
 
   props: {

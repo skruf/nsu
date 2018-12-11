@@ -1,0 +1,122 @@
+const defaultOptions = {
+  action: "listAsync"
+}
+
+const helper = (state) => ({
+  limit: state.pageSize,
+  skip: (state.pageCurrent - 1) * state.pageSize,
+  sort: state.sortBy,
+  search: {
+    fields: state.searchFilterFields,
+    value: state.searchFilterValue || null
+  }
+})
+
+export default (options) => {
+  const config = { ...defaultOptions, ...options }
+
+  const state = {}
+  const mutations = {}
+  const actions = {}
+  const getters = {}
+
+  if(config.listAsync || config.createAsync || config.removeAsync) {
+    state.count = 0
+  }
+
+  if(config.listAsync) {
+    state.listIsLoading = false
+    state.listFilter = {}
+    state.list = []
+
+    mutations.SET_LIST_LOADING = (state, loading) => {
+      state.listIsLoading = loading
+    }
+    mutations.SET_LIST = (state, items) => {
+      state.list = items
+    }
+    mutations.SET_COUNT = (state, count) => {
+      state.count = count
+    }
+    mutations.SET_LIST_FILTER = (state, listFilter) => {
+      state.listFilter = listFilter
+    }
+
+    actions.listAsync = async function({ commit, state }) {
+      commit("SET_LIST_LOADING", true)
+      const results = await config.listAsync(state.filter, helper(state))
+      commit("SET_LIST", results.items)
+      commit("SET_COUNT", results.count)
+      commit("SET_LIST_LOADING", false)
+    }
+  }
+
+  if(config.selectAsync) {
+    state.selectedIsLoading = false
+    state.selected = {}
+
+    mutations.SET_SELECTED_LOADING = (state, loading) => {
+      state.selectedIsLoading = loading
+    }
+    mutations.SET_SELECTED = (state, item) => {
+      state.selected = item
+    }
+
+    actions.selectAsync = async ({ commit }, filter = {}) => {
+      commit("SET_SELECTED_LOADING", true)
+      const item = await config.selectAsync(filter)
+      commit("SET_SELECTED", item)
+      commit("SET_SELECTED_LOADING", false)
+    }
+  }
+
+  if(config.createAsync) {
+    state.createIsLoading = false
+
+    mutations.SET_CREATE_LOADING = (state, loading) => {
+      state.createIsLoading = loading
+    }
+
+    mutations.ADD_ONE = (state, item) => {
+      state.list.push(item)
+      state.count += 1
+    }
+
+    actions.createAsync = async ({ commit }, item) => {
+      commit("SET_CREATE_LOADING", true)
+      const created = await config.createAsync(item)
+      commit("ADD_ONE", created)
+      commit("SET_CREATE_LOADING", false)
+    }
+  }
+
+  if(config.removeAsync) {
+    state.removeIsLoading = false
+
+    mutations.SET_REMOVE_LOADING = (state, loading) => {
+      state.removeIsLoading = loading
+    }
+
+    mutations.REMOVE_ONE = (state, item) => {
+      state.list.splice(state.list.findIndex(({ _id }) => item._id === _id), 1)
+      state.count -= 1
+      if(state.selected && state.selected._id === item._id) {
+        state.selected = {}
+      }
+    }
+
+    actions.removeAsync = async ({ commit }, item) => {
+      commit("SET_REMOVE_LOADING", true)
+      await config.removeAsync({ _id: item._id })
+      commit("REMOVE_ONE", item)
+      commit("SET_REMOVE_LOADING", false)
+    }
+  }
+
+  return {
+    state,
+    mutations,
+    actions,
+    getters
+  }
+}

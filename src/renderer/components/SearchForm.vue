@@ -1,5 +1,5 @@
 <style lang="stylus">
-.filter-form
+.search-form
   display flex
   margin 10px 0 20px
   .el-button
@@ -7,7 +7,7 @@
 </style>
 
 <template>
-  <el-form ref="form" class="filter-form" @submit.prevent.native="submit">
+  <el-form ref="form" class="search-form" @submit.prevent.native="submit">
     <el-input
       v-model="v"
       @input="input"
@@ -22,17 +22,10 @@
 
 <script>
 export default {
-  name: "FilterForm",
+  name: "SearchForm",
   props: {
     value: { type: String, default: "" },
     placeholder: { type: String, default: "Enter search words.." }
-  },
-  watch: {
-    value(v) {
-      if(v === "") {
-        this.submit()
-      }
-    }
   },
   data: function() {
     return {
@@ -42,6 +35,9 @@ export default {
   methods: {
     input() {
       this.$emit("input", this.v)
+      if(this.v === "") {
+        this.submit()
+      }
     },
     submit() {
       this.$emit("submit", this.v)

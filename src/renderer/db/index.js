@@ -66,7 +66,7 @@ export const find = (collection, filter = {}, options = {}) => {
     try {
       const results = await query(collection, "find", filter, options)
       const count = await query(collection, "count")
-      resolve({ [collection]: results, count })
+      resolve({ items: results, count })
     } catch(e) {
       reject(e)
     }

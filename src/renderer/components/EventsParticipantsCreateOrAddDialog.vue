@@ -50,7 +50,7 @@ li
     align-items center
     padding-left 20px
 
-  .filter-form
+  .search-form
     padding 0
 
 </style>
@@ -70,7 +70,7 @@ li
           <div class="column">
             <h4 class="h4">Clubs</h4>
 
-            <filter-form
+            <search-form
               v-model="clubsSearch"
               @submit="clubsSearchSubmit"
               placeholder="Search for a club by name"
@@ -91,7 +91,7 @@ li
           <div class="column">
             <template v-if="showClubMembers">
               <h4 class="h4">{{ selectedClub.name }}'s members</h4>
-              <filter-form
+              <search-form
                 v-model="membersSearch"
                 @submit="membersSearchSubmit"
                 placeholder="Search for a member by name"
@@ -114,7 +114,7 @@ li
 
           <div class="column">
             <h4 class="h4">Added participants</h4>
-            <filter-form
+            <search-form
               v-model="participantsSearch"
               @submit="participantsSearchSubmit"
               placeholder="Search for a participant by name"
@@ -176,7 +176,7 @@ li
 
 <script>
 import { clubs, members } from "@/../../mocks"
-import FilterForm from "@/components/FilterForm"
+import SearchForm from "@/components/SearchForm"
 
 const formStub = {
   firstName: "Ola",
@@ -188,7 +188,7 @@ const formStub = {
 
 export default {
   name: "EventsParticipantsCreateOrAddDialog",
-  components: { FilterForm },
+  components: { SearchForm },
   props: {
     shown: { type: Boolean, default: false },
     isLoading: { type: Boolean, default: false },

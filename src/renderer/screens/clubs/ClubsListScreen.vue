@@ -15,9 +15,9 @@
     </div>
 
     <el-main>
-      <filter-form
+      <search-form
         v-model="clubsSearchFilter"
-        @submit="clubsSubmitSearchFilterAsync"
+        @submit="clubsSetSearchFilterAsync"
         placeholder="Search for a club by name"
       />
 
@@ -104,14 +104,14 @@
 
 <script>
 import { mapActions, mapMutations, mapState } from "vuex"
-import FilterForm from "@/components/FilterForm"
+import SearchForm from "@/components/SearchForm"
 import ClubsCreateDialog from "@/components/ClubsCreateDialog"
 
 export default {
   name: "ClubsListScreen",
 
   components: {
-    FilterForm,
+    SearchForm,
     ClubsCreateDialog
   },
 
@@ -155,13 +155,9 @@ export default {
       clubsRemoveAsync: "removeAsync",
       clubsSetSortingAsync: "setSortingAsync",
       clubsSetPageSizeAsync: "setPageSizeAsync",
-      clubsSetPageCurrentAsync: "setPageCurrentAsync"
+      clubsSetPageCurrentAsync: "setPageCurrentAsync",
+      clubsSetSearchFilterAsync: "setSearchFilterAsync"
     }),
-
-    async clubsSubmitSearchFilterAsync(search) {
-      await this.clubsListAsync()
-    },
-
     clubsOpenCreateDialog() {
       this.clubsShowCreateDialog = true
     },
@@ -183,7 +179,6 @@ export default {
         })
       }
     },
-
     clubsTableRowDispatchActions({ handler, payload }) {
       switch(handler) {
         case "clubsDelete":
@@ -216,19 +211,17 @@ export default {
         })
       }
     },
-
     clubsRowClick(club, e) {
       if(e.target.className.includes("table-button")) {
         return
       }
       this.$router.push(`/clubs/${club._id}`)
     },
-
-    clubsTableDispatchActions({ handler, payload }) {
-    },
     clubsSelectionChange(clubs) {
       this.clubsSelection = clubs
-    }
+    },
+
+    clubsTableDispatchActions({ handler, payload }) {}
   }
 }
 </script>

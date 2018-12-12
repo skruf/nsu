@@ -1,16 +1,8 @@
+import { queryHelper } from "@/utils"
+
 const defaultOptions = {
   action: "listAsync"
 }
-
-const helper = (state) => ({
-  limit: state.pageSize,
-  skip: (state.pageCurrent - 1) * state.pageSize,
-  sort: state.sortBy,
-  search: {
-    fields: state.searchFilterFields,
-    value: state.searchFilterValue || null
-  }
-})
 
 export default (options) => {
   const config = { ...defaultOptions, ...options }
@@ -44,7 +36,8 @@ export default (options) => {
 
     actions.listAsync = async function({ commit, state }) {
       commit("SET_LIST_LOADING", true)
-      const results = await config.listAsync(state.filter, helper(state))
+      const cfg = queryHelper(state)
+      const results = await config.listAsync(state.listFilter, cfg)
       commit("SET_LIST", results.items)
       commit("SET_COUNT", results.count)
       commit("SET_LIST_LOADING", false)

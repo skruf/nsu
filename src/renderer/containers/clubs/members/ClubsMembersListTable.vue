@@ -1,9 +1,8 @@
 <style lang="stylus">
-// .clubs-members
 </style>
 
 <template>
-  <div class="clubs-members pt-2">
+  <div class="clubs-members-list-table pt-2">
     <search-form
       v-model="clubsMembersSearchFilter"
       @submit="clubsMembersSetSearchFilterAsync"
@@ -79,7 +78,7 @@ import { mapActions, mapState, mapMutations } from "vuex"
 import SearchForm from "@/components/SearchForm"
 
 export default {
-  name: "ClubsMembers",
+  name: "ClubsMembersListTable",
 
   components: {
     SearchForm

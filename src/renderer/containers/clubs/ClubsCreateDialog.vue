@@ -8,7 +8,7 @@
     :visible.sync="visible"
     @close="close"
   >
-    <div v-loading="isLoading">
+    <div v-loading="clubsCreateIsLoading">
       <el-form
         ref="form"
         label-position="top"
@@ -55,32 +55,31 @@
 </template>
 
 <script>
-const formStub = {
-  name: "Norske Officerers Pistolklubb",
-  email: "svartkrutt@nop.no",
-  address: "Postboks 92 Sentrum",
-  area: "0101 Oslo",
-  country: "Norway",
-  range: "Løvenskioldbanen Dælimosen 50, 1359 Eiksmarka",
-  leader: "Jens Berentzen"
-}
+import { mapActions, mapState } from "vuex"
+import { stub } from "@/db/clubs"
 
 export default {
   name: "ClubsCreateDialog",
+
   props: {
-    shown: { type: Boolean, default: false },
-    isLoading: { type: Boolean, default: false }
+    shown: { type: Boolean, default: false }
   },
+
   watch: {
     shown(shown) {
       this.visible = shown
       this.$emit("update:shown", shown)
     }
   },
+
+  computed: mapState("clubs", {
+    clubsCreateIsLoading: "createIsLoading"
+  }),
+
   data: function() {
     return {
       visible: this.shown,
-      form: formStub,
+      form: stub,
       formRules: {
         name: { required: true, message: "Name is a required field" },
         area: { required: true, message: "Area is a required field" },
@@ -88,22 +87,48 @@ export default {
       }
     }
   },
+
   methods: {
+    ...mapActions("clubs", {
+      clubsCreateAsync: "createAsync"
+    }),
+
     submit() {
       this.$refs.form.validate((isValid) => {
         if(!isValid) {
           return this.$notify({
+            type: "error",
             title: "Oops!",
-            message: "Please fill in all required fields before saving",
-            type: "error"
+            message: "Please fill in all required fields before saving"
           })
         }
-        this.$emit("submit", this.form)
+        this.clubsCreateFormSubmit(this.form)
       })
     },
-    clear() {
-      this.form = { ...formStub }
+
+    async clubsCreateFormSubmit(form) {
+      try {
+        await this.clubsCreateAsync(form)
+        this.$notify({
+          type: "success",
+          title: "Great success",
+          message: `${form.name} was successfully added to the database`
+        })
+        this.clear()
+        this.close()
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     },
+
+    clear() {
+      this.form = { ...stub }
+    },
+
     close() {
       this.visible = false
       this.$emit("update:shown", false)

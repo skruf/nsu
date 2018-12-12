@@ -30,7 +30,7 @@ export const findEventParticipantsAsync = async (filter = {}, options = {}) => {
     }
   })
 
-  return { participants: a, count: a.length }
+  return { items: a, count: a.length }
 }
 
 export const insertEventParticipantsAsync = async (doc, options = {}) => {

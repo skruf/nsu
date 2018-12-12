@@ -14,7 +14,7 @@
     :visible.sync="visible"
     @close="close"
   >
-    <div v-loading="isLoading">
+    <div v-loading="eventsCreateIsLoading">
       <el-form
         ref="form"
         label-position="top"
@@ -96,23 +96,8 @@
 </template>
 
 <script>
-const formStub = {
-  title: "Skedsmo Championships",
-  startsAt: "",
-  endsAt: "",
-  category: "Club event",
-  branch: "50m",
-  organizer: "Skedsmo Civile Skydeselskab",
-  area: "Korpåsen, Lillestrøm",
-  approbated: "Y",
-  lat: 59.917561,
-  lng: 10.754604,
-
-  dates: [
-    new Date(),
-    new Date()
-  ]
-}
+import { mapActions, mapState } from "vuex"
+import { stub } from "@/db/events"
 
 const categories = [
   { _id: 0, title: "World Championship" },
@@ -128,33 +113,28 @@ const clubs = [
   { _id: 3, title: "OKTS Svartkruttgruppa" }
 ]
 
-// const formStub = {
-//   title: "",
-//   dates: "",
-//   category: "",
-//   branch: "",
-//   organizer: "",
-//   area: "",
-//   approbated: "",
-//   dates: []
-// }
-
 export default {
   name: "EventsCreateDialog",
+
   props: {
-    shown: { type: Boolean, default: false },
-    isLoading: { type: Boolean, default: false }
+    shown: { type: Boolean, default: false }
   },
+
   watch: {
     shown(shown) {
       this.visible = shown
       this.$emit("update:shown", shown)
     }
   },
+
+  computed: mapState("events", {
+    eventsCreateIsLoading: "createIsLoading"
+  }),
+
   data: function() {
     return {
       visible: this.shown,
-      form: formStub,
+      form: { ...stub, dates: [] },
       formRules: {
         title: { required: true, message: "Title is a required field" },
         dates: { required: true, message: "Dates is a required field" },
@@ -167,26 +147,53 @@ export default {
       clubs: clubs
     }
   },
+
   methods: {
+    ...mapActions("events", {
+      eventsCreateAsync: "createAsync"
+    }),
+
     submit() {
       this.$refs.form.validate((isValid) => {
         if(!isValid) {
           return this.$notify({
+            type: "error",
             title: "Oops!",
-            message: "Please fill in all required fields before saving",
-            type: "error"
+            message: "Please fill in all required fields before saving"
           })
         }
 
-        const data = this.form
-        data.startsAt = this.form.dates[0]
-        data.endsAt = this.form.dates[1]
-        this.$emit("submit", data)
+        const data = { ...this.form }
+        data.startsAt = data.dates[0]
+        data.endsAt = data.dates[1]
+        delete data.dates
+        this.eventsCreateFormSubmit(data)
       })
     },
-    clear() {
-      this.form = { ...formStub }
+
+    async eventsCreateFormSubmit(form) {
+      try {
+        await this.eventsCreateAsync(form)
+        this.$notify({
+          type: "success",
+          title: "Great success",
+          message: `${form.title} was successfully added to the database`
+        })
+        this.clear()
+        this.close()
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     },
+
+    clear() {
+      this.form = { ...stub }
+    },
+
     close() {
       this.visible = false
       this.$emit("update:shown", false)

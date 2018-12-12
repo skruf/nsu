@@ -1,12 +1,11 @@
 <style lang="stylus">
-// .events-participants
 </style>
 
 <template>
   <div class="events-participants pt-4">
     <search-form
-      v-model="eventsParticipantsSarchFilter"
-      @submit="eventsParticipantsFetchMany"
+      v-model="eventsParticipantsSearchFilter"
+      @submit="eventsParticipantsSetSearchFilterAsync"
       placeholder="Search for participant by first or last name"
     />
 
@@ -24,22 +23,22 @@
     </div>
 
     <el-table
-      :data="eventsParticipantsListMembers"
+      :data="eventsParticipantsList"
       @selection-change="eventsParticipantsSelectionChange"
       @row-click="eventsParticipantsRowClick"
-      @sort-change="eventsParticipantsSetSorting"
+      @sort-change="eventsParticipantsSetSortingAsync"
       :sort-by="eventsParticipantsSortBy"
       row-key="_id"
       class="table-clickable"
       empty-text
     >
       <el-table-column type="selection" width="30"></el-table-column>
-      <el-table-column prop="name" label="Name" sortable="custom">
+      <el-table-column prop="name" label="Name" sortable="custom" :sort-orders="eventsParticipantsSortOrders">
         <template slot-scope="scope">
           {{ scope.row.firstName }} {{ scope.row.lastName }}
         </template>
       </el-table-column>
-      <el-table-column prop="club" label="Club" sortable="custom"></el-table-column>
+      <el-table-column prop="club" label="Club" sortable="custom" :sort-orders="eventsParticipantsSortOrders"></el-table-column>
       <el-table-column width="40">
         <template slot-scope="scope">
           <el-dropdown trigger="click" @command="eventsParticipantsTableRowDispatchActions">
@@ -75,11 +74,11 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex"
+import { mapActions, mapState, mapMutations } from "vuex"
 import SearchForm from "@/components/SearchForm"
 
 export default {
-  name: "EventsParticipants",
+  name: "EventsParticipantsListTable",
 
   components: {
     SearchForm
@@ -90,47 +89,53 @@ export default {
   },
 
   data: () => ({
-    eventsParticipantsSarchFilter: "",
-    eventsParticipantsPageSize: 15,
-    eventsParticipantsPageCurrent: 1,
-    eventsParticipantsSortBy: "_id",
     eventsParticipantsSelection: [],
-    eventsParticipantsCount: 6
+    eventsParticipantsSortOrders: [ "descending", "ascending" ]
   }),
 
   async created() {
-    await this.listParticipantsAsync({ eventId: this.eventId })
+    this.eventsParticipantsSetListFilter({ eventId: this.eventId })
+    await this.eventsParticipantsListAsync()
   },
 
   computed: {
     ...mapState("events/participants", {
-      eventsParticipantsListMembers: "list"
-    }),
-    ...mapState("clubs/members", {
-      clubsMembersList: "list"
+      eventsParticipantsList: "list",
+      eventsParticipantsCount: "count",
+      eventsParticipantsPageSize: "pageSize",
+      eventsParticipantsPageCurrent: "pageCurrent",
+      eventsParticipantsSortBy: "sortBy"
     }),
     eventsParticipantsHasSelection() {
       return this.eventsParticipantsSelection.length > 0
+    },
+    eventsParticipantsSearchFilter: {
+      get() { return this.$store.state.clubs.searchFilterValue },
+      set(search) { this.eventsParticipantsSetSearchFilter(search) }
     }
   },
 
   methods: {
-    ...mapActions("events/participants", {
-      listParticipantsAsync: "listAsync"
+    ...mapMutations("events/participants", {
+      eventsParticipantsSetListFilter: "SET_LIST_FILTER",
+      eventsParticipantsSetSearchFilter: "SET_SEARCH_FILTER"
     }),
-
-    eventsParticipantsTableDispatchActions() {},
+    ...mapActions("events/participants", {
+      eventsParticipantsListAsync: "listAsync",
+      eventsParticipantsSetPageSize: "setPageSizeAsync",
+      eventsParticipantsSetPageCurrent: "setPageCurrentAsync",
+      eventsParticipantsSetSortingAsync: "setSortingAsync",
+      eventsParticipantsSetSearchFilterAsync: "setSearchFilterAsync"
+    }),
     eventsParticipantsOpenCreateOrAddDialog() {
       this.$emit("eventsParticipantsOpenCreateOrAddDialog")
     },
     eventsParticipantsSelectionChange(participants) {
       this.eventsParticipantsSelection = participants
     },
+
+    eventsParticipantsTableDispatchActions() {},
     eventsParticipantsRowClick() {},
-    eventsParticipantsSetSorting() {},
-    eventsParticipantsFetchMany() {},
-    eventsParticipantsSetPageSize() {},
-    eventsParticipantsSetPageCurrent() {},
     eventsParticipantsTableRowDispatchActions() {}
   }
 }

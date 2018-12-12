@@ -1,7 +1,8 @@
 import { insert, find, findOne, remove } from "@/db"
 
 export const stub = {
-  name: "",
+  firstName: "",
+  lastName: "",
   emailAddress: "",
   country: "",
   phoneNumber: "",

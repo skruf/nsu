@@ -66,7 +66,7 @@
         </div>
       </div>
 
-      <clubs-members
+      <clubs-members-list-table
         v-if="!clubsSelectedIsLoading"
         :clubId="clubsSelected._id"
         @clubsMembersOpenCreateOrAddDialog="clubsMembersOpenCreateOrAddDialog"
@@ -81,28 +81,23 @@
 
     <clubs-members-create-or-add-dialog
       v-if="!clubsSelectedIsLoading"
-      ref="clubsMembersCreateOrAddDialog"
       :clubId="clubsSelected._id"
       :clubName="clubsSelected.name"
       :shown.sync="clubsMembersShowCreateOrAddDialog"
-      :isLoading="clubsMembersCreateIsLoading"
-      @submit="clubsMembersCreateFormSubmit"
     />
   </el-container>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex"
-import SearchForm from "@/components/SearchForm"
-import ClubsMembers from "@/components/ClubsMembers"
-import ClubsMembersCreateOrAddDialog from "@/components/ClubsMembersCreateOrAddDialog"
+import ClubsMembersListTable from "@/containers/clubs/members/ClubsMembersListTable"
+import ClubsMembersCreateOrAddDialog from "@/containers/clubs/members/ClubsMembersCreateOrAddDialog"
 
 export default {
   name: "ClubsViewScreen",
 
   components: {
-    SearchForm,
-    ClubsMembers,
+    ClubsMembersListTable,
     ClubsMembersCreateOrAddDialog
   },
 
@@ -117,8 +112,7 @@ export default {
   computed: {
     ...mapState("clubs", {
       clubsSelectedIsLoading: "selectedIsLoading",
-      clubsSelected: "selected",
-      clubsMembersCreateIsLoading: "createIsLoading"
+      clubsSelected: "selected"
     })
   },
 
@@ -126,32 +120,11 @@ export default {
     ...mapActions("clubs", {
       clubsSelectAsync: "selectAsync"
     }),
-    ...mapActions("clubs/members", {
-      clubsMembersCreateAsync: "createAsync"
-    }),
 
     clubsSelectedDispatchActions() {},
 
     clubsMembersOpenCreateOrAddDialog() {
       this.clubsMembersShowCreateOrAddDialog = true
-    },
-    async clubsMembersCreateFormSubmit(form) {
-      try {
-        await this.clubsMembersCreateAsync(form)
-        this.$notify({
-          title: "Great success",
-          message: `${form.firstName} ${form.lastName} was successfully added to the database`,
-          type: "success"
-        })
-        this.$refs.clubsMembersCreateOrAddDialog.clear()
-        this.clubsMembersShowCreateOrAddDialog = false
-      } catch(e) {
-        this.$notify({
-          title: "Oops!",
-          message: e.message,
-          type: "error"
-        })
-      }
     }
   }
 }

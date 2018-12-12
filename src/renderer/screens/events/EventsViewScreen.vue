@@ -84,11 +84,10 @@
 
       <el-tabs v-model="activeTab">
         <el-tab-pane label="Participants" name="participants">
-
-          <events-participants
+          <events-participants-list-table
             v-if="!eventsSelectedIsLoading"
             :eventId="eventsSelected._id"
-            @eventsParticipantsShowCreateOrAddDialog="eventsParticipantsShowCreateOrAddDialog"
+            @eventsParticipantsOpenCreateOrAddDialog="eventsParticipantsOpenCreateOrAddDialog"
           />
 
           <div class="page-actions">
@@ -110,12 +109,9 @@
 
     <events-participants-create-or-add-dialog
       v-if="!eventsSelectedIsLoading"
-      ref="eventsParticipantsCreateDialog"
       :eventId="eventsSelected._id"
       :eventTitle="eventsSelected.title"
       :shown.sync="eventsParticipantsShowCreateOrAddDialog"
-      :isLoading="eventsParticipantsCreateIsLoading"
-      @submit="eventsParticipantsCreateFormSubmit"
     />
   </el-container>
 </template>
@@ -124,8 +120,9 @@
 import moment from "moment"
 import { mapActions, mapState } from "vuex"
 import DateWithTooltip from "@/components/DateWithTooltip"
-import EventsParticipants from "@/components/EventsParticipants"
-import EventsParticipantsCreateOrAddDialog from "@/components/EventsParticipantsCreateOrAddDialog"
+import EventsParticipantsListTable from "@/containers/events/participants/EventsParticipantsListTable"
+import EventsParticipantsCreateOrAddDialog from "@/containers/events/participants/EventsParticipantsCreateOrAddDialog"
+
 import EventsDivisions from "@/components/EventsDivisions"
 import EventsResults from "@/components/EventsResults"
 
@@ -134,7 +131,7 @@ export default {
 
   components: {
     DateWithTooltip,
-    EventsParticipants,
+    EventsParticipantsListTable,
     EventsParticipantsCreateOrAddDialog,
     EventsDivisions,
     EventsResults

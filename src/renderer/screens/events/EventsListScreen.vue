@@ -30,7 +30,7 @@
 
       <div class="page-actions">
         <el-button @click="eventsOpenCreateDialog" type="primary">
-          <i class="el-icon-plus el-icon--right"></i> Create event
+          <i class="el-icon-plus el-icon--left"></i> Create event
         </el-button>
       </div>
     </el-main>

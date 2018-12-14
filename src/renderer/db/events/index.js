@@ -35,7 +35,7 @@ export const insertEventAsync = async (doc = {}, options = {}) => {
   return results
 }
 
-export const removeEventAsync = async (filter = {}, options = {}) => {
+export const removeEventAsync = async (filter, options = {}) => {
   const results = await remove("events", filter, options)
   return results
 }

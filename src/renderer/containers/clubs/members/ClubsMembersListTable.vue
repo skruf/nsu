@@ -55,7 +55,7 @@
       </el-table-column>
       <template slot="empty">
         No members yet.
-        <el-button type="text" size="small" @click="clubsMembersOpenCreateOrAddDialog">
+        <el-button type="text" size="small" @click="clubsMembersOpenCreateDialog">
           Create/add new?
         </el-button>
       </template>
@@ -127,8 +127,8 @@ export default {
       clubsMembersSetSortingAsync: "setSortingAsync",
       clubsMembersSetSearchFilterAsync: "setSearchFilterAsync"
     }),
-    clubsMembersOpenCreateOrAddDialog() {
-      this.$emit("clubsMembersOpenCreateOrAddDialog")
+    clubsMembersOpenCreateDialog() {
+      this.$emit("clubsMembersOpenCreateDialog")
     },
     clubsMembersSelectionChange(members) {
       this.clubsMembersSelection = members

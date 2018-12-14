@@ -33,12 +33,12 @@
       empty-text
     >
       <el-table-column type="selection" width="30"></el-table-column>
-      <el-table-column prop="name" label="Name" sortable="custom" :sort-orders="eventsParticipantsSortOrders">
+      <el-table-column prop="member.firstName" label="Name" sortable="custom" :sort-orders="eventsParticipantsSortOrders">
         <template slot-scope="scope">
-          {{ scope.row.firstName }} {{ scope.row.lastName }}
+          {{ scope.row.member.firstName }} {{ scope.row.member.lastName }}
         </template>
       </el-table-column>
-      <el-table-column prop="club" label="Club" sortable="custom" :sort-orders="eventsParticipantsSortOrders"></el-table-column>
+      <el-table-column prop="member.clubName" label="Club" sortable="custom" :sort-orders="eventsParticipantsSortOrders"></el-table-column>
       <el-table-column width="40">
         <template slot-scope="scope">
           <el-dropdown trigger="click" @command="eventsParticipantsTableRowDispatchActions">
@@ -55,7 +55,7 @@
       </el-table-column>
       <template slot="empty">
         No participants yet.
-        <el-button type="text" size="small" @click="eventsParticipantsOpenCreateOrAddDialog">
+        <el-button type="text" size="small" @click="eventsParticipantsOpenAddDialog">
           Create/add new?
         </el-button>
       </template>
@@ -127,8 +127,8 @@ export default {
       eventsParticipantsSetSortingAsync: "setSortingAsync",
       eventsParticipantsSetSearchFilterAsync: "setSearchFilterAsync"
     }),
-    eventsParticipantsOpenCreateOrAddDialog() {
-      this.$emit("eventsParticipantsOpenCreateOrAddDialog")
+    eventsParticipantsOpenAddDialog() {
+      this.$emit("eventsParticipantsOpenAddDialog")
     },
     eventsParticipantsSelectionChange(participants) {
       this.eventsParticipantsSelection = participants

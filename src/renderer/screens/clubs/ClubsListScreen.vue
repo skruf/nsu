@@ -21,7 +21,7 @@
 
       <div class="page-actions">
         <el-button @click="clubsOpenCreateDialog" type="primary">
-          <i class="el-icon-plus el-icon--right"></i> Create club
+          <i class="el-icon-plus el-icon--left"></i> Create club
         </el-button>
       </div>
     </el-main>

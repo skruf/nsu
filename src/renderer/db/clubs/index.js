@@ -25,7 +25,7 @@ export const insertClubAsync = async (doc = {}, options = {}) => {
   return results
 }
 
-export const removeClubAsync = async (filter = {}, options = {}) => {
+export const removeClubAsync = async (filter, options = {}) => {
   const results = await remove("clubs", filter, options)
   return results
 }

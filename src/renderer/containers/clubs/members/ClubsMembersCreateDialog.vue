@@ -3,7 +3,7 @@
 
 <template>
   <el-dialog
-    title="Create or add member"
+    title="Create a club member"
     custom-class="create-dialog"
     :visible.sync="visible"
     :append-to-body="true"
@@ -56,7 +56,7 @@ import { mapActions, mapState } from "vuex"
 import { stub } from "@/db/clubs/members"
 
 export default {
-  name: "ClubsMembersCreateOrAddDialog",
+  name: "ClubsMembersCreateDialog",
 
   props: {
     shown: { type: Boolean, default: false },

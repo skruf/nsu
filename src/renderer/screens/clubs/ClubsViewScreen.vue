@@ -69,21 +69,21 @@
       <clubs-members-list-table
         v-if="!clubsSelectedIsLoading"
         :clubId="clubsSelected._id"
-        @clubsMembersOpenCreateOrAddDialog="clubsMembersOpenCreateOrAddDialog"
+        @clubsMembersOpenCreateDialog="clubsMembersOpenCreateDialog"
       />
 
       <div class="page-actions">
-        <el-button @click="clubsMembersOpenCreateOrAddDialog" type="primary">
-          <i class="el-icon-plus el-icon--right"></i> Add / Create members
+        <el-button @click="clubsMembersOpenCreateDialog" type="primary">
+          <i class="el-icon-plus el-icon--left"></i> Create member
         </el-button>
       </div>
     </el-main>
 
-    <clubs-members-create-or-add-dialog
+    <clubs-members-create-dialog
       v-if="!clubsSelectedIsLoading"
       :clubId="clubsSelected._id"
       :clubName="clubsSelected.name"
-      :shown.sync="clubsMembersShowCreateOrAddDialog"
+      :shown.sync="clubsMembersShowCreateDialog"
     />
   </el-container>
 </template>
@@ -91,18 +91,18 @@
 <script>
 import { mapActions, mapState } from "vuex"
 import ClubsMembersListTable from "@/containers/clubs/members/ClubsMembersListTable"
-import ClubsMembersCreateOrAddDialog from "@/containers/clubs/members/ClubsMembersCreateOrAddDialog"
+import ClubsMembersCreateDialog from "@/containers/clubs/members/ClubsMembersCreateDialog"
 
 export default {
   name: "ClubsViewScreen",
 
   components: {
     ClubsMembersListTable,
-    ClubsMembersCreateOrAddDialog
+    ClubsMembersCreateDialog
   },
 
   data: () => ({
-    clubsMembersShowCreateOrAddDialog: false
+    clubsMembersShowCreateDialog: false
   }),
 
   async created() {
@@ -123,8 +123,8 @@ export default {
 
     clubsSelectedDispatchActions() {},
 
-    clubsMembersOpenCreateOrAddDialog() {
-      this.clubsMembersShowCreateOrAddDialog = true
+    clubsMembersOpenCreateDialog() {
+      this.clubsMembersShowCreateDialog = true
     }
   }
 }

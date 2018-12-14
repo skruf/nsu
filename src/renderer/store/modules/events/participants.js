@@ -1,6 +1,7 @@
 import {
   findEventParticipantsAsync,
-  insertEventParticipantsAsync
+  insertEventParticipantsAsync,
+  removeEventParticipantAsync
 } from "@/db/events/participants"
 import extend from "@/store/extensions"
 
@@ -22,7 +23,8 @@ const modules = [
     module: "crud",
     options: {
       listAsync: findEventParticipantsAsync,
-      createAsync: insertEventParticipantsAsync
+      createAsync: insertEventParticipantsAsync,
+      removeAsync: removeEventParticipantAsync
     }
   },
   {

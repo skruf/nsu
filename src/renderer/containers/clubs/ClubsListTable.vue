@@ -119,6 +119,7 @@ export default {
     ...mapMutations("clubs", {
       clubsSetSearchFilter: "SET_SEARCH_FILTER"
     }),
+
     ...mapActions("clubs", {
       clubsListAsync: "listAsync",
       clubsRemoveAsync: "removeAsync",
@@ -139,6 +140,7 @@ export default {
           break
       }
     },
+
     async clubsDeleteAsync(club) {
       await this.$confirm(
         `This will remove ${club.name} permanently. Continue?`,
@@ -152,24 +154,26 @@ export default {
       try {
         await this.clubsRemoveAsync(club)
         this.$notify({
+          type: "success",
           title: "Success",
-          message: `${club.name} was removed from the database`,
-          type: "success"
+          message: `${club.name} was removed from the database`
         })
       } catch(e) {
         this.$notify({
+          type: "error",
           title: "Oops!",
-          message: e.message,
-          type: "error"
+          message: e.message
         })
       }
     },
+
     clubsRowClick(club, e) {
       if(e.target.className.includes("table-button")) {
         return
       }
       this.$router.push(`/clubs/${club._id}`)
     },
+
     clubsSelectionChange(clubs) {
       this.clubsSelection = clubs
     },

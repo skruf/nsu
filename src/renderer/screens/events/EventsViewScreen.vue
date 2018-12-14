@@ -87,12 +87,15 @@
           <events-participants-list-table
             v-if="!eventsSelectedIsLoading"
             :eventId="eventsSelected._id"
-            @eventsParticipantsOpenCreateOrAddDialog="eventsParticipantsOpenCreateOrAddDialog"
+            @eventsParticipantsOpenAddDialog="eventsParticipantsOpenAddDialog"
           />
 
           <div class="page-actions">
-            <el-button @click="eventsParticipantsOpenCreateOrAddDialog" type="primary">
-              <i class="el-icon-plus el-icon--right"></i> Add / Create participants
+            <el-button @click="eventsParticipantsOpenAddDialog" type="primary">
+              <i class="ion-ios-keypad el-icon--left"></i> Manage participants
+            </el-button>
+            <el-button @click="clubsMembersOpenCreateDialog">
+              <i class="el-icon-plus el-icon--left"></i> Create club member
             </el-button>
           </div>
         </el-tab-pane>
@@ -107,11 +110,15 @@
       </el-tabs>
     </el-main>
 
-    <events-participants-create-or-add-dialog
+    <clubs-members-create-dialog
+      :shown.sync="clubsMembersShowCreateDialog"
+    />
+
+    <events-participants-add-dialog
       v-if="!eventsSelectedIsLoading"
       :eventId="eventsSelected._id"
       :eventTitle="eventsSelected.title"
-      :shown.sync="eventsParticipantsShowCreateOrAddDialog"
+      :shown.sync="eventsParticipantsShowAddDialog"
     />
   </el-container>
 </template>
@@ -121,7 +128,8 @@ import moment from "moment"
 import { mapActions, mapState } from "vuex"
 import DateWithTooltip from "@/components/DateWithTooltip"
 import EventsParticipantsListTable from "@/containers/events/participants/EventsParticipantsListTable"
-import EventsParticipantsCreateOrAddDialog from "@/containers/events/participants/EventsParticipantsCreateOrAddDialog"
+import EventsParticipantsAddDialog from "@/containers/events/participants/EventsParticipantsAddDialog"
+import ClubsMembersCreateDialog from "@/containers/clubs/members/ClubsMembersCreateDialog"
 
 import EventsDivisions from "@/components/EventsDivisions"
 import EventsResults from "@/components/EventsResults"
@@ -132,14 +140,17 @@ export default {
   components: {
     DateWithTooltip,
     EventsParticipantsListTable,
-    EventsParticipantsCreateOrAddDialog,
+    EventsParticipantsAddDialog,
+    ClubsMembersCreateDialog,
+
     EventsDivisions,
     EventsResults
   },
 
   data: () => ({
     activeTab: "participants",
-    eventsParticipantsShowCreateOrAddDialog: false
+    eventsParticipantsShowAddDialog: false,
+    clubsMembersShowCreateDialog: false
   }),
 
   async created() {
@@ -173,8 +184,12 @@ export default {
 
     eventsSelectedDispatchActions() {},
 
-    eventsParticipantsOpenCreateOrAddDialog() {
-      this.eventsParticipantsShowCreateOrAddDialog = true
+    clubsMembersOpenCreateDialog() {
+      this.clubsMembersShowCreateDialog = true
+    },
+
+    eventsParticipantsOpenAddDialog() {
+      this.eventsParticipantsShowAddDialog = true
     }
   }
 }

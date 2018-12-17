@@ -10,7 +10,7 @@
     />
 
     <div class="table-actions" :class="{ 'disabled': !clubsHasSelection }">
-      <el-dropdown @command="clubsTableDispatchActions">
+      <el-dropdown trigger="click" @command="clubsTableDispatchActions">
         <el-button type="text" size="small">
           Actions <i class="el-icon-arrow-down el-icon--left"></i>
         </el-button>
@@ -57,7 +57,7 @@
         </el-table-column>
         <template slot="empty">
           No clubs yet.
-          <el-button type="text" size="small" @click="clubsOpenCreateDialog">
+          <el-button type="text" @click="clubsOpenCreateDialog">
             Create new?
           </el-button>
         </template>

@@ -1,16 +1,14 @@
 <style lang="stylus">
-ul
-  padding 0
-li
-  list-style-type none
-
-.el-dialog.events-participants-add-dialog
-  position relative
+.el-dialog.events-participants-manage-dialog
   padding-bottom 80px
   display flex
   flex-direction column
-  margin 5% 5% 10% 5%
-  height 85%
+  position fixed
+  left 5%
+  top 5%
+  right 5%
+  bottom 5%
+  height 90%
   width 90%
 
   .el-tabs,
@@ -18,9 +16,12 @@ li
   .el-dialog__body
     display flex
 
+  .el-dialog__header
+    border-bottom 1px solid var(--border-color)
+
   .el-dialog__body
     flex-grow 1
-    padding-bottom 0
+    padding 0
   .el-tabs
     flex-direction column
   .el-tabs,
@@ -30,13 +31,25 @@ li
 
   .column
     flex 1
-    padding 1rem
-    border-right 1px solid var(--border-color)
-    &:last-child
-      border-right none
+    border-left 1px solid var(--border-color)
+    overflow-y auto
+    display flex
+    flex-direction column
+    // resize horizontal
+    &:first-child
+      border-left none
+
+  .h5
+    padding 15px
 
   li
     border-bottom 1px solid var(--border-color)
+    padding 10px 20px
+    &:hover
+      color var(--primary-color)
+      cursor pointer
+    &.is-active
+      background-color var(--primary-alt-color)
     &:last-of-type
       border-bottom none
 
@@ -51,19 +64,30 @@ li
     border-top 1px solid var(--border-color)
     display flex
     align-items center
+    justify-content flex-end
     padding-left 20px
+    padding-right 20px
 
   .search-form
-    padding 0
+    margin 0 10px 20px
+    .el-button
+      margin-left 10px
+
+  .placeholder
+    display flex
+    align-items center
+    justify-content center
+    flex 1
 
 </style>
 
 <template>
   <el-dialog
-    :title="`Manage participants for ${eventTitle}`"
-    custom-class="events-participants-add-dialog"
+    :title="`Manage participants for ${event.title}`"
+    custom-class="events-participants-manage-dialog"
     :fullscreen="true"
     :visible.sync="visible"
+    @open="open"
     @close="close"
   >
     <div class="flex min-h-full w-full">
@@ -72,20 +96,21 @@ li
         v-loading="clubsListIsLoading"
         class="column clubs"
       >
-        <h4 class="h4">Clubs</h4>
+        <h5 class="h5">Select a club</h5>
 
         <search-form
+          class="small"
           v-model="clubsSearch"
           @submit="clubsSearchSubmit"
-          placeholder="Search for a club by name"
+          placeholder="Search clubs by name"
         />
 
         <ul class="">
           <li
             v-for="club in clubsList"
             :key="club._id"
+            :class="isClubActive(club)"
             @click="fetchClubsMemebersListAsync(club)"
-            class="py-4"
           >
             {{ club.name }}
           </li>
@@ -96,21 +121,21 @@ li
         v-loading="clubsSelectedOrListIsLoading"
         class="column clubs_members"
       >
+        <h5 class="h5">Select club members</h5>
+
+        <search-form
+          class="small"
+          v-model="membersSearch"
+          @submit="membersSearchSubmit"
+          placeholder="Search members by name"
+        />
+
         <template v-if="showClubMembers">
-          <h4 class="h4">{{ clubsSelected.name }}'s members</h4>
-
-          <search-form
-            v-model="membersSearch"
-            @submit="membersSearchSubmit"
-            placeholder="Search for a member by name"
-          />
-
           <ul class="">
             <li
               v-for="member in clubsMembersListFilteredByEventsParticipants"
               :key="member._id"
               @click="eventsParticipantsAdd(member)"
-              class="py-4"
             >
               {{ member.firstName }} {{ member.lastName }}
             </li>
@@ -118,7 +143,7 @@ li
         </template>
 
         <template v-else>
-          <small class="small">Please select a club</small>
+          <small class="small placeholder">Please select a club</small>
         </template>
       </div>
 
@@ -126,12 +151,13 @@ li
         v-loading="eventsParticipantsListOrRemoveIsLoading"
         class="column event_participants"
       >
-        <h4 class="h4">Added participants</h4>
+        <h5 class="h5">Added participants</h5>
 
         <search-form
+          class="small"
           v-model="participantsSearch"
           @submit="participantsSearchSubmit"
-          placeholder="Search for a participant by name"
+          placeholder="Search participants by name"
         />
 
         <ul class="">
@@ -139,17 +165,15 @@ li
             v-for="participant in eventsParticipantsList"
             :key="participant._id"
             @click="eventsParticipantsDeleteAsync(participant)"
-            class="py-4"
           >
             {{ participant.member.firstName }} {{ participant.member.lastName }}
           </li>
         </ul>
       </div>
-
     </div>
 
     <template slot="footer">
-      <div class="dialog-footer flex justify-end pr-8">
+      <div class="dialog-footer">
         <!-- <el-button class="block" type="primary" @click="submit">
           Add selected participants
         </el-button> -->
@@ -166,7 +190,7 @@ import { mapActions, mapState, mapMutations } from "vuex"
 import SearchForm from "@/components/SearchForm"
 
 export default {
-  name: "EventsParticipantsAddDialog",
+  name: "EventsParticipantsManageDialog",
 
   components: {
     SearchForm
@@ -174,8 +198,7 @@ export default {
 
   props: {
     shown: { type: Boolean, default: false },
-    eventId: { type: String, required: true },
-    eventTitle: { type: String, required: true }
+    event: { type: Object, required: true }
   },
 
   watch: {
@@ -183,10 +206,6 @@ export default {
       this.visible = shown
       this.$emit("update:shown", shown)
     }
-  },
-
-  async created() {
-    await this.clubsListAsync()
   },
 
   computed: {
@@ -238,6 +257,16 @@ export default {
   },
 
   methods: {
+    async open() {
+      await this.clubsListAsync()
+    },
+
+    isClubActive(club) {
+      if(this.clubsSelected && club._id === this.clubsSelected._id) {
+        return "is-active"
+      }
+    },
+
     ...mapActions("events/participants", {
       eventsParticipantsListAsync: "listAsync",
       eventsParticipantsCreateAsync: "createAsync",
@@ -272,7 +301,7 @@ export default {
     },
 
     async eventsParticipantsAdd(member) {
-      const participant = { eventId: this.eventId, memberId: member._id }
+      const participant = { eventId: this.event._id, memberId: member._id }
       try {
         await this.eventsParticipantsCreateAsync(participant)
         this.$notify({
@@ -292,7 +321,7 @@ export default {
 
     async eventsParticipantsDeleteAsync(participant) {
       try {
-        // const filter = { eventId: this.eventId, memberId: participant._id }
+        // const filter = { eventId: this.event._id, memberId: participant._id }
         await this.eventsParticipantsRemoveAsync(participant)
         this.$notify({
           type: "success",

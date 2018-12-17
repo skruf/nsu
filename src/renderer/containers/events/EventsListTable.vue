@@ -10,7 +10,7 @@
     />
 
     <div class="table-actions" :class="{ 'disabled': !eventsHasSelection }">
-      <el-dropdown @command="eventsTableDispatchActions">
+      <el-dropdown trigger="click" @command="eventsTableDispatchActions">
         <el-button type="text" size="small">
           Actions <i class="el-icon-arrow-down el-icon--left"></i>
         </el-button>
@@ -40,7 +40,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="title" label="Title" sortable="custom" :sort-orders="eventsSortOrders"></el-table-column>
-        <el-table-column prop="organizer" label="Organizer" sortable="custom" :sort-orders="eventsSortOrders"></el-table-column>
+        <el-table-column prop="organizerName" label="Organizer" sortable="custom" :sort-orders="eventsSortOrders"></el-table-column>
         <el-table-column prop="category" label="Category" sortable="custom" :sort-orders="eventsSortOrders"></el-table-column>
         <el-table-column width="40">
           <template slot-scope="scope">
@@ -61,7 +61,7 @@
         </el-table-column>
         <template slot="empty">
           No events yet.
-          <el-button type="text" size="small" @click="eventsOpenCreateDialog">
+          <el-button type="text" @click="eventsOpenCreateDialog">
             Create new?
           </el-button>
         </template>

@@ -16,7 +16,9 @@ const db = {
   clubs: createOrGetCollection("clubs"),
   members: createOrGetCollection("members"),
   events: createOrGetCollection("events"),
-  participants: createOrGetCollection("participants")
+  participants: createOrGetCollection("participants"),
+  classes: createOrGetCollection("classes"),
+  divisions: createOrGetCollection("divisions")
 }
 
 const query = (collection, method, filter = {}, options = {}) => {

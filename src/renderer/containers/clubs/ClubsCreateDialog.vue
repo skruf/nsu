@@ -15,7 +15,7 @@
         :model="form"
         :rules="formRules"
       >
-        <el-form-item label="Title" prop="name">
+        <el-form-item label="Name" prop="name">
           <el-input placeholder="Enter a name" v-model="form.name"></el-input>
         </el-form-item>
 
@@ -36,7 +36,14 @@
         </el-form-item>
 
         <el-form-item label="Country" prop="country">
-          <el-input placeholder="Enter a country" v-model="form.country"></el-input>
+          <el-select v-model="form.country" placeholder="Select a country">
+            <el-option
+              v-for="(country, index) in clubsCountries"
+              :key="index"
+              :label="country"
+              :value="country"
+            ></el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item label="Shooting Range" prop="range">
@@ -73,7 +80,8 @@ export default {
   },
 
   computed: mapState("clubs", {
-    clubsCreateIsLoading: "createIsLoading"
+    clubsCreateIsLoading: "createIsLoading",
+    clubsCountries: "countries"
   }),
 
   data: function() {

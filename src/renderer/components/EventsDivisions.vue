@@ -27,7 +27,7 @@
               :key="index"
               class="info-grid_item"
             >
-              <h4 class="info-grid_item_key h4">{{ key }}:</h4>
+              <h6 class="info-grid_item_key h6">{{ key }}:</h6>
               <div class="info-grid_item_value">{{ value }}</div>
             </div>
           </div>
@@ -41,7 +41,7 @@
               :key="index"
               class="info-grid_item"
             >
-              <h4 class="info-grid_item_key h4">{{ key }}:</h4>
+              <h6 class="info-grid_item_key h6">{{ key }}:</h6>
               <div class="info-grid_item_value">{{ value }}</div>
             </div>
           </div>

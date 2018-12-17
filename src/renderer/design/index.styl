@@ -15,7 +15,7 @@ body
   background-color var(--bg-color)
   font-weight var(--font-weight)
 
-.h1, .h2, .h3, .h4
+.h1, .h2, .h3, .h4, .h5, .h6
   color var(--title-color)
 
 .h2
@@ -26,8 +26,17 @@ body
   font-weight 600
 
 .h4
+  font-size 18px
+
+.h5
+  font-size 16px
+
+.h6
   font-weight 600
   font-size inherit
+
+.small
+  font-size 0.75rem
 
 .el-tag
   border none
@@ -76,7 +85,7 @@ a
   box-shadow none
   border-radius 3px
   &:not(.is-fullscreen)
-    margin-top 10vh !important
+    margin-top 5vh !important
 .el-dialog__body
   padding-top 10px
 

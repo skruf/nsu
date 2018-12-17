@@ -2,7 +2,6 @@
   background-color inherit
 
 .el-menu
-  height 100%
   border-right none
   // border-top 1px solid var(--border-color)
 
@@ -11,6 +10,8 @@
   // border-bottom 1px solid var(--border-color)
 .el-breadcrumb
   font-size 13px
+  padding-left 2px
+  padding-right 2px
 .el-breadcrumb__inner:hover
   color var(--primary-color)
   cursor pointer
@@ -23,8 +24,10 @@
 .el-submenu
   .el-menu-item
     padding-left 50px !important
+    padding-right 0
     line-height 35px
     height 35px
+    min-width auto
     &:last-of-type
       margin-bottom 10px
 

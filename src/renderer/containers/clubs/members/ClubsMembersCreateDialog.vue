@@ -7,6 +7,7 @@
     custom-class="create-dialog"
     :visible.sync="visible"
     :append-to-body="true"
+    @open="open"
     @close="close"
   >
     <div v-loading="clubsMembersCreateIsLoading">
@@ -16,28 +17,46 @@
         :model="form"
         :rules="formRules"
       >
-        <el-form-item label="First name" prop="firstName">
+        <el-form-item label="First Name" prop="firstName">
           <el-input placeholder="Enter a first name" v-model="form.firstName"></el-input>
         </el-form-item>
 
-        <el-form-item label="Last name" prop="lastName">
+        <el-form-item label="Last Name" prop="lastName">
           <el-input placeholder="Enter a last name" v-model="form.lastName"></el-input>
         </el-form-item>
 
-        <el-form-item label="Email address" prop="emailAddress">
+        <el-form-item label="Email Address" prop="emailAddress">
           <el-input placeholder="Enter a email address" v-model="form.emailAddress"></el-input>
         </el-form-item>
 
-        <el-form-item label="Phone number" prop="phoneNumber">
+        <el-form-item label="Phone Number" prop="phoneNumber">
           <el-input placeholder="Enter a phone number" v-model="form.phoneNumber"></el-input>
         </el-form-item>
 
         <el-form-item label="Country" prop="country">
-          <el-input placeholder="Enter a country" v-model="form.country"></el-input>
+          <el-select v-model="form.country" placeholder="Select a country">
+            <el-option
+              v-for="(country, index) in clubsMembersCountries"
+              :key="index"
+              :label="country"
+              :value="country"
+            ></el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item label="Club" prop="club" v-if="clubNotProvided">
-          <el-input placeholder="Select a club" v-model="form.clubId"></el-input>
+          <el-select
+            v-model="form.clubId"
+            placeholder="Select a club"
+            :loading="clubsListIsLoading"
+          >
+            <el-option
+              v-for="club in clubsList"
+              :key="club._id"
+              :label="club.name"
+              :value="club._id"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
 
@@ -73,7 +92,12 @@ export default {
 
   computed: {
     ...mapState("clubs", {
-      clubsMembersCreateIsLoading: "createIsLoading"
+      clubsListIsLoading: "listIsLoading",
+      clubsList: "list"
+    }),
+    ...mapState("clubs/members", {
+      clubsMembersCreateIsLoading: "createIsLoading",
+      clubsMembersCountries: "countries"
     }),
     clubNotProvided() {
       return !(this.clubId && this.clubName)
@@ -93,8 +117,18 @@ export default {
   },
 
   methods: {
+    async open() {
+      if(this.clubNotProvided) {
+        await this.clubsListAsync()
+      }
+    },
+
     ...mapActions("clubs/members", {
       clubsMembersCreateAsync: "createAsync"
+    }),
+
+    ...mapActions("clubs", {
+      clubsListAsync: "listAsync"
     }),
 
     submit() {

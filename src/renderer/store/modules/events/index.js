@@ -7,7 +7,14 @@ import {
 import extend from "@/store/extensions"
 import { queryHelper } from "@/utils"
 
-const state = {}
+const state = {
+  categories: [
+    "Local / Club",
+    "Norwegian Championship",
+    "European Championship",
+    "World Championship"
+  ]
+}
 const mutations = {}
 const actions = {}
 const getters = {}

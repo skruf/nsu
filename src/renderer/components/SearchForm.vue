@@ -4,6 +4,16 @@
   margin 10px 0 20px
   .el-button
     margin-left 20px
+  &.small
+    .el-input__icon,
+    .el-input__inner
+      line-height 30px
+    .el-input__inner
+      height 30px
+    .el-button
+      padding 0 10px
+    .el-input, .el-button, .el-input__inner, .el-tabs__item
+      font-size 0.8rem
 </style>
 
 <template>
@@ -14,9 +24,9 @@
       @clear="submit"
       :placeholder="placeholder"
       :clearable="true"
+      suffix-icon="el-icon-search"
     ></el-input>
-
-    <el-button native-type="submit" type="primary">Search</el-button>
+    <!-- <el-button native-type="submit" type="primary">Search</el-button> -->
   </el-form>
 </template>
 

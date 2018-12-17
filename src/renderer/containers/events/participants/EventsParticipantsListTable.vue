@@ -33,7 +33,7 @@
       empty-text
     >
       <el-table-column type="selection" width="30"></el-table-column>
-      <el-table-column prop="member.firstName" label="Name" sortable="custom" :sort-orders="eventsParticipantsSortOrders">
+      <el-table-column prop="member" label="Name" sortable="custom" :sort-orders="eventsParticipantsSortOrders">
         <template slot-scope="scope">
           {{ scope.row.member.firstName }} {{ scope.row.member.lastName }}
         </template>
@@ -55,8 +55,8 @@
       </el-table-column>
       <template slot="empty">
         No participants yet.
-        <el-button type="text" size="small" @click="eventsParticipantsOpenAddDialog">
-          Create/add new?
+        <el-button type="text" @click="eventsParticipantsOpenManageDialog">
+          Add a member?
         </el-button>
       </template>
     </el-table>
@@ -127,8 +127,8 @@ export default {
       eventsParticipantsSetSortingAsync: "setSortingAsync",
       eventsParticipantsSetSearchFilterAsync: "setSearchFilterAsync"
     }),
-    eventsParticipantsOpenAddDialog() {
-      this.$emit("eventsParticipantsOpenAddDialog")
+    eventsParticipantsOpenManageDialog() {
+      this.$emit("eventsParticipantsOpenManageDialog")
     },
     eventsParticipantsSelectionChange(participants) {
       this.eventsParticipantsSelection = participants

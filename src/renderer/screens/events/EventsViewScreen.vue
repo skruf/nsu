@@ -43,42 +43,42 @@
     <el-main>
       <div class="info-grid">
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Starts at:</h3>
+          <h6 class="h6 info-grid_item_key">Starts at:</h6>
           <p class="info-grid_item_value">
             <date-with-tooltip :date="eventsSelected.startsAt" />
           </p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">End at:</h3>
+          <h6 class="h6 info-grid_item_key">End at:</h6>
           <p class="info-grid_item_value">
             <date-with-tooltip :date="eventsSelected.endsAt" />
           </p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Duration:</h3>
+          <h6 class="h6 info-grid_item_key">Duration:</h6>
           <p class="info-grid_item_value">
             {{ eventsSelectedDuration }}
           </p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Category:</h3>
+          <h6 class="h6 info-grid_item_key">Category:</h6>
           <p class="info-grid_item_value">{{ eventsSelected.category }}</p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Branch:</h3>
+          <h6 class="h6 info-grid_item_key">Branch:</h6>
           <p class="info-grid_item_value">{{ eventsSelected.branch }}</p>
         </div>
         <div class="info-grid_item" v-if="eventsSelected.lat && eventsSelected.lng">
-          <h3 class="h4 info-grid_item_key">Lat/Lng:</h3>
+          <h6 class="h6 info-grid_item_key">Lat/Lng:</h6>
           <p class="info-grid_item_value">{{ eventsSelected.lat }} {{ eventsSelected.lng }}</p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Area:</h3>
+          <h6 class="h6 info-grid_item_key">Area:</h6>
           <p class="info-grid_item_value">{{ eventsSelected.area }}</p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Organizer:</h3>
-          <p class="info-grid_item_value">{{ eventsSelected.organizer }}</p>
+          <h6 class="h6 info-grid_item_key">Organizer:</h6>
+          <p class="info-grid_item_value">{{ eventsSelected.organizerName }}</p>
         </div>
       </div>
 
@@ -87,11 +87,11 @@
           <events-participants-list-table
             v-if="!eventsSelectedIsLoading"
             :eventId="eventsSelected._id"
-            @eventsParticipantsOpenAddDialog="eventsParticipantsOpenAddDialog"
+            @eventsParticipantsOpenManageDialog="eventsParticipantsOpenManageDialog"
           />
 
           <div class="page-actions">
-            <el-button @click="eventsParticipantsOpenAddDialog" type="primary">
+            <el-button @click="eventsParticipantsOpenManageDialog" type="primary">
               <i class="ion-ios-keypad el-icon--left"></i> Manage participants
             </el-button>
             <el-button @click="clubsMembersOpenCreateDialog">
@@ -101,11 +101,29 @@
         </el-tab-pane>
 
         <el-tab-pane label="Divisions" name="divisions">
-          <!-- <events-divisions /> -->
+          <events-divisions
+            v-if="!eventsSelectedIsLoading"
+            :eventId="eventsSelected._id"
+          />
+
+          <div class="page-actions">
+            <el-button @click="eventsDivisionsOpenCreateDialog" type="primary">
+              <i class="ion-ios-keypad el-icon--left"></i> Create division
+            </el-button>
+          </div>
         </el-tab-pane>
 
         <el-tab-pane label="Results" name="results">
           <events-results />
+
+          <div class="page-actions">
+            <el-button @click="eventsParticipantsOpenManageDialog" type="primary">
+              <i class="ion-ios-keypad el-icon--left"></i> Input results
+            </el-button>
+            <el-button @click="clubsMembersOpenCreateDialog">
+              <i class="el-icon-plus el-icon--left"></i> Create club member
+            </el-button>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -114,11 +132,16 @@
       :shown.sync="clubsMembersShowCreateDialog"
     />
 
-    <events-participants-add-dialog
+    <events-divisions-create-dialog
       v-if="!eventsSelectedIsLoading"
-      :eventId="eventsSelected._id"
-      :eventTitle="eventsSelected.title"
-      :shown.sync="eventsParticipantsShowAddDialog"
+      :event="eventsSelected"
+      :shown.sync="eventsDivisionsShowCreateDialog"
+    />
+
+    <events-participants-manage-dialog
+      v-if="!eventsSelectedIsLoading"
+      :event="eventsSelected"
+      :shown.sync="eventsParticipantsShowManageDialog"
     />
   </el-container>
 </template>
@@ -128,10 +151,12 @@ import moment from "moment"
 import { mapActions, mapState } from "vuex"
 import DateWithTooltip from "@/components/DateWithTooltip"
 import EventsParticipantsListTable from "@/containers/events/participants/EventsParticipantsListTable"
-import EventsParticipantsAddDialog from "@/containers/events/participants/EventsParticipantsAddDialog"
+import EventsParticipantsManageDialog from "@/containers/events/participants/EventsParticipantsManageDialog"
 import ClubsMembersCreateDialog from "@/containers/clubs/members/ClubsMembersCreateDialog"
+import EventsDivisions from "@/containers/events/divisions/EventsDivisions"
 
-import EventsDivisions from "@/components/EventsDivisions"
+import EventsDivisionsCreateDialog from "@/containers/events/divisions/EventsDivisionsCreateDialog"
+
 import EventsResults from "@/components/EventsResults"
 
 export default {
@@ -140,16 +165,19 @@ export default {
   components: {
     DateWithTooltip,
     EventsParticipantsListTable,
-    EventsParticipantsAddDialog,
+    EventsParticipantsManageDialog,
     ClubsMembersCreateDialog,
-
     EventsDivisions,
+
+    EventsDivisionsCreateDialog,
+
     EventsResults
   },
 
   data: () => ({
     activeTab: "participants",
-    eventsParticipantsShowAddDialog: false,
+    eventsParticipantsShowManageDialog: false,
+    eventsDivisionsShowCreateDialog: false,
     clubsMembersShowCreateDialog: false
   }),
 
@@ -188,8 +216,12 @@ export default {
       this.clubsMembersShowCreateDialog = true
     },
 
-    eventsParticipantsOpenAddDialog() {
-      this.eventsParticipantsShowAddDialog = true
+    eventsParticipantsOpenManageDialog() {
+      this.eventsParticipantsShowManageDialog = true
+    },
+
+    eventsDivisionsOpenCreateDialog() {
+      this.eventsDivisionsShowCreateDialog = true
     }
   }
 }

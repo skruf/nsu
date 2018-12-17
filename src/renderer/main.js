@@ -39,7 +39,8 @@ import {
   Collapse,
   CollapseItem,
   Tag,
-  Tree
+  Tree,
+  TimeSelect
 } from "element-ui"
 
 import App from "./App"
@@ -79,6 +80,7 @@ Vue.use(Collapse)
 Vue.use(CollapseItem)
 Vue.use(Tag)
 Vue.use(Tree)
+Vue.use(TimeSelect)
 
 Vue.prototype.$loading = Loading.service
 Vue.prototype.$notify = Notification

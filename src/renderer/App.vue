@@ -3,6 +3,7 @@
   flex 1
   min-height 100vh
   display flex
+  padding-left 175px
 
 .logo
   max-width 100px
@@ -10,10 +11,21 @@
   margin-top 10px
   margin-bottom 10px
 
+.titlebar
+  -webkit-user-select none
+  -webkit-app-region drag
+  width 100%
+  height 20px
+  position absolute
+  left 0
+  right 0
+  top 0
+
 </style>
 
 <template>
   <el-container id="app">
+    <!-- <div class="titlebar"></div> -->
 
     <el-aside width="175px">
       <img
@@ -33,7 +45,7 @@
           <el-menu-item index="1-4" @click="navTo('/events/categories')" disabled>Categories</el-menu-item>
         </el-submenu>
 
-        <el-menu-item index="2" @click="navTo('/records')" disabled>
+        <el-menu-item index="2" @click="navTo('/classes')">
           <i class="menu-icon ion-ios-nuclear"></i>
           <span>Classes</span>
         </el-menu-item>
@@ -46,6 +58,11 @@
         <el-menu-item index="4" @click="navTo('/records')" disabled>
           <i class="menu-icon ion-ios-star"></i>
           <span>Records</span>
+        </el-menu-item>
+
+        <el-menu-item index="4" @click="navTo('/settings')" disabled>
+          <i class="menu-icon ion-ios-settings"></i>
+          <span>Settings</span>
         </el-menu-item>
       </el-menu>
     </el-aside>

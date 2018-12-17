@@ -3,10 +3,6 @@
   .info-grid
     margin-top 10px
 
-.events-results
-  max-height calc(60vh + 8px)
-  overflow-y scroll
-
 .weapon-picture
   max-height 80px
 
@@ -49,7 +45,7 @@
               :key="index"
               class="info-grid_item"
             >
-              <h4 class="info-grid_item_key h4">{{ key }}:</h4>
+              <h6 class="info-grid_item_key h6">{{ key }}:</h6>
               <div class="info-grid_item_value">{{ value }}</div>
             </div>
           </div>
@@ -63,7 +59,7 @@
               :key="index"
               class="info-grid_item"
             >
-              <h4 class="info-grid_item_key h4">{{ key }}:</h4>
+              <h6 class="info-grid_item_key h6">{{ key }}:</h6>
               <div class="info-grid_item_value">{{ value }}</div>
             </div>
           </div>
@@ -71,20 +67,20 @@
 
         <div class="class_results">
           <div class="flex w-full">
-            <div class="results-cell h4 w-24">Rank</div>
-            <div class="results-cell h4 w-24">Sum</div>
-            <div class="results-cell h4 w-1/4"><span class="pl-4">Contestant</span></div>
-            <div class="h4 w-2/3 flex text-center">
-              <div class="results-cell results-cell_hit h4 w-1/10">#1</div>
-              <div class="results-cell results-cell_hit h4 w-1/10">#2</div>
-              <div class="results-cell results-cell_hit h4 w-1/10">#3</div>
-              <div class="results-cell results-cell_hit h4 w-1/10">#4</div>
-              <div class="results-cell results-cell_hit h4 w-1/10">#5</div>
-              <div class="results-cell results-cell_hit h4 w-1/10">#6</div>
-              <div class="results-cell results-cell_hit h4 w-1/10">#7</div>
-              <div class="results-cell results-cell_hit h4 w-1/10">#8</div>
-              <div class="results-cell results-cell_hit h4 w-1/10">#9</div>
-              <div class="results-cell results-cell_hit h4 w-1/10">#10</div>
+            <div class="results-cell h6 w-24">Rank</div>
+            <div class="results-cell h6 w-24">Sum</div>
+            <div class="results-cell h6 w-1/4"><span class="pl-4">Contestant</span></div>
+            <div class="h6 w-2/3 flex text-center">
+              <div class="results-cell results-cell_hit h6 w-1/10">#1</div>
+              <div class="results-cell results-cell_hit h6 w-1/10">#2</div>
+              <div class="results-cell results-cell_hit h6 w-1/10">#3</div>
+              <div class="results-cell results-cell_hit h6 w-1/10">#4</div>
+              <div class="results-cell results-cell_hit h6 w-1/10">#5</div>
+              <div class="results-cell results-cell_hit h6 w-1/10">#6</div>
+              <div class="results-cell results-cell_hit h6 w-1/10">#7</div>
+              <div class="results-cell results-cell_hit h6 w-1/10">#8</div>
+              <div class="results-cell results-cell_hit h6 w-1/10">#9</div>
+              <div class="results-cell results-cell_hit h6 w-1/10">#10</div>
             </div>
           </div>
 
@@ -204,7 +200,7 @@ const classesMock = [
     },
 
     weapon: {
-      condition: "Orginal & Replika",
+      condition: "Orginal & Replica",
       type: "Glattløpet militær flinlåsmuskett",
       sights: "I original tro utførelse, intet baksikte",
       trigger: "Orginal ikke snellert",
@@ -230,9 +226,9 @@ const classesMock = [
     },
 
     weapon: {
-      condition: "Orginal & Replika",
+      condition: "Orginal & Replica",
       type: "Fri flinlåsrifle",
-      sights: "Tidsriktige. Disse kan være originale modeller i replika utførelse, også diopter",
+      sights: "Tidsriktige. Disse kan være originale modeller i Replica utførelse, også diopter",
       trigger: "Snellert tillatt",
       calibre: "Fritt",
       bullet: "Rund"

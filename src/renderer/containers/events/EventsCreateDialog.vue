@@ -12,6 +12,7 @@
     title="Opprett et nytt stevne"
     custom-class="create-dialog"
     :visible.sync="visible"
+    @open="open"
     @close="close"
   >
     <div v-loading="eventsCreateIsLoading">
@@ -22,7 +23,7 @@
         :rules="formRules"
       >
         <el-form-item label="Title" prop="title">
-          <el-input placeholder="Enter a title" v-model="form.title"></el-input>
+          <el-input placeholder="Enter a title" v-model="form.title" />
         </el-form-item>
 
         <el-form-item label="Start / End" prop="dates">
@@ -32,47 +33,51 @@
             range-separator="to"
             start-placeholder="Start date"
             end-placeholder="End date"
-          ></el-date-picker>
+          />
         </el-form-item>
 
         <div class="flex">
           <el-form-item label="Category" prop="category" class="w-full mr-2">
             <el-select v-model="form.category" placeholder="Select a category">
               <el-option
-                v-for="(category, index) in categories"
-                :key="category._id"
-                :label="category.title"
-                :value="category.title"
-              ></el-option>
+                v-for="(category, index) in eventsCategories"
+                :key="index"
+                :label="category"
+                :value="category"
+              />
             </el-select>
           </el-form-item>
 
           <el-form-item label="Branch" prop="branch"  class="w-full ml-2">
-            <el-input placeholder="Enter a branch" v-model="form.branch"></el-input>
+            <el-input placeholder="Enter a branch" v-model="form.branch" />
           </el-form-item>
         </div>
 
-        <el-form-item label="Organizer" prop="organizer">
-          <el-select v-model="form.organizer" placeholder="Select the organizer">
+        <el-form-item label="Organizer" prop="organizerId">
+          <el-select
+            v-model="form.organizerId"
+            placeholder="Select the organizer"
+            :loading="clubsListIsLoading"
+          >
             <el-option
-              v-for="(club, index) in clubs"
+              v-for="club in clubsList"
               :key="club._id"
-              :label="club.title"
-              :value="club.title"
-            ></el-option>
+              :label="club.name"
+              :value="club._id"
+            />
           </el-select>
         </el-form-item>
 
         <div class="flex">
           <el-form-item label="Area" prop="area" class="w-full mr-2">
-            <el-input placeholder="Enter a area" v-model="form.area"></el-input>
+            <el-input placeholder="Enter a area" v-model="form.area" />
           </el-form-item>
           <div class="w-full ml-2 flex">
             <el-form-item label="Lat" prop="lat" class="w-full mr-2">
-              <el-input placeholder="Enter latitude" v-model="form.lat"></el-input>
+              <el-input placeholder="Enter latitude" v-model="form.lat" />
             </el-form-item>
             <el-form-item label="Lng" prop="lng" class="w-full mr-2">
-              <el-input placeholder="Enter longitude" v-model="form.lng"></el-input>
+              <el-input placeholder="Enter longitude" v-model="form.lng" />
             </el-form-item>
           </div>
         </div>
@@ -81,7 +86,7 @@
           <el-switch
             v-model="form.approbated"
             active-text="Is officially approbated?"
-          ></el-switch>
+          />
         </el-form-item>
       </el-form>
 
@@ -99,20 +104,6 @@
 import { mapActions, mapState } from "vuex"
 import { stub } from "@/db/events"
 
-const categories = [
-  { _id: 0, title: "World Championship" },
-  { _id: 1, title: "European Championship" },
-  { _id: 2, title: "Norwegian Championship" },
-  { _id: 3, title: "Club event" }
-]
-
-const clubs = [
-  { _id: 0, title: "Skedsmo Civile Skydeselskab" },
-  { _id: 1, title: "Norske Officerers Pistolklubb" },
-  { _id: 2, title: "Oslo Vestre Sportsskyttere" },
-  { _id: 3, title: "OKTS Svartkruttgruppa" }
-]
-
 export default {
   name: "EventsCreateDialog",
 
@@ -127,9 +118,16 @@ export default {
     }
   },
 
-  computed: mapState("events", {
-    eventsCreateIsLoading: "createIsLoading"
-  }),
+  computed: {
+    ...mapState("events", {
+      eventsCreateIsLoading: "createIsLoading",
+      eventsCategories: "categories"
+    }),
+    ...mapState("clubs", {
+      clubsListIsLoading: "createIsLoading",
+      clubsList: "list"
+    })
+  },
 
   data: function() {
     return {
@@ -140,17 +138,22 @@ export default {
         dates: { required: true, message: "Dates is a required field" },
         category: { required: true, message: "Category is a required field" },
         branch: { required: true, message: "Branch is a required field" },
-        organizer: { required: true, message: "Organizer is a required field" },
+        organizerId: { required: true, message: "Organizer is a required field" },
         area: { required: true, message: "Area is a required field" }
-      },
-      categories: categories,
-      clubs: clubs
+      }
     }
   },
 
   methods: {
+    async open() {
+      await this.clubsListAsync()
+    },
+
     ...mapActions("events", {
       eventsCreateAsync: "createAsync"
+    }),
+    ...mapActions("clubs", {
+      clubsListAsync: "listAsync"
     }),
 
     submit() {

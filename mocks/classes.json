@@ -10,13 +10,12 @@
     "cleaning": "Ikke tillatt",
     "distance": "50 meter",
     "team": "Nr. 9 Gustav Adolph (O) nr. 31 Halikko (R)",
-    "condition": "Orginal & Replika",
+    "condition": "Orginal & Replica",
     "type": "Glattløpet militær flinlåsmuskett",
     "sights": "I original tro utførelse, intet baksikte",
     "trigger": "Orginal ikke snellert",
     "calibre": "13.5mm / 0.5315\"",
-    "bullet": "Rund",
-    "contestants": []
+    "bullet": "Rund"
   },
   {
     "_id": 1,
@@ -29,12 +28,11 @@
     "cleaning": "Tillatt",
     "distance": "100 meter",
     "team": "Nr. 26 Wedgnock (O), Nr. 19 Luca (R)",
-    "condition": "Orginal & Replika",
+    "condition": "Orginal & Replica",
     "type": "Fri flinlåsrifle",
-    "sights": "Tidsriktige. Disse kan være originale modeller i replika utførelse, også diopter",
+    "sights": "Tidsriktige. Disse kan være originale modeller i Replica utførelse, også diopter",
     "trigger": "Snellert tillatt",
     "calibre": "Fritt",
-    "bullet": "Rund",
-    "contestants": []
+    "bullet": "Rund"
   }
 ]

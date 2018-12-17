@@ -37,31 +37,31 @@
     <el-main>
       <div class="info-grid">
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Area:</h3>
+          <h6 class="h6 info-grid_item_key">Area:</h6>
           <p class="info-grid_item_value">{{ clubsSelected.area }}</p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Address:</h3>
+          <h6 class="h6 info-grid_item_key">Address:</h6>
           <p class="info-grid_item_value">{{ clubsSelected.address }}</p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Country:</h3>
+          <h6 class="h6 info-grid_item_key">Country:</h6>
           <p class="info-grid_item_value">{{ clubsSelected.country }}</p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Email:</h3>
+          <h6 class="h6 info-grid_item_key">Email:</h6>
           <p class="info-grid_item_value">{{ clubsSelected.email }}</p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Email:</h3>
+          <h6 class="h6 info-grid_item_key">Email:</h6>
           <p class="info-grid_item_value">{{ clubsSelected.email }}</p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Leader:</h3>
+          <h6 class="h6 info-grid_item_key">Leader:</h6>
           <p class="info-grid_item_value">{{ clubsSelected.leader }}</p>
         </div>
         <div class="info-grid_item">
-          <h3 class="h4 info-grid_item_key">Range:</h3>
+          <h6 class="h6 info-grid_item_key">Range:</h6>
           <p class="info-grid_item_value">{{ clubsSelected.range }}</p>
         </div>
       </div>

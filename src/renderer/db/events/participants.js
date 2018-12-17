@@ -7,9 +7,9 @@ export const stub = {
 
 // @TODO: handle search
 export const findEventParticipantsAsync = async (filter = {}, options = {}) => {
-  const participants = await find("participants", filter)
+  const results = await find("participants", filter)
 
-  const results = await Promise.all(participants.items.map((participant) => {
+  results.items = await Promise.all(results.items.map((participant) => {
     return new Promise(async (resolve, reject) => {
       const member = await findOne("members", { _id: participant.memberId })
       const club = await findOne("clubs", { _id: member.clubId })
@@ -19,7 +19,7 @@ export const findEventParticipantsAsync = async (filter = {}, options = {}) => {
     })
   }))
 
-  return { items: results, count: results.length }
+  return results
 }
 
 export const insertEventParticipantsAsync = async (doc, options = {}) => {

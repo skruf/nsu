@@ -1,17 +1,21 @@
 import {
-  findClubsAsync,
-  findOneClubAsync,
-  insertClubAsync,
-  removeClubAsync
-} from "@/db/clubs/index"
+  findClassesAsync,
+  findOneClassAsync,
+  insertClassAsync,
+  removeClassAsync
+} from "@/db/classes"
 import extend from "@/store/extensions"
 
-export const state = {
-  countries: [
-    "Norway",
-    "Sweden",
-    "Denmark",
-    "Finland"
+const state = {
+  categories: [
+    "Rifles & Muskets",
+    "Pistols & Revolvers",
+    "Shotguns"
+  ],
+  conditions: [
+    "Original",
+    "Replica",
+    "Original or Replica"
   ]
 }
 const mutations = {}
@@ -30,10 +34,10 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: findClubsAsync,
-      selectAsync: findOneClubAsync,
-      createAsync: insertClubAsync,
-      removeAsync: removeClubAsync
+      listAsync: findClassesAsync,
+      selectAsync: findOneClassAsync,
+      createAsync: insertClassAsync,
+      removeAsync: removeClassAsync
     }
   },
   {

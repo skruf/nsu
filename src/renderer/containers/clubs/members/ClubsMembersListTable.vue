@@ -55,8 +55,8 @@
       </el-table-column>
       <template slot="empty">
         No members yet.
-        <el-button type="text" size="small" @click="clubsMembersOpenCreateDialog">
-          Create/add new?
+        <el-button type="text" @click="clubsMembersOpenCreateDialog">
+          Create new?
         </el-button>
       </template>
     </el-table>

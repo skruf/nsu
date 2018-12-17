@@ -3,8 +3,11 @@ import {
   insertClubMemberAsync
 } from "@/db/clubs/members"
 import extend from "@/store/extensions"
+import { state as clubsState } from "."
 
-const state = {}
+const state = {
+  countries: clubsState.countries
+}
 const mutations = {}
 const actions = {}
 const getters = {}

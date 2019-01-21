@@ -109,6 +109,7 @@
     "inject-loader": "^4.0.1",
     "ionicons": "^4.4.8",
     "jest-serializer-vue": "^2.0.2",
+    "jest-transform-stub": "^1.0.0",
     "mini-css-extract-plugin": "0.4.0",
     "multispinner": "^0.2.1",
     "node-loader": "^0.6.0",

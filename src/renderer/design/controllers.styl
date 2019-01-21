@@ -1,0 +1,62 @@
+.el-dropdown-menu__item:focus,
+.el-dropdown-menu__item:not(.is-disabled):hover
+  background-color var(--primary-alt-color)
+  color var(--primary-color)
+
+.el-button
+  border-radius var(--border-radius)
+  font-weight var(--controller-font-weight)
+  position relative
+  letter-spacing 0.01rem
+  padding 12px 24px
+  span
+    display flex
+    align-items center
+  [class*=" el-icon-"], [class^=el-icon-]
+    font-size 15px
+  // [class*=" ion-"], [class^=ion-]
+  //   font-size 26px
+  //   height 0
+  //   margin-top -28px
+  .el-icon--left
+    margin-right 10px
+  .el-icon--right
+    margin-left 10px
+  & + &
+    margin-left 20px
+  &:not(.el-button--text)
+    box-shadow var(--box-shadow)
+    &:hover
+      opacity 0.8
+    &:active
+      top -1px
+
+.el-button--primary
+  border-width 1px
+
+.el-button--default
+  background-color var(--bg-color)
+  border-color var(--border-color)
+  border-width var(--border-width)
+
+.el-button--primary
+  &, &:hover, &:focus
+    border none
+    background-image var(--button-bg)
+    background-color transparent
+
+.el-switch.is-checked .el-switch__core
+  background-color var(--primary-color)
+  border-color var(--primary-color)
+
+.el-tabs__item.is-active,
+.el-switch__label.is-active
+  color var(--primary-color)
+
+.dangerous-confirmation
+  .el-button--primary
+    background-color var(--dangerous-color)
+    border-color var(--dangerous-color)
+    &:focus, &:hover
+      background-color var(--dangerous-alt-color)
+      border-color var(--dangerous-alt-color)

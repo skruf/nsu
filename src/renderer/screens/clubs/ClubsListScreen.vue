@@ -2,29 +2,39 @@
 </style>
 
 <template>
-  <el-container class="screen" id="clubs-list-screen">
+  <el-container
+    id="clubs-list-screen"
+    class="screen"
+  >
     <el-header height="auto">
-      <h1 class="h1 text-4xl">Clubs</h1>
+      <breadcrumb-bar
+        :paths="[
+          { to: '/clubs', label: 'Clubs' },
+          { to: '', label: 'All' }
+        ]"
+      />
+
+      <div class="page-titles">
+        <h1 class="h1">
+          Clubs
+        </h1>
+      </div>
     </el-header>
 
-    <div class="breadcrumb-bar">
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/clubs' }">Clubs</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/clubs' }">All</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-
-    <el-main>
+    <el-main class="content">
       <clubs-list-table
         @clubsOpenCreateDialog="clubsOpenCreateDialog"
       />
-
-      <div class="page-actions">
-        <el-button @click="clubsOpenCreateDialog" type="primary">
-          <i class="el-icon-plus el-icon--left"></i> Create club
-        </el-button>
-      </div>
     </el-main>
+
+    <el-footer height="auto">
+      <el-button
+        type="primary"
+        @click="clubsOpenCreateDialog"
+      >
+        <i class="el-icon-plus el-icon--left" /> Create club
+      </el-button>
+    </el-footer>
 
     <clubs-create-dialog
       :shown.sync="clubsShowCreateDialog"
@@ -33,6 +43,7 @@
 </template>
 
 <script>
+import BreadcrumbBar from "@/components/BreadcrumbBar"
 import ClubsListTable from "@/containers/clubs/ClubsListTable"
 import ClubsCreateDialog from "@/containers/clubs/ClubsCreateDialog"
 
@@ -40,6 +51,7 @@ export default {
   name: "ClubsListScreen",
 
   components: {
+    BreadcrumbBar,
     ClubsListTable,
     ClubsCreateDialog
   },

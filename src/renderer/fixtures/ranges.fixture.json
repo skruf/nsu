@@ -1,0 +1,19 @@
+[{
+  "id": "1",
+  "name": "Løvenskioldbanen",
+  "address": "Dælimosen 50",
+  "area": "1359 Eiksmarka",
+  "country": "Norway",
+  "type": "Outdoor",
+  "lat": "59.9608354",
+  "lng": "10.5821424"
+}, {
+  "id": "2",
+  "name": "Korpåsen",
+  "address": "Flaenveien 85",
+  "area": "2015, Leirsund",
+  "country": "Norway",
+  "type": "Outdoor",
+  "lat": "59.975744",
+  "lng": "11.111534"
+}]

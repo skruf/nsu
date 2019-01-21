@@ -10,41 +10,78 @@
     @open="open"
     @close="close"
   >
-    <div v-loading="clubsMembersCreateIsLoading">
+    <div
+      v-loading="clubsMembersCreateIsLoading"
+      class="dialog_content"
+    >
       <el-form
         ref="form"
         label-position="top"
         :model="form"
         :rules="formRules"
       >
-        <el-form-item label="First Name" prop="firstName">
-          <el-input placeholder="Enter a first name" v-model="form.firstName"></el-input>
+        <el-form-item
+          label="First Name"
+          prop="firstName"
+        >
+          <el-input
+            v-model="form.firstName"
+            placeholder="Enter a first name"
+          />
         </el-form-item>
 
-        <el-form-item label="Last Name" prop="lastName">
-          <el-input placeholder="Enter a last name" v-model="form.lastName"></el-input>
+        <el-form-item
+          label="Last Name"
+          prop="lastName"
+        >
+          <el-input
+            v-model="form.lastName"
+            placeholder="Enter a last name"
+          />
         </el-form-item>
 
-        <el-form-item label="Email Address" prop="emailAddress">
-          <el-input placeholder="Enter a email address" v-model="form.emailAddress"></el-input>
+        <el-form-item
+          label="Email Address"
+          prop="emailAddress"
+        >
+          <el-input
+            v-model="form.emailAddress"
+            placeholder="Enter a email address"
+          />
         </el-form-item>
 
-        <el-form-item label="Phone Number" prop="phoneNumber">
-          <el-input placeholder="Enter a phone number" v-model="form.phoneNumber"></el-input>
+        <el-form-item
+          label="Phone Number"
+          prop="phoneNumber"
+        >
+          <el-input
+            v-model="form.phoneNumber"
+            placeholder="Enter a phone number"
+          />
         </el-form-item>
 
-        <el-form-item label="Country" prop="country">
-          <el-select v-model="form.country" placeholder="Select a country">
+        <el-form-item
+          label="Country"
+          prop="country"
+        >
+          <el-select
+            v-model="form.country"
+            placeholder="Select a country"
+          >
             <el-option
               v-for="(country, index) in clubsMembersCountries"
               :key="index"
               :label="country"
               :value="country"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Club" prop="club" v-if="clubNotProvided">
+        <el-form-item
+          v-if="clubNotProvided"
+          label="Club"
+          prop="club"
+        >
           <el-select
             v-model="form.clubId"
             placeholder="Select a club"
@@ -55,38 +92,53 @@
               :key="club._id"
               :label="club.name"
               :value="club._id"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
       </el-form>
-
-      <span slot="footer" class="dialog-footer">
-        <div class="flex justify-end">
-          <el-button class="block" type="default" @click="close">Cancel</el-button>
-          <el-button class="block" type="primary" @click="submit">Save</el-button>
-        </div>
-      </span>
     </div>
+
+    <template slot="footer">
+      <el-button
+        class="block"
+        type="text"
+        @click="close"
+      >
+        Cancel
+      </el-button>
+      <el-button
+        class="block"
+        type="primary"
+        @click="submit"
+      >
+        Save
+      </el-button>
+    </template>
   </el-dialog>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex"
-import { stub } from "@/db/clubs/members"
+import { clubsMembersStub } from "@/stubs"
 
 export default {
   name: "ClubsMembersCreateDialog",
 
   props: {
     shown: { type: Boolean, default: false },
-    clubId: { type: String, required: false },
-    clubName: { type: String, required: false }
+    clubId: { type: String, required: false, default: "" },
+    clubName: { type: String, required: false, default: "" }
   },
 
-  watch: {
-    shown(shown) {
-      this.visible = shown
-      this.$emit("update:shown", shown)
+  data: function() {
+    return {
+      visible: this.shown,
+      form: clubsMembersStub,
+      formRules: {
+        firstName: { required: true, message: "First name is a required field" },
+        lastName: { required: true, message: "Last name is a required field" },
+        email: { required: true, message: "Email is a required field" }
+      }
     }
   },
 
@@ -104,15 +156,10 @@ export default {
     }
   },
 
-  data: function() {
-    return {
-      visible: this.shown,
-      form: stub,
-      formRules: {
-        firstName: { required: true, message: "First name is a required field" },
-        lastName: { required: true, message: "Last name is a required field" },
-        email: { required: true, message: "Email is a required field" }
-      }
+  watch: {
+    shown(shown) {
+      this.visible = shown
+      this.$emit("update:shown", shown)
     }
   },
 
@@ -167,7 +214,7 @@ export default {
     },
 
     clear() {
-      this.form = { ...stub }
+      this.form = { ...clubsMembersStub }
     },
 
     close() {

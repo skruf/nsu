@@ -1,8 +1,4 @@
-import {
-  findEventParticipantsAsync,
-  insertEventParticipantsAsync,
-  removeEventParticipantAsync
-} from "@/db/events/participants"
+import { eventsParticipantsService } from "@/services"
 import extend from "@/store/extensions"
 
 const state = {}
@@ -22,9 +18,9 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: findEventParticipantsAsync,
-      createAsync: insertEventParticipantsAsync,
-      removeAsync: removeEventParticipantAsync
+      listAsync: eventsParticipantsService.list,
+      createAsync: eventsParticipantsService.create,
+      removeAsync: eventsParticipantsService.remove
     }
   },
   {

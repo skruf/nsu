@@ -80,6 +80,7 @@ export default (options) => {
       const created = await config.createAsync(item)
       commit("ADD_ONE", created)
       commit("SET_CREATE_LOADING", false)
+      return created
     }
   }
 

@@ -10,6 +10,11 @@ export default [
         component: require("./EventsListScreen").default
       },
       {
+        path: "create",
+        name: "EventsCreateScreen",
+        component: require("./EventsCreateScreen").default
+      },
+      {
         path: ":eventId",
         name: "EventsViewScreen",
         component: require("./EventsViewScreen").default

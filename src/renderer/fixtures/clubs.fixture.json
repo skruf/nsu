@@ -1,0 +1,19 @@
+[{
+  "id": "1",
+  "name": "Norske Officerers Pistolklubb",
+  "leader": "Jens Berentzen",
+  "emailAddress": "svartkrutt@nop.no",
+  "address": "Postboks 92 Sentrum",
+  "area": "0101, Oslo",
+  "country": "Norway",
+  "rangeId": "1"
+}, {
+  "id": "1",
+  "name": "Schedmoe Civile Skydeselskab",
+  "leader": "Frode Høybråten",
+  "emailAddress": "frode.hoybraten@lilleborg.no",
+  "address": "",
+  "area": "1903, Gan",
+  "country": "Norway",
+  "rangeId": "2"
+}]

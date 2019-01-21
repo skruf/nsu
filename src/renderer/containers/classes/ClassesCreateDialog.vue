@@ -8,34 +8,61 @@
     :visible.sync="visible"
     @close="close"
   >
-    <div v-loading="classesCreateIsLoading">
+    <div
+      v-loading="classesCreateIsLoading"
+      class="dialog_content"
+    >
       <el-form
         ref="form"
         label-position="top"
         :model="form"
         :rules="formRules"
       >
-        <el-form-item label="Number" prop="number">
-          <el-input placeholder="Enter a class number" v-model="form.number" />
+        <el-form-item
+          label="Number"
+          prop="number"
+        >
+          <el-input
+            v-model="form.number"
+            placeholder="Enter a class number"
+          />
         </el-form-item>
 
-        <el-form-item label="Name" prop="name">
-          <el-input placeholder="Enter a name" v-model="form.name" />
+        <el-form-item
+          label="Name"
+          prop="name"
+        >
+          <el-input
+            v-model="form.name"
+            placeholder="Enter a name"
+          />
         </el-form-item>
 
-        <el-form-item label="Category" prop="category">
-          <el-select v-model="form.category" placeholder="Select a category">
+        <el-form-item
+          label="Category"
+          prop="category"
+        >
+          <el-select
+            v-model="form.category"
+            placeholder="Select a category"
+          >
             <el-option
               v-for="(category, index) in classesCategories"
               :key="index"
               :label="category"
               :value="category"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Condition" prop="condition">
-          <el-select v-model="form.condition" placeholder="Select a condition">
+        <el-form-item
+          label="Condition"
+          prop="condition"
+        >
+          <el-select
+            v-model="form.condition"
+            placeholder="Select a condition"
+          >
             <el-option
               v-for="(condition, index) in classesConditions"
               :key="index"
@@ -45,55 +72,130 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Target" prop="target">
-          <el-input placeholder="Enter target rules" v-model="form.target" />
+        <el-form-item
+          label="Target"
+          prop="target"
+        >
+          <el-input
+            v-model="form.target"
+            placeholder="Enter target rules"
+          />
         </el-form-item>
 
-        <el-form-item label="Position" prop="position">
-          <el-input placeholder="Enter position rules" v-model="form.position" />
+        <el-form-item
+          label="Position"
+          prop="position"
+        >
+          <el-input
+            v-model="form.position"
+            placeholder="Enter position rules"
+          />
         </el-form-item>
 
-        <el-form-item label="Distance" prop="distance">
-          <el-input placeholder="Enter distance rules" v-model="form.distance" />
+        <el-form-item
+          label="Distance"
+          prop="distance"
+        >
+          <el-input
+            v-model="form.distance"
+            placeholder="Enter distance rules"
+          />
         </el-form-item>
 
-        <el-form-item label="Type" prop="type">
-          <el-input placeholder="Enter a type" v-model="form.type" />
+        <el-form-item
+          label="Type"
+          prop="type"
+        >
+          <el-input
+            v-model="form.type"
+            placeholder="Enter a type"
+          />
         </el-form-item>
 
-        <el-form-item label="Sight" prop="sight">
-          <el-input placeholder="Enter sight rules" v-model="form.sight" />
+        <el-form-item
+          label="Sight"
+          prop="sight"
+        >
+          <el-input
+            v-model="form.sight"
+            placeholder="Enter sight rules"
+          />
         </el-form-item>
 
-        <el-form-item label="Trigger" prop="trigger">
-          <el-input placeholder="Enter trigger rules" v-model="form.trigger" />
+        <el-form-item
+          label="Trigger"
+          prop="trigger"
+        >
+          <el-input
+            v-model="form.trigger"
+            placeholder="Enter trigger rules"
+          />
         </el-form-item>
 
-        <el-form-item label="Calibre" prop="calibre">
-          <el-input placeholder="Enter calibre rules" v-model="form.calibre" />
+        <el-form-item
+          label="Calibre"
+          prop="calibre"
+        >
+          <el-input
+            v-model="form.calibre"
+            placeholder="Enter calibre rules"
+          />
         </el-form-item>
 
-        <el-form-item label="Bullet Type" prop="bulletType">
-          <el-input placeholder="Enter bullet type rules" v-model="form.bulletType" />
+        <el-form-item
+          label="Bullet Type"
+          prop="bulletType"
+        >
+          <el-input
+            v-model="form.bulletType"
+            placeholder="Enter bullet type rules"
+          />
         </el-form-item>
 
-        <el-form-item label="Loading Rod" prop="loadingRod">
-          <el-input placeholder="Enter loading rod rules" v-model="form.loadingRod" />
+        <el-form-item
+          label="Loading Rod"
+          prop="loadingRod"
+        >
+          <el-input
+            v-model="form.loadingRod"
+            placeholder="Enter loading rod rules"
+          />
         </el-form-item>
 
-        <el-form-item label="Cleaning" prop="cleaning">
-          <el-input placeholder="Enter cleaning rules" v-model="form.cleaning" />
+        <el-form-item
+          label="Cleaning"
+          prop="cleaning"
+        >
+          <el-input
+            v-model="form.cleaning"
+            placeholder="Enter cleaning rules"
+          />
         </el-form-item>
 
-        <el-form-item label="Team" prop="team">
-          <el-input placeholder="Enter a team" v-model="form.team" />
+        <el-form-item
+          label="Team"
+          prop="team"
+        >
+          <el-input
+            v-model="form.team"
+            placeholder="Enter a team"
+          />
         </el-form-item>
 
-        <el-form-item label="Picture URL" prop="pictureUrl">
-          <el-input placeholder="Enter a URL to a picture" v-model="form.pictureUrl" />
+        <el-form-item
+          label="Picture URL"
+          prop="pictureUrl"
+        >
+          <el-input
+            v-model="form.pictureUrl"
+            placeholder="Enter a URL to a picture"
+          />
         </el-form-item>
 
-        <el-form-item label="Remarks" prop="remarks">
+        <el-form-item
+          label="Remarks"
+          prop="remarks"
+        >
           <el-input
             v-model="form.remarks"
             :autosize="{ minRows: 3 }"
@@ -102,20 +204,30 @@
           />
         </el-form-item>
       </el-form>
-
-      <span slot="footer" class="dialog-footer">
-        <div class="flex justify-end">
-          <el-button class="block" type="default" @click="close">Cancel</el-button>
-          <el-button class="block" type="primary" @click="submit">Save</el-button>
-        </div>
-      </span>
     </div>
+
+    <template slot="footer">
+      <el-button
+        class="block"
+        type="text"
+        @click="close"
+      >
+        Cancel
+      </el-button>
+      <el-button
+        class="block"
+        type="primary"
+        @click="submit"
+      >
+        Save
+      </el-button>
+    </template>
   </el-dialog>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex"
-import { stub } from "@/db/classes"
+import { classesStub } from "@/stubs"
 
 export default {
   name: "ClassesCreateDialog",
@@ -124,23 +236,10 @@ export default {
     shown: { type: Boolean, default: false }
   },
 
-  watch: {
-    shown(shown) {
-      this.visible = shown
-      this.$emit("update:shown", shown)
-    }
-  },
-
-  computed: mapState("classes", {
-    classesCreateIsLoading: "createIsLoading",
-    classesCategories: "categories",
-    classesConditions: "conditions"
-  }),
-
   data: function() {
     return {
       visible: this.shown,
-      form: stub,
+      form: classesStub,
       formRules: {
         number: { required: true, message: "Number is a required field" },
         name: { required: true, message: "Name is a required field" },
@@ -155,6 +254,19 @@ export default {
         calibre: { required: true, message: "Calibre is a required field" },
         bulletType: { required: true, message: "Bullet Type is a required field" }
       }
+    }
+  },
+
+  computed: mapState("classes", {
+    classesCreateIsLoading: "createIsLoading",
+    classesCategories: "categories",
+    classesConditions: "conditions"
+  }),
+
+  watch: {
+    shown(shown) {
+      this.visible = shown
+      this.$emit("update:shown", shown)
     }
   },
 
@@ -196,7 +308,7 @@ export default {
     },
 
     clear() {
-      this.form = { ...stub }
+      this.form = { ...classesStub }
     },
 
     close() {

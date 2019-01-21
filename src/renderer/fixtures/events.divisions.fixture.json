@@ -1,0 +1,15 @@
+[{
+  "id": "1",
+  "name": "Day 1",
+  "day": "10.03.2018",
+  "endsAt": "10:00",
+  "interval": "30min",
+  "eventId": "1"
+}, {
+  "id": "2",
+  "name": "Day 2",
+  "day": "11.03.2018",
+  "endsAt": "09:00",
+  "interval": "60min",
+  "eventId": "1"
+}]

@@ -1,22 +1,10 @@
-import {
-  findClassesAsync,
-  findOneClassAsync,
-  insertClassAsync,
-  removeClassAsync
-} from "@/db/classes"
+import { classesService } from "@/services"
 import extend from "@/store/extensions"
+import { classesCategoriesFixture, classesConditionsFixture } from "@/fixtures"
 
 const state = {
-  categories: [
-    "Rifles & Muskets",
-    "Pistols & Revolvers",
-    "Shotguns"
-  ],
-  conditions: [
-    "Original",
-    "Replica",
-    "Original or Replica"
-  ]
+  categories: classesCategoriesFixture,
+  conditions: classesConditionsFixture
 }
 const mutations = {}
 const actions = {}
@@ -34,10 +22,10 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: findClassesAsync,
-      selectAsync: findOneClassAsync,
-      createAsync: insertClassAsync,
-      removeAsync: removeClassAsync
+      listAsync: classesService.list,
+      selectAsync: classesService.select,
+      createAsync: classesService.create,
+      removeAsync: classesService.remove
     }
   },
   {

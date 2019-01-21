@@ -5,59 +5,130 @@
   <div class="clubs-list-table">
     <search-form
       v-model="clubsSearchFilter"
-      @submit="clubsSetSearchFilterAsync"
       placeholder="Search for a club by name"
+      @submit="clubsSetSearchFilterAsync"
     />
-
-    <div class="table-actions" :class="{ 'disabled': !clubsHasSelection }">
-      <el-dropdown trigger="click" @command="clubsTableDispatchActions">
-        <el-button type="text" size="small">
-          Actions <i class="el-icon-arrow-down el-icon--left"></i>
-        </el-button>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="removeSelection">
-            <i class="el-icon-delete el-icon--left"></i> Remove selected
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-    </div>
 
     <div v-loading="clubsListIsLoading || clubsRemoveIsLoading">
       <el-table
         :data="clubsList"
-        @selection-change="clubsSelectionChange"
-        @row-click="clubsRowClick"
-        @sort-change="clubsSetSortingAsync"
         :sort-by="clubsSortBy"
         row-key="_id"
         class="table-clickable"
         empty-text
+        @selection-change="clubsSelectionChange"
+        @row-click="clubsRowClick"
+        @sort-change="clubsSetSortingAsync"
       >
-        <el-table-column type="selection" width="30"></el-table-column>
-        <el-table-column prop="name" label="Name" sortable="custom" :sort-orders="clubsSortOrders"></el-table-column>
-        <el-table-column prop="area" label="Area" sortable="custom" :sort-orders="clubsSortOrders"></el-table-column>
-        <el-table-column prop="country" label="Country" sortable="custom" :sort-orders="clubsSortOrders"></el-table-column>
-        <el-table-column prop="members" label="Members" sortable="custom" width="110px" :sort-orders="clubsSortOrders"></el-table-column>
-        <el-table-column width="40">
+        <el-table-column
+          type="selection"
+          width="40"
+        />
+
+        <el-table-column
+          prop="name"
+          label="Name/Area"
+          sortable="custom"
+          :sort-orders="clubsSortOrders"
+        >
           <template slot-scope="scope">
-            <el-dropdown trigger="click" @command="clubsTableRowDispatchActions">
+            <h6 class="h6">
+              {{ scope.row.name }}
+            </h6>
+            <small class="small">
+              {{ scope.row.area }}
+            </small>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="name"
+          label="Range Name/Area"
+          sortable="custom"
+          :sort-orders="clubsSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.range.name }}
+            </h6>
+            <small class="small">
+              {{ scope.row.range.area }}
+            </small>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="members"
+          label="Members"
+          sortable="custom"
+          width="150px"
+          :sort-orders="clubsSortOrders"
+        >
+          23
+        </el-table-column>
+
+        <el-table-column
+          prop="createdAt"
+          label="Added On"
+          sortable="custom"
+          width="150px"
+          :sort-orders="clubsSortOrders"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.createdAt | moment("MM.DD.YY") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          width="50"
+          align="right"
+        >
+          <template slot="header">
+            <div
+              class="table-actions"
+              :class="{ 'disabled': !clubsHasSelection }"
+            >
+              <el-dropdown
+                trigger="click"
+                @command="clubsTableDispatchActions"
+              >
+                <span class="el-dropdown-link">
+                  <i class="table-button el-icon-more" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="removeSelection">
+                    <i class="el-icon-delete el-icon--left" /> Remove selected
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+          </template>
+          <template slot-scope="scope">
+            <el-dropdown
+              trigger="click"
+              @command="clubsTableRowDispatchActions"
+            >
               <span class="el-dropdown-link">
-                <i class="table-button el-icon-setting"></i>
+                <i class="table-button el-icon-more" />
               </span>
               <el-dropdown-menu slot="dropdown">
                 <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
                   <i class="el-icon-edit el-icon--left"></i> Rediger
                 </el-dropdown-item> -->
                 <el-dropdown-item :command="{ handler: 'clubsDelete', payload: scope.row }">
-                  <i class="el-icon-delete el-icon--left"></i> Slett
+                  <i class="el-icon-delete el-icon--left" /> Slett
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
+
         <template slot="empty">
           No clubs yet.
-          <el-button type="text" @click="clubsOpenCreateDialog">
+          <el-button
+            type="text"
+            @click="clubsOpenCreateDialog"
+          >
             Create new?
           </el-button>
         </template>
@@ -65,13 +136,13 @@
 
       <el-pagination
         layout="total, sizes, prev, pager, next"
-        @size-change="clubsSetPageSizeAsync"
-        @current-change="clubsSetPageCurrentAsync"
         :page-size="clubsPageSize"
         :current-page="clubsPageCurrent"
         :page-sizes="[ 15, 30, 45, 60 ]"
         :total="clubsCount"
-      ></el-pagination>
+        @size-change="clubsSetPageSizeAsync"
+        @current-change="clubsSetPageCurrentAsync"
+      />
     </div>
   </div>
 </template>
@@ -85,10 +156,6 @@ export default {
 
   components: {
     SearchForm
-  },
-
-  async created() {
-    await this.clubsListAsync()
   },
 
   data: () => ({
@@ -113,6 +180,10 @@ export default {
       get() { return this.$store.state.clubs.searchFilterValue },
       set(search) { this.clubsSetSearchFilter(search) }
     }
+  },
+
+  async created() {
+    await this.clubsListAsync()
   },
 
   methods: {

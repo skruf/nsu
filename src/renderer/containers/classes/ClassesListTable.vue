@@ -5,58 +5,124 @@
   <div class="classes-list-table">
     <search-form
       v-model="classesSearchFilter"
-      @submit="classesSetSearchFilterAsync"
       placeholder="Search for a class by name"
+      @submit="classesSetSearchFilterAsync"
     />
-
-    <div class="table-actions" :class="{ 'disabled': !classesHasSelection }">
-      <el-dropdown trigger="click" @command="classesTableDispatchActions">
-        <el-button type="text" size="small">
-          Actions <i class="el-icon-arrow-down el-icon--left"></i>
-        </el-button>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="removeSelection">
-            <i class="el-icon-delete el-icon--left"></i> Remove selected
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-    </div>
 
     <div v-loading="classesListIsLoading || classesRemoveIsLoading">
       <el-table
         :data="classesList"
-        @selection-change="classesSelectionChange"
-        @row-click="classesRowClick"
-        @sort-change="classesSetSortingAsync"
         :sort-by="classesSortBy"
         row-key="_id"
         class="table-clickable"
         empty-text
+        @selection-change="classesSelectionChange"
+        @row-click="classesRowClick"
+        @sort-change="classesSetSortingAsync"
       >
-        <el-table-column type="selection" width="30"></el-table-column>
-        <el-table-column prop="number" label="Number" width="130" sortable="custom" :sort-orders="classesSortOrders"></el-table-column>
-        <el-table-column prop="name" label="Name" sortable="custom" :sort-orders="classesSortOrders"></el-table-column>
-        <el-table-column prop="category" label="Category" sortable="custom" :sort-orders="classesSortOrders"></el-table-column>
-        <el-table-column width="40">
+        <el-table-column
+          type="selection"
+          width="40"
+        />
+
+        <el-table-column
+          prop="name"
+          label="Name/Number"
+          sortable="custom"
+          :sort-orders="classesSortOrders"
+        >
           <template slot-scope="scope">
-            <el-dropdown trigger="click" @command="classesTableRowDispatchActions">
+            <h6 class="h6">
+              {{ scope.row.name }}
+            </h6>
+            <small class="small">
+              {{ scope.row.number }}
+            </small>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="category"
+          label="Category/Condition"
+          sortable="custom"
+          :sort-orders="classesSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.category }}
+            </h6>
+            <small class="small">
+              {{ scope.row.condition }}
+            </small>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="category"
+          label="Distance/Position"
+          sortable="custom"
+          :sort-orders="classesSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.distance }}
+            </h6>
+            <small class="small">
+              {{ scope.row.position }}
+            </small>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          width="50"
+          align="right"
+        >
+          <template slot="header">
+            <div
+              class="table-actions"
+              :class="{ 'disabled': !classesHasSelection }"
+            >
+              <el-dropdown
+                trigger="click"
+                @command="classesTableDispatchActions"
+              >
+                <span class="el-dropdown-link">
+                  <i class="table-button el-icon-more" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="removeSelection">
+                    <i class="el-icon-delete el-icon--left" /> Remove selected
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+          </template>
+          <template slot-scope="scope">
+            <el-dropdown
+              trigger="click"
+              @command="classesTableRowDispatchActions"
+            >
               <span class="el-dropdown-link">
-                <i class="table-button el-icon-setting"></i>
+                <i class="table-button el-icon-more" />
               </span>
               <el-dropdown-menu slot="dropdown">
                 <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
                   <i class="el-icon-edit el-icon--left"></i> Rediger
                 </el-dropdown-item> -->
                 <el-dropdown-item :command="{ handler: 'classesDelete', payload: scope.row }">
-                  <i class="el-icon-delete el-icon--left"></i> Slett
+                  <i class="el-icon-delete el-icon--left" /> Slett
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
+
         <template slot="empty">
           No classes yet.
-          <el-button type="text" @click="classesOpenCreateDialog">
+          <el-button
+            type="text"
+            @click="classesOpenCreateDialog"
+          >
             Create new?
           </el-button>
         </template>
@@ -64,13 +130,13 @@
 
       <el-pagination
         layout="total, sizes, prev, pager, next"
-        @size-change="classesSetPageSizeAsync"
-        @current-change="classesSetPageCurrentAsync"
         :page-size="classesPageSize"
         :current-page="classesPageCurrent"
         :page-sizes="[ 15, 30, 45, 60 ]"
         :total="classesCount"
-      ></el-pagination>
+        @size-change="classesSetPageSizeAsync"
+        @current-change="classesSetPageCurrentAsync"
+      />
     </div>
   </div>
 </template>
@@ -84,10 +150,6 @@ export default {
 
   components: {
     SearchForm
-  },
-
-  async created() {
-    await this.classesListAsync()
   },
 
   data: () => ({
@@ -112,6 +174,10 @@ export default {
       get() { return this.$store.state.classes.searchFilterValue },
       set(search) { this.classesSetSearchFilter(search) }
     }
+  },
+
+  async created() {
+    await this.classesListAsync()
   },
 
   methods: {

@@ -15,18 +15,30 @@
     @open="open"
     @close="close"
   >
-    <div v-loading="eventsCreateIsLoading">
+    <div
+      v-loading="eventsCreateIsLoading"
+      class="dialog_content"
+    >
       <el-form
         ref="form"
         label-position="top"
         :model="form"
         :rules="formRules"
       >
-        <el-form-item label="Title" prop="title">
-          <el-input placeholder="Enter a title" v-model="form.title" />
+        <el-form-item
+          label="Title"
+          prop="title"
+        >
+          <el-input
+            v-model="form.title"
+            placeholder="Enter a title"
+          />
         </el-form-item>
 
-        <el-form-item label="Start / End" prop="dates">
+        <el-form-item
+          label="Start / End"
+          prop="dates"
+        >
           <el-date-picker
             v-model="form.dates"
             type="daterange"
@@ -37,8 +49,15 @@
         </el-form-item>
 
         <div class="flex">
-          <el-form-item label="Category" prop="category" class="w-full mr-2">
-            <el-select v-model="form.category" placeholder="Select a category">
+          <el-form-item
+            label="Category"
+            prop="category"
+            class="w-full mr-2"
+          >
+            <el-select
+              v-model="form.category"
+              placeholder="Select a category"
+            >
               <el-option
                 v-for="(category, index) in eventsCategories"
                 :key="index"
@@ -48,12 +67,22 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="Branch" prop="branch"  class="w-full ml-2">
-            <el-input placeholder="Enter a branch" v-model="form.branch" />
+          <el-form-item
+            label="Branch"
+            prop="branch"
+            class="w-full ml-2"
+          >
+            <el-input
+              v-model="form.branch"
+              placeholder="Enter a branch"
+            />
           </el-form-item>
         </div>
 
-        <el-form-item label="Organizer" prop="organizerId">
+        <el-form-item
+          label="Organizer"
+          prop="organizerId"
+        >
           <el-select
             v-model="form.organizerId"
             placeholder="Select the organizer"
@@ -69,40 +98,74 @@
         </el-form-item>
 
         <div class="flex">
-          <el-form-item label="Area" prop="area" class="w-full mr-2">
-            <el-input placeholder="Enter a area" v-model="form.area" />
+          <el-form-item
+            label="Area"
+            prop="area"
+            class="w-full mr-2"
+          >
+            <el-input
+              v-model="form.area"
+              placeholder="Enter a area"
+            />
           </el-form-item>
           <div class="w-full ml-2 flex">
-            <el-form-item label="Lat" prop="lat" class="w-full mr-2">
-              <el-input placeholder="Enter latitude" v-model="form.lat" />
+            <el-form-item
+              label="Lat"
+              prop="lat"
+              class="w-full mr-2"
+            >
+              <el-input
+                v-model="form.lat"
+                placeholder="Enter latitude"
+              />
             </el-form-item>
-            <el-form-item label="Lng" prop="lng" class="w-full mr-2">
-              <el-input placeholder="Enter longitude" v-model="form.lng" />
+            <el-form-item
+              label="Lng"
+              prop="lng"
+              class="w-full mr-2"
+            >
+              <el-input
+                v-model="form.lng"
+                placeholder="Enter longitude"
+              />
             </el-form-item>
           </div>
         </div>
 
-        <el-form-item label="Approbated" prop="approbated">
+        <el-form-item
+          label="Approbated"
+          prop="approbated"
+        >
           <el-switch
             v-model="form.approbated"
             active-text="Is officially approbated?"
           />
         </el-form-item>
       </el-form>
-
-      <span slot="footer" class="dialog-footer">
-        <div class="flex justify-end">
-          <el-button class="block" type="default" @click="close">Cancel</el-button>
-          <el-button class="block" type="primary" @click="submit">Save</el-button>
-        </div>
-      </span>
     </div>
+
+    <template slot="footer">
+      <el-button
+        class="block"
+        type="text"
+        @click="close"
+      >
+        Cancel
+      </el-button>
+      <el-button
+        class="block"
+        type="primary"
+        @click="submit"
+      >
+        Save
+      </el-button>
+    </template>
   </el-dialog>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex"
-import { stub } from "@/db/events"
+import { eventsStub } from "@/stubs"
 
 export default {
   name: "EventsCreateDialog",
@@ -111,10 +174,18 @@ export default {
     shown: { type: Boolean, default: false }
   },
 
-  watch: {
-    shown(shown) {
-      this.visible = shown
-      this.$emit("update:shown", shown)
+  data: function() {
+    return {
+      visible: this.shown,
+      form: { ...eventsStub, dates: [] },
+      formRules: {
+        title: { required: true, message: "Title is a required field" },
+        dates: { required: true, message: "Dates is a required field" },
+        category: { required: true, message: "Category is a required field" },
+        branch: { required: true, message: "Branch is a required field" },
+        organizerId: { required: true, message: "Organizer is a required field" },
+        area: { required: true, message: "Area is a required field" }
+      }
     }
   },
 
@@ -129,18 +200,10 @@ export default {
     })
   },
 
-  data: function() {
-    return {
-      visible: this.shown,
-      form: { ...stub, dates: [] },
-      formRules: {
-        title: { required: true, message: "Title is a required field" },
-        dates: { required: true, message: "Dates is a required field" },
-        category: { required: true, message: "Category is a required field" },
-        branch: { required: true, message: "Branch is a required field" },
-        organizerId: { required: true, message: "Organizer is a required field" },
-        area: { required: true, message: "Area is a required field" }
-      }
+  watch: {
+    shown(shown) {
+      this.visible = shown
+      this.$emit("update:shown", shown)
     }
   },
 
@@ -194,7 +257,7 @@ export default {
     },
 
     clear() {
-      this.form = { ...stub }
+      this.form = { ...eventsStub }
     },
 
     close() {

@@ -1,12 +1,9 @@
-import {
-  findClubMembersAsync,
-  insertClubMemberAsync
-} from "@/db/clubs/members"
+import { clubsMembersService } from "@/services"
 import extend from "@/store/extensions"
-import { state as clubsState } from "."
+import { countriesFixture } from "@/fixtures"
 
 const state = {
-  countries: clubsState.countries
+  countries: countriesFixture
 }
 const mutations = {}
 const actions = {}
@@ -24,8 +21,8 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: findClubMembersAsync,
-      createAsync: insertClubMemberAsync
+      listAsync: clubsMembersService.list,
+      createAsync: clubsMembersService.create
     }
   },
   {

@@ -1,22 +1,29 @@
+@import url("https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800")
+
 @tailwind preflight
 @tailwind components
-@tailwind utilities
 
 @import "./config"
+@import "./layout"
 @import "./data"
 @import "./navigation"
-@import "./layout"
+@import "./controllers"
 
 body
   font-family var(--font-family)
   font-size var(--text-size)
   line-height var(--text-height)
   color var(--text-color)
-  background-color var(--bg-color)
   font-weight var(--font-weight)
+  // background-color var(--bg-alt-color)
 
 .h1, .h2, .h3, .h4, .h5, .h6
   color var(--title-color)
+  font-weight 500
+  letter-spacing -0.02em
+
+.h1
+  font-size 27px
 
 .h2
   font-size 27px
@@ -36,7 +43,12 @@ body
   font-size inherit
 
 .small
-  font-size 0.75rem
+  font-size 0.8rem
+  font-weight 400
+  color var(--muted-color)
+
+.color--primary
+  color var(--primary-color)
 
 .el-tag
   border none
@@ -47,26 +59,11 @@ body
   text-align left
   font-size 0.85rem
 
-.el-date-editor .el-range-input,
-.el-input__inner
-  &::placeholder
-    color var(--muted-color)
-
-.dangerous-confirmation
-  .el-button--primary
-    &
-      background-color var(--dangerous-color)
-      border-color var(--dangerous-color)
-    &:focus, &:hover
-      background-color var(--dangerous-alt-color)
-      border-color var(--dangerous-alt-color)
-
 .el-input,
 .el-button,
 .el-input__inner,
 .el-tabs__item
   font-size 0.85rem
-  // font-size var(--text-size)
 
 .el-button--mini,
 .el-button--small
@@ -78,38 +75,9 @@ body
 a
   text-decoration none
 
-.v-modal
-  opacity 0.85
-  background-color #ececec
-.el-dialog
-  box-shadow none
-  border-radius 3px
-  &:not(.is-fullscreen)
-    margin-top 5vh !important
-.el-dialog__body
-  padding-top 10px
+ul
+  padding 0
+li
+  list-style-type none
 
-.el-button--primary,
-.el-switch.is-checked .el-switch__core
-  border-color var(--primary-color)
-  background-color var(--primary-color)
-
-.el-tabs__item.is-active,
-.el-switch__label.is-active
-  color var(--primary-color)
-
-.el-tabs__active-bar
-  background-color var(--primary-color)
-
-.el-dropdown-menu__item:focus,
-.el-dropdown-menu__item:not(.is-disabled):hover
-  background-color var(--primary-alt-color)
-  color var(--primary-color)
-
-.el-input__inner
-  border-radius var(--border-radius)
-  border-color var(--border-color)
-
-.el-button
-  border-radius var(--border-radius)
-  font-weight 300
+@tailwind utilities

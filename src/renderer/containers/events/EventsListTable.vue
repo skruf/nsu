@@ -5,63 +5,147 @@
   <div class="events-list-table">
     <search-form
       v-model="eventsSearchFilter"
-      @submit="eventsSubmitSearchFilterAsync"
       placeholder="Search for an event by title or club"
+      @submit="eventsSubmitSearchFilterAsync"
     />
-
-    <div class="table-actions" :class="{ 'disabled': !eventsHasSelection }">
-      <el-dropdown trigger="click" @command="eventsTableDispatchActions">
-        <el-button type="text" size="small">
-          Actions <i class="el-icon-arrow-down el-icon--left"></i>
-        </el-button>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="removeSelection">
-            <i class="el-icon-delete el-icon--left"></i> Slett valgte
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-    </div>
 
     <div v-loading="eventsListIsLoading || eventsRemoveIsLoading">
       <el-table
         :data="eventsList"
-        @selection-change="eventsSelectionChange"
-        @row-click="eventsRowClick"
-        @sort-change="eventsSetSortingAsync"
         :sort-by="eventsSortBy"
         row-key="_id"
         class="table-clickable"
         empty-text
+        @selection-change="eventsSelectionChange"
+        @row-click="eventsRowClick"
+        @sort-change="eventsSetSortingAsync"
       >
-        <el-table-column type="selection" width="30"></el-table-column>
-        <el-table-column prop="startsAt" label="Starts" width="90px" sortable="custom" :sort-orders="eventsSortOrders">
+        <el-table-column
+          type="selection"
+          width="40"
+        />
+
+        <el-table-column
+          prop="startsAt"
+          label="Starts/Ends"
+          width="150px"
+          sortable="custom"
+          :sort-orders="eventsSortOrders"
+        >
           <template slot-scope="scope">
-            <date-with-tooltip :date="scope.row.startsAt" />
+            <h6 class="h6">
+              {{ scope.row.startsAt | moment("MMM, D") }}
+            </h6>
+            <small class="small">
+              {{ scope.row.endsAt | moment("MMM, D") }}
+            </small>
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="Title" sortable="custom" :sort-orders="eventsSortOrders"></el-table-column>
-        <el-table-column prop="organizerName" label="Organizer" sortable="custom" :sort-orders="eventsSortOrders"></el-table-column>
-        <el-table-column prop="category" label="Category" sortable="custom" :sort-orders="eventsSortOrders"></el-table-column>
-        <el-table-column width="40">
+
+        <el-table-column
+          prop="title"
+          label="Title/Approbated"
+          sortable="custom"
+          :sort-orders="eventsSortOrders"
+        >
           <template slot-scope="scope">
-            <el-dropdown trigger="click" @command="eventsTableRowDispatchActions">
+            <h6 class="h6">
+              {{ scope.row.title }}
+            </h6>
+            <small class="small">
+              <template v-if="scope.row.approbated">
+                <i class="el-icon-star-on" /> Is approbated
+              </template>
+              <template v-else>
+                <i class="el-icon-star-off" /> Isn't approbated
+              </template>
+            </small>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="category"
+          label="Category/Branch"
+          sortable="custom"
+          :sort-orders="eventsSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.category }}
+            </h6>
+            <small class="small">
+              {{ scope.row.branch }}
+            </small>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="organizerName"
+          label="Area/Organizer"
+          sortable="custom"
+          :sort-orders="eventsSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.area }}
+            </h6>
+            <small class="small">
+              {{ scope.row.organizerName }}
+            </small>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          width="50"
+          align="right"
+        >
+          <template slot="header">
+            <div
+              class="table-actions"
+              :class="{ 'disabled': !eventsHasSelection }"
+            >
+              <el-dropdown
+                trigger="click"
+                @command="eventsTableDispatchActions"
+              >
+                <span class="el-dropdown-link">
+                  <i class="table-button el-icon-more" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="removeSelection">
+                    <i class="el-icon-delete el-icon--left" /> Remove selected
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+          </template>
+
+          <template slot-scope="scope">
+            <el-dropdown
+              trigger="click"
+              @command="eventsTableRowDispatchActions"
+            >
               <span class="el-dropdown-link">
-                <i class="table-button el-icon-setting"></i>
+                <i class="table-button el-icon-more" />
               </span>
               <el-dropdown-menu slot="dropdown">
                 <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
                   <i class="el-icon-edit el-icon--left"></i> Rediger
                 </el-dropdown-item> -->
                 <el-dropdown-item :command="{ handler: 'eventsDelete', payload: scope.row }">
-                  <i class="el-icon-delete el-icon--left"></i> Slett
+                  <i class="el-icon-delete el-icon--left" /> Slett
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
+
         <template slot="empty">
           No events yet.
-          <el-button type="text" @click="eventsOpenCreateDialog">
+          <el-button
+            type="text"
+            @click="eventsOpenCreateDialog"
+          >
             Create new?
           </el-button>
         </template>
@@ -69,13 +153,13 @@
 
       <el-pagination
         layout="total, sizes, prev, pager, next"
-        @size-change="eventsSetPageSizeAsync"
-        @current-change="eventsSetPageCurrentAsync"
         :page-size="eventsPageSize"
         :current-page="eventsPageCurrent"
         :page-sizes="[ 15, 30, 45, 60 ]"
         :total="eventsCount"
-      ></el-pagination>
+        @size-change="eventsSetPageSizeAsync"
+        @current-change="eventsSetPageCurrentAsync"
+      />
     </div>
   </div>
 </template>
@@ -83,14 +167,12 @@
 <script>
 import { mapActions, mapMutations, mapState } from "vuex"
 import SearchForm from "@/components/SearchForm"
-import DateWithTooltip from "@/components/DateWithTooltip"
 
 export default {
   name: "EventsListTable",
 
   components: {
-    SearchForm,
-    DateWithTooltip
+    SearchForm
   },
 
   data: () => ({

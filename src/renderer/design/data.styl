@@ -1,10 +1,30 @@
+th
+  font-weight inherit
+
 .table-controls
   display flex
-  justify-content space-between
-.table-controls-actions.disabled
-  opacity 0.5
+  align-items center
+  margin-bottom 10px
+.el-table
+  .table-actions
+    // margin-right 20px
+    &, div
+      padding 0
+      line-height 1
+    .el-button
+      padding-top 12.5px
+      padding-bottom 12.5px
+      box-shadow none
+      border var(--border-width) solid var(--border-color)
+.search-form
+  width 100%
+
+.table-actions.disabled
   pointer-events none
   cursor no-drop
+  opacity 0.5
+  // .el-button
+  // opacity 0.5
 .el-table
   &, thead
     font inherit
@@ -14,7 +34,6 @@
     cursor pointer
 .el-pagination
   margin-top 20px
-  margin-bottom 20px
 
 .el-table td,
 .el-table th.is-leaf,
@@ -23,18 +42,55 @@
 .el-table::before
   border-color var(--border-color)
 
+.el-table td
+  border-bottom-width var(--border-width)
+.el-table th.is-leaf
+  border-bottom-width 2px
+  padding-bottom 6px
+
+.el-table thead,
+.el-form-item__label
+  color var(--muted-color)
+  font-weight var(--controller-font-weight)
+
+.el-table__empty-block
+  .el-button
+    padding 0
+
+.el-checkbox__inner
+  border var(--border-width) solid var(--border-color)
+
+.el-checkbox__inner
+  width 16px
+  height 16px
+
+.el-input__inner,
+.el-textarea__inner
+  background-color var(--input-bg-color)
+  border-radius var(--border-radius)
+  font-weight var(--controller-font-weight)
+  border none
+  border var(--border-width) solid var(--border-color)
+  border-color transparent
+  &:hover, &:active
+    border-color var(--border-color)
+
+.el-input__inner
+  height 48px
+  line-height 48px
+
+.el-form-item__error
+  left 20px
+  padding-top 5px
+  font-weight var(--controller-font-weight)
+
 .el-input__suffix
   right 10px
 
 .info-grid
   display flex
   flex-wrap wrap
-  margin-top -10px
-  margin-bottom 10px
-  margin-left -20px
-  margin-right -20px
-  padding 0px 5px 10px
-  border-bottom 1px solid var(--border-color)
+  padding 0 12px
 .info-grid_item
   min-width 33.3333%
   padding 10px 15px
@@ -43,3 +99,33 @@
   min-width 90px
 .info-grid_item_value
   margin-left 10px
+
+.el-date-editor .el-range-input,
+.el-input__inner
+  &::placeholder
+    color var(--muted-color)
+    font-weight var(--controller-font-weight)
+
+.el-date-editor--daterange.el-input,
+.el-date-editor--daterange.el-input__inner,
+.el-select
+  width 100%
+.el-range-editor .el-range-input
+  width 50%
+  background-color transparent
+
+.fieldset
+  display flex
+  padding-top 20px
+  padding-bottom 10px
+  border-bottom var(--border-width) solid var(--border-color)
+  &:first-child
+    padding-top 0
+  &:last-child
+    border-bottom 0
+    padding-bottom 0
+.fieldset_details
+  flex 1
+  padding-right 20px
+.fieldset_fields
+  flex 2

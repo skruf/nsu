@@ -1,19 +1,10 @@
-import {
-  findEventsAsync,
-  findOneEventAsync,
-  insertEventAsync,
-  removeEventAsync
-} from "@/db/events/index"
+import { eventsService } from "@/services"
 import extend from "@/store/extensions"
 import { queryHelper } from "@/utils"
+import { eventsCategoriesFixture } from "@/fixtures"
 
 const state = {
-  categories: [
-    "Local / Club",
-    "Norwegian Championship",
-    "European Championship",
-    "World Championship"
-  ]
+  categories: eventsCategoriesFixture
 }
 const mutations = {}
 const actions = {}
@@ -28,7 +19,7 @@ mutations.SET_FETCH_MODE = (state, fetchMode) => {
 actions.listAsync = async ({ commit, state }, filter = {}) => {
   commit("SET_LIST_LOADING", true)
   const config = queryHelper(state)
-  const results = await findEventsAsync(filter, config, state.fetchMode)
+  const results = await eventsService.list(filter, config, state.fetchMode)
   commit("SET_LIST", results.items)
   commit("SET_COUNT", results.count)
   commit("SET_LIST_LOADING", false)
@@ -46,10 +37,10 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: findEventsAsync,
-      selectAsync: findOneEventAsync,
-      createAsync: insertEventAsync,
-      removeAsync: removeEventAsync
+      listAsync: eventsService.list,
+      selectAsync: eventsService.select,
+      createAsync: eventsService.create,
+      removeAsync: eventsService.remove
     }
   },
   {

@@ -3,54 +3,45 @@
   "env": {
     "test": {
       "presets": [
-        ["env", {
-          "targets": { "node": 7 }
-        }],
+        [ "env", { "targets": { "node": "current" } } ],
         "stage-0"
       ],
-      "plugins": ["istanbul"]
+      "plugins": [ "istanbul" ]
     },
 
     "main": {
       "presets": [
-        ["env", {
-          "targets": { "node": 7 }
-        }],
+        [ "env", { "targets": { "node": "current" } } ],
         "stage-0"
       ]
     },
 
     "renderer": {
       "presets": [
-        ["env", {
-          "modules": false
-        }],
+        [ "env", { "modules": false } ],
         "stage-0"
       ],
       "plugins": [
         "transform-runtime",
-        ["component",
-        {
+        [ "component", {
           "libraryName": "element-ui",
           "styleLibraryName": "theme-chalk"
-        }]
+        } ]
       ]
     },
 
     "web": {
       "presets": [
-        ["env", {
-          "modules": false
-        }],
+        [ "env", { "modules": false } ],
         "stage-0"
       ],
       "plugins": [
         "transform-runtime",
-        ["component",
+        [ "component",
         {
           "libraryName": "element-ui",
           "styleLibraryName": "theme-chalk"
-        }]
+        } ]
       ]
     }
   },

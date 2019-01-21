@@ -1,13 +1,21 @@
 <style lang="stylus">
 .search-form
   display flex
-  margin 10px 0 20px
+  margin 0
+  width 100%
+  max-width 400px
+  .el-input__inner
+    height 42px
+    line-height 42px
   .el-button
     margin-left 20px
+  .el-input__icon
+    font-size 18px
   &.small
     .el-input__icon,
     .el-input__inner
       line-height 30px
+      font-size 16px
     .el-input__inner
       height 30px
     .el-button
@@ -17,16 +25,19 @@
 </style>
 
 <template>
-  <el-form ref="form" class="search-form" @submit.prevent.native="submit">
+  <el-form
+    ref="form"
+    class="search-form"
+    @submit.prevent.native="submit"
+  >
     <el-input
       v-model="v"
-      @input="input"
-      @clear="submit"
       :placeholder="placeholder"
       :clearable="true"
-      suffix-icon="el-icon-search"
-    ></el-input>
-    <!-- <el-button native-type="submit" type="primary">Search</el-button> -->
+      prefix-icon="el-icon-search"
+      @input="input"
+      @clear="submit"
+    />
   </el-form>
 </template>
 

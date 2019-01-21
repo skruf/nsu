@@ -6,70 +6,157 @@
     title="Create a new club"
     custom-class="create-dialog"
     :visible.sync="visible"
+    @open="open"
     @close="close"
   >
-    <div v-loading="clubsCreateIsLoading">
+    <div
+      v-loading="clubsCreateIsLoading"
+      class="dialog_content"
+    >
       <el-form
         ref="form"
         label-position="top"
         :model="form"
         :rules="formRules"
       >
-        <el-form-item label="Name" prop="name">
-          <el-input placeholder="Enter a name" v-model="form.name"></el-input>
+        <el-form-item
+          label="Name"
+          prop="name"
+        >
+          <el-input
+            v-model="form.name"
+            placeholder="Enter a name"
+          />
         </el-form-item>
 
-        <el-form-item label="Leader" prop="leader">
-          <el-input placeholder="Enter a leader" v-model="form.leader"></el-input>
+        <el-form-item
+          label="Leader"
+          prop="leader"
+        >
+          <el-input
+            v-model="form.leader"
+            placeholder="Enter a full name"
+          />
         </el-form-item>
 
-        <el-form-item label="Email" prop="email">
-          <el-input placeholder="Enter a email" v-model="form.email"></el-input>
+        <el-form-item
+          label="Email"
+          prop="email"
+        >
+          <el-input
+            v-model="form.email"
+            placeholder="Enter a email"
+          />
         </el-form-item>
 
-        <el-form-item label="Address" prop="address">
-          <el-input placeholder="Enter a address" v-model="form.address"></el-input>
+        <el-form-item
+          label="Address"
+          prop="address"
+        >
+          <el-input
+            v-model="form.address"
+            placeholder="Enter a address"
+          />
         </el-form-item>
 
-        <el-form-item label="Area" prop="area">
-          <el-input placeholder="Enter a area" v-model="form.area"></el-input>
+        <el-form-item
+          label="Area"
+          prop="area"
+        >
+          <el-input
+            v-model="form.area"
+            placeholder="Enter a area"
+          />
         </el-form-item>
 
-        <el-form-item label="Country" prop="country">
-          <el-select v-model="form.country" placeholder="Select a country">
+        <el-form-item
+          label="Country"
+          prop="country"
+        >
+          <el-select
+            v-model="form.country"
+            placeholder="Select a country"
+          >
             <el-option
               v-for="(country, index) in clubsCountries"
               :key="index"
               :label="country"
               :value="country"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Shooting Range" prop="range">
-          <el-input placeholder="Enter a range" v-model="form.range"></el-input>
+        <el-form-item
+          label="Range"
+          prop="rangeId"
+        >
+          <el-select
+            v-model="form.rangeId"
+            placeholder="Select a shooting range"
+            :loading="rangesListIsLoading"
+          >
+            <el-option
+              v-for="range in rangesList"
+              :key="range._id"
+              :label="`${range.name} (${range.area})`"
+              :value="range._id"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
-
-      <span slot="footer" class="dialog-footer">
-        <div class="flex justify-end">
-          <el-button class="block" type="default" @click="close">Cancel</el-button>
-          <el-button class="block" type="primary" @click="submit">Save</el-button>
-        </div>
-      </span>
     </div>
+
+    <template slot="footer">
+      <el-button
+        class="block"
+        type="text"
+        @click="close"
+      >
+        Cancel
+      </el-button>
+      <el-button
+        class="block"
+        type="primary"
+        @click="submit"
+      >
+        Save
+      </el-button>
+    </template>
   </el-dialog>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex"
-import { stub } from "@/db/clubs"
+import { clubsStub } from "@/stubs"
 
 export default {
   name: "ClubsCreateDialog",
 
   props: {
     shown: { type: Boolean, default: false }
+  },
+
+  data: function() {
+    return {
+      visible: this.shown,
+      form: clubsStub,
+      formRules: {
+        name: { required: true, message: "Name is a required field" },
+        area: { required: true, message: "Area is a required field" },
+        country: { required: true, message: "Country is a required field" }
+      }
+    }
+  },
+
+  computed: {
+    ...mapState("clubs", {
+      clubsCreateIsLoading: "createIsLoading",
+      clubsCountries: "countries"
+    }),
+    ...mapState("ranges", {
+      rangesListIsLoading: "listIsLoading",
+      rangesList: "list"
+    })
   },
 
   watch: {
@@ -79,27 +166,18 @@ export default {
     }
   },
 
-  computed: mapState("clubs", {
-    clubsCreateIsLoading: "createIsLoading",
-    clubsCountries: "countries"
-  }),
-
-  data: function() {
-    return {
-      visible: this.shown,
-      form: stub,
-      formRules: {
-        name: { required: true, message: "Name is a required field" },
-        area: { required: true, message: "Area is a required field" },
-        country: { required: true, message: "Country is a required field" }
-      }
-    }
-  },
-
   methods: {
     ...mapActions("clubs", {
       clubsCreateAsync: "createAsync"
     }),
+
+    ...mapActions("ranges", {
+      rangesListAsync: "listAsync"
+    }),
+
+    async open() {
+      await this.rangesListAsync()
+    },
 
     submit() {
       this.$refs.form.validate((isValid) => {
@@ -134,7 +212,7 @@ export default {
     },
 
     clear() {
-      this.form = { ...stub }
+      this.form = { ...clubsStub }
     },
 
     close() {

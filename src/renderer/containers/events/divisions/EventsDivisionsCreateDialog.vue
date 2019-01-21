@@ -1,6 +1,5 @@
 <style lang="stylus">
 .el-dialog.events-divisions-create-dialog
-  padding-bottom 80px
   display flex
   flex-direction column
   position fixed
@@ -15,9 +14,6 @@
   .el-tabs__content,
   .el-dialog__body
     display flex
-
-  .el-dialog__header
-    border-bottom 1px solid var(--border-color)
 
   .el-dialog__body
     flex-grow 1
@@ -47,8 +43,6 @@
     border-top 1px solid var(--border-color)
     padding 10px 20px
 
-  .el-dialog__footer
-    padding 0
   .dialog-footer
     position absolute
     left 0
@@ -73,6 +67,14 @@
     justify-content center
     flex 1
 
+  .generate-button
+    margin-bottom 27px
+    align-self flex-end
+
+  .dialog_content
+    padding-top 0
+    padding-bottom 0
+
 .el-date-editor.el-input, .el-date-editor.el-input__inner
   width 100%
 
@@ -88,25 +90,38 @@
     @close="eventsDivisionsCreateDialogClose"
   >
     <div
-      class="flex flex-1"
-      v-loading="eventsDivisionsCreateIsLoading"
+      v-loading="eventsDivisionsCreateIsLoading || eventsDivisionsContestantsCreateIsLoading"
+      class="dialog_content flex flex-1"
     >
-      <div class="px-5 py-5 w-full">
-        <h4 class="h4">Division meta</h4>
+      <div class="pr-5 w-full">
+        <h4 class="h4 mt-4">
+          Division settings
+        </h4>
 
         <el-form
-          class="my-3"
           ref="eventsDivisionsForm"
+          class="my-3"
           label-position="top"
           :model="eventsDivisionsForm"
           :rules="eventsDivisionsFormRules"
         >
           <div class="flex">
-            <el-form-item label="Name" prop="name" class="w-2/3 mr-3">
-              <el-input placeholder="Enter a name" v-model="eventsDivisionsForm.name" />
+            <el-form-item
+              label="Name"
+              prop="name"
+              class="w-2/3 mr-3"
+            >
+              <el-input
+                v-model="eventsDivisionsForm.name"
+                placeholder="Enter a name"
+              />
             </el-form-item>
 
-            <el-form-item label="Choose a Day" prop="day" class="w-1/3">
+            <el-form-item
+              label="Choose a Day"
+              prop="day"
+              class="w-1/3"
+            >
               <el-date-picker
                 v-model="eventsDivisionsForm.day"
                 type="date"
@@ -117,7 +132,11 @@
           </div>
 
           <div class="flex">
-            <el-form-item class="w-full pr-3" label="Starts At" prop="startsAt">
+            <el-form-item
+              class="w-full pr-3"
+              label="Starts At"
+              prop="startsAt"
+            >
               <el-time-select
                 v-model="eventsDivisionsForm.startsAt"
                 placeholder="Pick a start time"
@@ -125,22 +144,26 @@
               />
             </el-form-item>
 
-            <el-form-item class="w-full pr-3" label="Shooting Interval" prop="interval">
+            <el-form-item
+              class="w-full pr-3"
+              label="Shooting Interval"
+              prop="interval"
+            >
               <el-select
                 v-model="eventsDivisionsForm.interval"
                 placeholder="Select an interval"
               >
                 <el-option
-                  v-for="(interval, index) in intervals"
+                  v-for="(i, index) in intervals"
                   :key="index"
-                  :label="interval.label"
-                  :value="interval.value"
+                  :label="i.label"
+                  :value="i.value"
                 />
               </el-select>
             </el-form-item>
 
             <el-button
-              class="mb-6 self-end"
+              class="generate-button"
               type="primary"
               :disabled="!eventsDivisionsContestantsIsConfigured"
               @click="generateContestantList"
@@ -151,11 +174,13 @@
         </el-form>
 
         <div
-          class="border-t pt-5"
           v-if="eventsDivisionsContestantsForms.length > 0"
           v-loading="eventsParticipantsListIsLoading"
+          class="border-t"
         >
-          <h4 class="h4 mb-6">Assign contestants to time slots</h4>
+          <h4 class="h4 mt-4 mb-6">
+            Assign contestants to time slots
+          </h4>
 
           <el-form
             v-for="(contestantForm, index) in eventsDivisionsContestantsForms"
@@ -165,7 +190,11 @@
             label-position="top"
             :model="contestantForm"
           >
-            <el-form-item label="" prop="time" class="pr-2">
+            <el-form-item
+              label=""
+              prop="time"
+              class="pr-2"
+            >
               <!-- <el-time-select
                 v-model="contestantForm.time"
                 placeholder="Select time"
@@ -179,15 +208,19 @@
               {{ contestantForm.time }}
             </el-form-item>
 
-            <el-form-item label="" prop="participant" class="px-2 w-full">
+            <el-form-item
+              label=""
+              prop="participant"
+              class="px-2 w-full"
+            >
               <el-select
                 v-model="contestantForm.memberId"
                 placeholder="Select a participant"
                 :loading="eventsParticipantsListIsLoading"
-                @change="eventsParticipantsSetUnavailable"
                 clearable
+                @change="eventsParticipantsSetUnavailable"
               >
-              <!-- @clear="eventsParticipantsSetAavailable($event)" -->
+                <!-- @clear="eventsParticipantsSetAavailable($event)" -->
                 <el-option
                   v-for="participant in eventsParticipantsListAvailable"
                   :key="participant.memberId"
@@ -197,7 +230,11 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label="" prop="class" class="px-2 w-full">
+            <el-form-item
+              label=""
+              prop="class"
+              class="px-2 w-full"
+            >
               <el-select
                 v-model="contestantForm.classId"
                 placeholder="Select a class"
@@ -212,26 +249,42 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label="" prop="calibre" class="pl-2 w-full">
-              <el-input placeholder="Enter a calibre" v-model="contestantForm.calibre" />
+            <el-form-item
+              label=""
+              prop="calibre"
+              class="pl-2 w-full"
+            >
+              <el-input
+                v-model="contestantForm.calibre"
+                placeholder="Enter a calibre"
+              />
             </el-form-item>
           </el-form>
         </div>
       </div>
 
-      <div class="py-5 border-l" style="min-width: 235px;">
-        <h4 class="h4 mb-2 px-5">Available participants</h4>
+      <div
+        class="border-l"
+        style="min-width: 235px;"
+      >
+        <h4 class="h4 mt-4 mb-2 px-5">
+          Available participants
+        </h4>
 
         <div class="flex flex-col px-5">
           <div class="">
-            <h6 class="h6 inline">Contestants:</h6> {{ eventsParticipantsList.length }}
+            <h6 class="h6 inline">
+              Contestants:
+            </h6> {{ eventsParticipantsList.length }}
           </div>
           <div class="">
-            <h6 class="h6 inline">Ends at:</h6> {{ eventsDivisionsEndsAt }}
+            <h6 class="h6 inline">
+              Ends at:
+            </h6> {{ eventsDivisionsEndsAt || 'TBD' }}
           </div>
         </div>
 
-        <ul class="mt-4">
+        <ul class="my-4">
           <li
             v-for="participant in eventsParticipantsListAvailable"
             :key="participant._id"
@@ -244,35 +297,27 @@
     </div>
 
     <template slot="footer">
-      <div class="dialog-footer">
-        <el-button
-          class="block"
-          type="default"
-          @click="eventsDivisionsCreateDialogClose"
-        >
-          Close
-        </el-button>
-        <el-button
-          class="block"
-          type="primary"
-          @click="eventsDivisionsCreateDialogSave"
-        >
-          Save
-        </el-button>
-      </div>
+      <el-button
+        class="block"
+        type="text"
+        @click="eventsDivisionsCreateDialogClose"
+      >
+        Cancel
+      </el-button>
+      <el-button
+        class="block"
+        type="primary"
+        @click="eventsDivisionsCreateDialogSave"
+      >
+        Save
+      </el-button>
     </template>
   </el-dialog>
 </template>
 
 <script>
 import { mapMutations, mapActions, mapState } from "vuex"
-import { stub } from "@/db/events/divisions"
-
-const contestantStub = {
-  time: "",
-  classId: "",
-  memberId: ""
-}
+import { eventsDivisionsStub, eventsDivisionsContestantsStub } from "@/stubs"
 
 const parseTimeInput = (s) => {
   return {
@@ -301,10 +346,33 @@ export default {
     event: { type: Object, required: true }
   },
 
-  watch: {
-    shown(shown) {
-      this.visible = shown
-      this.$emit("update:shown", shown)
+  data: function() {
+    return {
+      visible: this.shown,
+      eventsDivisionsForm: { ...eventsDivisionsStub },
+      eventsDivisionsFormRules: {
+        name: { required: true, message: "Name is a required field" },
+        day: { required: true, message: "Day is a required field" },
+        startsAt: { required: true, message: "Starts At is a required field" },
+        interval: { required: true, message: "Shooting Interval is a required field" }
+      },
+
+      eventsDivisionsFormTimePickerOptions: { start: "08:00", step: "00:05", end: "23:59" },
+      intervals: [
+        { label: '5 min', value: '00:05' },
+        { label: '10 min', value: '00:10' },
+        { label: '15 min', value: '00:15' },
+        { label: '20 min', value: '00:20' },
+        { label: '25 min', value: '00:25' },
+        { label: '30 min', value: '00:30' }
+      ],
+      eventsDivisionsContestantsForms: [],
+
+      eventsParticipantsListAvailable: [],
+
+      eventsDivisionsFormDayPickerOptions: {
+        disabledDate: this.eventsDivisionsFormDayPickerOptionsDisabledDate
+      }
     }
   },
 
@@ -312,16 +380,24 @@ export default {
     ...mapState("events/divisions", {
       eventsDivisionsCreateIsLoading: "createIsLoading"
     }),
+
+    ...mapState("events/divisions/contestants", {
+      eventsDivisionsContestantsCreateIsLoading: "createIsLoading",
+      eventsDivisionsContestantsCount: "count",
+      eventsDivisionsContestantsList: "list"
+    }),
+
     ...mapState("events/participants", {
       eventsParticipantsListIsLoading: "listIsLoading",
       eventsParticipantsCount: "count",
       eventsParticipantsList: "list"
     }),
+
     ...mapState("classes", {
       classesListIsLoading: "listIsLoading",
-      classesCount: "count",
       classesList: "list"
     }),
+
     eventsDivisionsContestantsIsConfigured() {
       return this.eventsDivisionsForm.startsAt && this.eventsDivisionsForm.interval
     },
@@ -344,37 +420,31 @@ export default {
     }
   },
 
-  data: function() {
-    return {
-      visible: this.shown,
-      eventsDivisionsForm: { ...stub },
-      eventsDivisionsFormRules: {
-        name: { required: true, message: "Name is a required field" },
-        day: { required: true, message: "Day is a required field" },
-        startsAt: { required: true, message: "Starts At is a required field" },
-        interval: { required: true, message: "Shooting Interval is a required field" }
-      },
-
-      eventsDivisionsFormTimePickerOptions: { start: "00:00", step: "00:05", end: "23:59" },
-      intervals: [
-        { label: '5 min', value: '00:05' },
-        { label: '10 min', value: '00:10' },
-        { label: '15 min', value: '00:15' },
-        { label: '20 min', value: '00:20' },
-        { label: '25 min', value: '00:25' },
-        { label: '30 min', value: '00:30' }
-      ],
-      eventsDivisionsContestantsForms: [],
-
-      eventsParticipantsListAvailable: [],
-
-      eventsDivisionsFormDayPickerOptions: {
-        disabledDate: this.eventsDivisionsFormDayPickerOptionsDisabledDate
-      }
+  watch: {
+    shown(shown) {
+      this.visible = shown
+      this.$emit("update:shown", shown)
     }
   },
 
   methods: {
+    ...mapActions("events/divisions", {
+      eventsDivisionsCreateAsync: "createAsync"
+    }),
+    ...mapActions("events/divisions/contestants", {
+      eventsDivisionsContestantsCreateAsync: "createAsync"
+    }),
+
+    ...mapMutations("events/participants", {
+      eventsParticipantsSetListFilter: "SET_LIST_FILTER"
+    }),
+    ...mapActions("events/participants", {
+      eventsParticipantsListAsync: "listAsync"
+    }),
+    ...mapActions("classes", {
+      classesListAsync: "listAsync"
+    }),
+
     eventsDivisionsFormDayPickerOptionsDisabledDate(day) {
       const time = day.getTime()
       return time < this.event.startsAt || time > this.event.endsAt
@@ -411,7 +481,7 @@ export default {
     generateContestantList() {
       const contestantsForm = []
       for(let i = 0; this.eventsParticipantsList.length > i; i++) {
-        const stub = { ...contestantStub }
+        const stub = { ...eventsDivisionsContestantsStub }
 
         const starts = toMinutes(this.starts.hours, this.starts.minutes)
         const interval = toMinutes(this.interval.hours, this.interval.minutes)
@@ -421,19 +491,6 @@ export default {
       }
       this.eventsDivisionsContestantsForms = contestantsForm
     },
-
-    ...mapMutations("events/participants", {
-      eventsParticipantsSetListFilter: "SET_LIST_FILTER"
-    }),
-    ...mapActions("events/participants", {
-      eventsParticipantsListAsync: "listAsync"
-    }),
-    ...mapActions("classes", {
-      classesListAsync: "listAsync"
-    }),
-    ...mapActions("events/divisions", {
-      eventsDivisionsCreateAsync: "createAsync"
-    }),
 
     eventsDivisionsCreateDialogSave() {
       this.$refs.eventsDivisionsForm.validate((isValid) => {
@@ -451,11 +508,14 @@ export default {
 
     async eventsDivisionsCreate(division, contestants) {
       division.eventId = this.event._id
-      division.contestants = contestants
       division.endsAt = this.eventsDivisionsEndsAt
 
       try {
-        await this.eventsDivisionsCreateAsync(division)
+        const createdDivision = await this.eventsDivisionsCreateAsync(division)
+        const contestantsWithDivision = contestants
+          .filter((contestant) => !!contestant.memberId)
+          .map((contestant) => ({ ...contestant, divisionId: createdDivision._id }))
+        await this.eventsDivisionsContestantsCreateAsync(contestantsWithDivision)
         this.$notify({
           type: "success",
           title: "Great success",
@@ -469,7 +529,7 @@ export default {
     },
 
     eventsDivisionsFormClear() {
-      this.eventsDivisionsForm = { ...stub }
+      this.eventsDivisionsForm = { ...eventsDivisionsStub }
     },
 
     eventsDivisionsCreateDialogClose() {

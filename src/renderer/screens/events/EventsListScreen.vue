@@ -2,38 +2,42 @@
 </style>
 
 <template>
-  <el-container class="screen" id="events-list-screen">
+  <el-container
+    id="events-list-screen"
+    class="screen"
+  >
     <el-header height="auto">
-      <h1 class="h1 text-4xl">
-        <template v-if="eventsfetchModeIsUpcoming">Upcoming</template>
-        <template v-else-if="eventsfetchModeIsHistory">Past</template>
-        <template v-else>All</template>
-        events
-      </h1>
+      <breadcrumb-bar
+        :paths="[
+          { to: '/events', label: 'Events' },
+          { to: '', label: breadcrumbLabel }
+        ]"
+      />
+
+      <div class="page-titles">
+        <h1 class="h1">
+          {{ breadcrumbLabel }} events
+        </h1>
+      </div>
     </el-header>
 
-    <div class="breadcrumb-bar">
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/events' }">Events</el-breadcrumb-item>
-        <el-breadcrumb-item>
-          <template v-if="eventsfetchModeIsUpcoming">Upcoming</template>
-          <template v-else-if="eventsfetchModeIsHistory">History</template>
-          <template v-else>All</template>
-        </el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-
-    <el-main>
+    <el-main class="content">
       <events-list-table
         @eventsOpenCreateDialog="eventsOpenCreateDialog"
       />
-
-      <div class="page-actions">
-        <el-button @click="eventsOpenCreateDialog" type="primary">
-          <i class="el-icon-plus el-icon--left"></i> Create event
-        </el-button>
-      </div>
     </el-main>
+
+    <el-footer height="auto">
+      <el-button
+        type="primary"
+        @click="navToCreate"
+      >
+        <i class="el-icon-plus el-icon--left" /> Create event
+      </el-button>
+      <!-- <el-button @click="eventsOpenCreateDialog" type="primary">
+        <i class="el-icon-plus el-icon--left"></i> Create event
+      </el-button> -->
+    </el-footer>
 
     <events-create-dialog
       :shown.sync="eventsShowCreateDialog"
@@ -43,6 +47,7 @@
 
 <script>
 import { mapActions, mapMutations, mapState } from "vuex"
+import BreadcrumbBar from "@/components/BreadcrumbBar"
 import EventsListTable from "@/containers/events/EventsListTable"
 import EventsCreateDialog from "@/containers/events/EventsCreateDialog"
 
@@ -50,18 +55,9 @@ export default {
   name: "EventsListScreen",
 
   components: {
+    BreadcrumbBar,
     EventsListTable,
     EventsCreateDialog
-  },
-
-  watch: {
-    "$route.query.filter": {
-      immediate: true,
-      handler: async function(mode) {
-        this.eventsSetFetchMode(mode)
-        await this.eventsListAsync()
-      }
-    }
   },
 
   data: () => ({
@@ -72,11 +68,21 @@ export default {
     ...mapState("events", {
       eventsFetchMode: "fetchMode"
     }),
-    eventsfetchModeIsUpcoming() {
-      return this.eventsFetchMode === "upcoming"
-    },
-    eventsfetchModeIsHistory() {
-      return this.eventsFetchMode === "history"
+    breadcrumbLabel() {
+      if(this.eventsFetchMode === "history") {
+        return "Past"
+      }
+      return this.eventsFetchMode || "All"
+    }
+  },
+
+  watch: {
+    "$route.query.filter": {
+      immediate: true,
+      handler: async function(mode) {
+        this.eventsSetFetchMode(mode)
+        await this.eventsListAsync()
+      }
     }
   },
 
@@ -91,6 +97,10 @@ export default {
 
     eventsOpenCreateDialog() {
       this.eventsShowCreateDialog = true
+    },
+
+    navToCreate() {
+      this.$router.push(`/events/create`)
     }
   }
 }

@@ -1,18 +1,9 @@
-import {
-  findClubsAsync,
-  findOneClubAsync,
-  insertClubAsync,
-  removeClubAsync
-} from "@/db/clubs/index"
+import { clubsService } from "@/services"
 import extend from "@/store/extensions"
+import { countriesFixture } from "@/fixtures"
 
 export const state = {
-  countries: [
-    "Norway",
-    "Sweden",
-    "Denmark",
-    "Finland"
-  ]
+  countries: countriesFixture
 }
 const mutations = {}
 const actions = {}
@@ -30,10 +21,10 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: findClubsAsync,
-      selectAsync: findOneClubAsync,
-      createAsync: insertClubAsync,
-      removeAsync: removeClubAsync
+      listAsync: clubsService.list,
+      selectAsync: clubsService.select,
+      createAsync: clubsService.create,
+      removeAsync: clubsService.remove
     }
   },
   {

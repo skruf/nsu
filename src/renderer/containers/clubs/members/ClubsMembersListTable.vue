@@ -2,60 +2,115 @@
 </style>
 
 <template>
-  <div class="clubs-members-list-table pt-2">
+  <div class="clubs-members-list-table">
     <search-form
       v-model="clubsMembersSearchFilter"
-      @submit="clubsMembersSetSearchFilterAsync"
       placeholder="Search for members by first or last name"
+      @submit="clubsMembersSetSearchFilterAsync"
     />
-
-    <div class="table-actions" :class="{ 'disabled': !clubsMembersHasSelection }">
-      <el-dropdown trigger="click" @command="clubsMembersTableDispatchActions">
-        <el-button type="text" size="small">
-          Actions <i class="el-icon-arrow-down el-icon--left"></i>
-        </el-button>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="removeSelection">
-            <i class="el-icon-delete el-icon--left"></i> Remove members
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-    </div>
 
     <el-table
       :data="clubsMembersList"
-      @selection-change="clubsMembersSelectionChange"
-      @row-click="clubsMembersRowClick"
-      @sort-change="clubsMembersSetSortingAsync"
       :sort-by="clubsMembersSortBy"
       row-key="_id"
       class="table-clickable"
       empty-text
+      @selection-change="clubsMembersSelectionChange"
+      @row-click="clubsMembersRowClick"
+      @sort-change="clubsMembersSetSortingAsync"
     >
-      <el-table-column type="selection" width="30"></el-table-column>
-      <el-table-column prop="name" label="Name" sortable="custom" :sort-orders="clubsMembersSortOrders">
+      <el-table-column
+        type="selection"
+        width="40"
+      />
+
+      <el-table-column
+        prop="member"
+        width="60px"
+      >
         <template slot-scope="scope">
-          {{ scope.row.firstName }} {{ scope.row.lastName }}
+          <avatar
+            :first-name="scope.row.firstName"
+            :last-name="scope.row.lastName"
+          />
         </template>
       </el-table-column>
-      <el-table-column prop="emailAddress" label="Email" sortable="custom" :sort-orders="clubsMembersSortOrders"></el-table-column>
-      <el-table-column width="40">
+
+      <el-table-column
+        prop="name"
+        label="Name/Email"
+        sortable="custom"
+        :sort-orders="clubsMembersSortOrders"
+      >
         <template slot-scope="scope">
-          <el-dropdown trigger="click" @command="clubsMembersTableRowDispatchActions">
+          <h6 class="h6">
+            {{ scope.row.firstName }} {{ scope.row.lastName }}
+          </h6>
+          <small class="small">
+            {{ scope.row.emailAddress }}
+          </small>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="createdAt"
+        label="Added On"
+        sortable="custom"
+        width="150px"
+        :sort-orders="clubsMembersSortOrders"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.createdAt | moment("MM.DD.YY") }}
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        width="50"
+        align="right"
+      >
+        <template slot="header">
+          <div
+            class="table-actions"
+            :class="{ 'disabled': !clubsMembersHasSelection }"
+          >
+            <el-dropdown
+              trigger="click"
+              @command="clubsMembersTableDispatchActions"
+            >
+              <span class="el-dropdown-link">
+                <i class="table-button el-icon-more" />
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="removeSelection">
+                  <i class="el-icon-delete el-icon--left" /> Remove selected
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+        </template>
+        <template slot-scope="scope">
+          <el-dropdown
+            trigger="click"
+            @command="clubsMembersTableRowDispatchActions"
+          >
             <span class="el-dropdown-link">
-              <i class="el-icon-setting"></i>
+              <i class="table-button el-icon-more" />
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item :command="{ handler: 'remove', payload: scope.row }">
-                <i class="el-icon-delete el-icon--left"></i> Remove member
+                <i class="el-icon-delete el-icon--left" /> Remove member
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
       </el-table-column>
+
       <template slot="empty">
         No members yet.
-        <el-button type="text" @click="clubsMembersOpenCreateDialog">
+        <el-button
+          type="text"
+          @click="clubsMembersOpenCreateDialog"
+        >
           Create new?
         </el-button>
       </template>
@@ -63,25 +118,27 @@
 
     <el-pagination
       layout="total, sizes, prev, pager, next"
-      @size-change="clubsMembersSetPageSize"
-      @current-change="clubsMembersSetPageCurrent"
       :page-size="clubsMembersPageSize"
       :current-page="clubsMembersPageCurrent"
       :page-sizes="[ 15, 30, 45, 60 ]"
       :total="clubsMembersCount"
-    ></el-pagination>
+      @size-change="clubsMembersSetPageSize"
+      @current-change="clubsMembersSetPageCurrent"
+    />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState, mapMutations } from "vuex"
 import SearchForm from "@/components/SearchForm"
+import Avatar from "@/components/Avatar"
 
 export default {
   name: "ClubsMembersListTable",
 
   components: {
-    SearchForm
+    SearchForm,
+    Avatar
   },
 
   props: {
@@ -92,11 +149,6 @@ export default {
     clubsMembersSelection: [],
     clubsMembersSortOrders: [ "descending", "ascending" ]
   }),
-
-  async created() {
-    this.clubsMembersSetListFilter({ clubId: this.clubId })
-    await this.clubsMembersListAsync()
-  },
 
   computed: {
     ...mapState("clubs/members", {
@@ -113,6 +165,11 @@ export default {
       get() { return this.$store.state.clubs.searchFilterValue },
       set(search) { this.clubsMembersSetSearchFilter(search) }
     }
+  },
+
+  async created() {
+    this.clubsMembersSetListFilter({ clubId: this.clubId })
+    await this.clubsMembersListAsync()
   },
 
   methods: {

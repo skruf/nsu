@@ -1,11 +1,4 @@
 <style lang="stylus">
-.events-results
-  .info-grid
-    margin-top 10px
-
-.weapon-picture
-  max-height 80px
-
 .w-1\\/10
   width 10%
 
@@ -26,61 +19,65 @@
     <div
       v-for="division in divisions"
       :key="division._id"
-      class="events-results_division"
+      class="events-results_division mb-8"
     >
-      <h2 class="h2 pt-8 pb-4">{{ division.title }}</h2>
+      <h2 class="h2 pb-4">
+        {{ division.title }}
+      </h2>
 
       <div
         v-for="divisionClass in division.classes"
         :key="divisionClass._id"
         class="division_class"
       >
-        <h3 class="h3 py-4">{{ divisionClass.name }}</h3>
-
-        <div class="class_weapon hidden">
-          <img class="class_weapon_picture" :src="divisionClass.weapon.pictureUrl" />
-          <div class="info-grid">
-            <div
-              v-for="(value, key, index) in divisionClass.weapon"
-              :key="index"
-              class="info-grid_item"
-            >
-              <h6 class="info-grid_item_key h6">{{ key }}:</h6>
-              <div class="info-grid_item_value">{{ value }}</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="class_rules hidden">
-          <h3 class="h3">Rules</h3>
-          <div class="info-grid">
-            <div
-              v-for="(value, key, index) in divisionClass.rules"
-              :key="index"
-              class="info-grid_item"
-            >
-              <h6 class="info-grid_item_key h6">{{ key }}:</h6>
-              <div class="info-grid_item_value">{{ value }}</div>
-            </div>
-          </div>
-        </div>
+        <h3 class="h3 py-4">
+          {{ divisionClass.name }}
+        </h3>
 
         <div class="class_results">
           <div class="flex w-full">
-            <div class="results-cell h6 w-24">Rank</div>
-            <div class="results-cell h6 w-24">Sum</div>
-            <div class="results-cell h6 w-1/4"><span class="pl-4">Contestant</span></div>
+            <div class="results-cell h6 w-24">
+              Rank
+            </div>
+            <div class="results-cell h6 w-24">
+              Sum
+            </div>
+            <div class="results-cell h6 w-1/4">
+              <span class="pl-4">
+                Contestant
+              </span>
+            </div>
             <div class="h6 w-2/3 flex text-center">
-              <div class="results-cell results-cell_hit h6 w-1/10">#1</div>
-              <div class="results-cell results-cell_hit h6 w-1/10">#2</div>
-              <div class="results-cell results-cell_hit h6 w-1/10">#3</div>
-              <div class="results-cell results-cell_hit h6 w-1/10">#4</div>
-              <div class="results-cell results-cell_hit h6 w-1/10">#5</div>
-              <div class="results-cell results-cell_hit h6 w-1/10">#6</div>
-              <div class="results-cell results-cell_hit h6 w-1/10">#7</div>
-              <div class="results-cell results-cell_hit h6 w-1/10">#8</div>
-              <div class="results-cell results-cell_hit h6 w-1/10">#9</div>
-              <div class="results-cell results-cell_hit h6 w-1/10">#10</div>
+              <div class="results-cell results-cell_hit h6 w-1/10">
+                #1
+              </div>
+              <div class="results-cell results-cell_hit h6 w-1/10">
+                #2
+              </div>
+              <div class="results-cell results-cell_hit h6 w-1/10">
+                #3
+              </div>
+              <div class="results-cell results-cell_hit h6 w-1/10">
+                #4
+              </div>
+              <div class="results-cell results-cell_hit h6 w-1/10">
+                #5
+              </div>
+              <div class="results-cell results-cell_hit h6 w-1/10">
+                #6
+              </div>
+              <div class="results-cell results-cell_hit h6 w-1/10">
+                #7
+              </div>
+              <div class="results-cell results-cell_hit h6 w-1/10">
+                #8
+              </div>
+              <div class="results-cell results-cell_hit h6 w-1/10">
+                #9
+              </div>
+              <div class="results-cell results-cell_hit h6 w-1/10">
+                #10
+              </div>
             </div>
           </div>
 
@@ -89,10 +86,16 @@
             :key="contestant._id"
             class="flex w-full"
           >
-            <div class="results-cell w-24">#{{ contestant.rank }}</div>
-            <div class="results-cell w-24">{{ contestant.result }}</div>
+            <div class="results-cell w-24">
+              #{{ contestant.rank }}
+            </div>
+            <div class="results-cell w-24">
+              {{ contestant.result }}
+            </div>
             <div class="results-cell w-1/4">
-              <span class="pl-4">{{ contestant.firstName }} {{ contestant.lastName }}</span>
+              <span class="pl-4">
+                {{ contestant.firstName }} {{ contestant.lastName }}
+              </span>
             </div>
             <div class="w-2/3 flex text-center">
               <div
@@ -106,7 +109,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -188,52 +190,12 @@ const classesMock = [
     _id: 0,
     number: 1,
     name: "Miquelet",
-    pictureUrl: "https://norsksvartkruttunion.no/wp-content/uploads/2014/03/Miquelet.png",
-
-    rules: {
-      target: "200 meters fransk militær geværskive",
-      position: "Stående",
-      loadingRod: "Tillatt, maks. 10 cm",
-      cleaning: "Ikke tillatt",
-      distance: "50 meter",
-      team: "Nr. 9 Gustav Adolph (O) nr. 31 Halikko (R)"
-    },
-
-    weapon: {
-      condition: "Orginal & Replica",
-      type: "Glattløpet militær flinlåsmuskett",
-      sights: "I original tro utførelse, intet baksikte",
-      trigger: "Orginal ikke snellert",
-      calibre: "13.5mm / 0.5315\"",
-      bullet: "Rund"
-    },
-
     contestants: contestantsMock
   },
   {
     _id: 1,
     number: 2,
     name: "Maximilian",
-    pictureUrl: "https://norsksvartkruttunion.no/wp-content/uploads/2014/03/Miquelet.png",
-
-    rules: {
-      target: "ISSF 50 meters pistolskive",
-      position: "Liggende",
-      loadingRod: "Tillatt",
-      cleaning: "Tillatt",
-      distance: "100 meter",
-      team: "Nr. 26 Wedgnock (O), Nr. 19 Luca (R)"
-    },
-
-    weapon: {
-      condition: "Orginal & Replica",
-      type: "Fri flinlåsrifle",
-      sights: "Tidsriktige. Disse kan være originale modeller i Replica utførelse, også diopter",
-      trigger: "Snellert tillatt",
-      calibre: "Fritt",
-      bullet: "Rund"
-    },
-
     contestants: contestantsMock
   }
 ]
@@ -254,20 +216,12 @@ const divisionsMock = [
 export default {
   name: "EventsResults",
 
-  components: {
-  },
-
   data: () => ({
-    participants: [],
     divisions: []
   }),
 
   async created() {
-    this.participants = participantsMock
     this.divisions = divisionsMock
-  },
-
-  computed: {
   },
 
   methods: {

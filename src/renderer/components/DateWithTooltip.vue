@@ -15,7 +15,7 @@
 export default {
   name: "DateWithTooltip",
   props: {
-    date: { required: true }
+    date: { type: String, required: true }
   }
 }
 </script>

@@ -1,6 +1,0 @@
-export { default as events } from "./events.json"
-export { default as members } from "./members.json"
-export { default as divisions } from "./divisions.json"
-export { default as classes } from "./classes.json"
-export { default as categories } from "./categories.json"
-export { default as clubs } from "./clubs.json"

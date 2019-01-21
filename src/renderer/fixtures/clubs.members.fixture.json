@@ -1,0 +1,17 @@
+[{
+  "id": "1",
+  "firstName": "Ola",
+  "lastName": "Dunk",
+  "emailAddress": "ola@dunk.no",
+  "country": "Norway",
+  "phoneNumber": "40444404",
+  "clubId": "1"
+}, {
+  "id": "2",
+  "firstName": "Petter",
+  "lastName": "Nilsen",
+  "emailAddress": "petter@nilsen.no",
+  "country": "Norway",
+  "phoneNumber": "90414463",
+  "clubId": "1"
+}]

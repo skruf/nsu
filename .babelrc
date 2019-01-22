@@ -5,8 +5,7 @@
       "presets": [
         [ "env", { "targets": { "node": "current" } } ],
         "stage-0"
-      ],
-      "plugins": [ "istanbul" ]
+      ]
     },
 
     "main": {

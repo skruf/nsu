@@ -1,6 +1,6 @@
 import { insert, find, findOne, destroy } from "@/db/queries"
 
-const list = async (filter = {}, options = {}, fetchMode) => {
+const list = async (filter = {}, options = {}) => {
   const results = await find("ranges", filter, options)
   results.items = results.items.map((doc) => doc.toJSON())
   return results

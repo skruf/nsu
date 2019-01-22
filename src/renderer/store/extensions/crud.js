@@ -41,6 +41,7 @@ export default (options) => {
       commit("SET_LIST", results.items)
       commit("SET_COUNT", results.count)
       commit("SET_LIST_LOADING", false)
+      return results
     }
   }
 

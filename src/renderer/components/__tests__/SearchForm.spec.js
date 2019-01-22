@@ -13,15 +13,15 @@ describe("SearchForm", () => {
 
   it("should have a form and an input", () => {
     const wrapper = shallowMount(SearchForm, { localVue })
-    expect(wrapper.find("el-form-stub").exists()).toBe(true)
-    expect(wrapper.find("el-input-stub").exists()).toBe(true)
+    expect(wrapper.find(Form).exists()).toBe(true)
+    expect(wrapper.find(Input).exists()).toBe(true)
   })
 
   it("has correct placeholder", () => {
     const expectedValue = "This is a test placeholder"
     const propsData = { placeholder: expectedValue }
     const wrapper = shallowMount(SearchForm, { localVue, propsData })
-    const input = wrapper.find("el-input-stub")
+    const input = wrapper.find(Input)
     const currentValue = input.attributes("placeholder")
     expect(currentValue).toBe(expectedValue)
   })
@@ -29,7 +29,7 @@ describe("SearchForm", () => {
   it("sets value when typing", () => {
     const expectedValue = "this is a test"
     const wrapper = shallowMount(SearchForm, { localVue })
-    const input = wrapper.find("el-input-stub")
+    const input = wrapper.find(Input)
     input.vm.$emit("input", expectedValue)
     expect(wrapper.emitted("input")[0][0]).toBe(expectedValue)
     expect(wrapper.vm.v).toBe(expectedValue)
@@ -47,7 +47,7 @@ describe("SearchForm", () => {
   it("submits form when value is empty", () => {
     const expectedValue = ""
     const wrapper = shallowMount(SearchForm, { localVue })
-    const input = wrapper.find("el-input-stub")
+    const input = wrapper.find(Input)
     input.vm.$emit("input", expectedValue)
     const emittedValue = wrapper.emitted("submit")[0][0]
     expect(emittedValue).toBe(expectedValue)

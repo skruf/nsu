@@ -53,11 +53,11 @@ describe("RangesListTable", () => {
   it("should have a search form, table and pagination", () => {
     const wrapper = build()
     expect(wrapper.find(SearchForm).exists()).toBe(true)
-    expect(wrapper.find("el-table-stub").exists()).toBe(true)
-    expect(wrapper.find("el-pagination-stub").exists()).toBe(true)
+    expect(wrapper.find(Table).exists()).toBe(true)
+    expect(wrapper.find(Pagination).exists()).toBe(true)
   })
 
-  it.only("should get a list of ranges", () => {
+  it("should get a list of ranges", () => {
     const wrapper = build()
     expect(store.actions.listAsync).toHaveBeenCalled()
     expect(wrapper.vm.rangesList).toBe(rangesFixture)
@@ -66,6 +66,6 @@ describe("RangesListTable", () => {
   it("should filter table by searching for a name", () => {
     const wrapper = build()
     wrapper.vm.rangesSetSearchFilter(rangesFixture[0].name)
-    console.log(wrapper.vm.rangesSearchFilter)
+    expect(store.mutations.SET_SEARCH_FILTER).toHaveBeenCalled()
   })
 })

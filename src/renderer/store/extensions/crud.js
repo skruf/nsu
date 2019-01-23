@@ -61,6 +61,7 @@ export default (options) => {
       const item = await config.selectAsync(filter)
       commit("SET_SELECTED", item)
       commit("SET_SELECTED_LOADING", false)
+      return item
     }
   }
 
@@ -105,6 +106,7 @@ export default (options) => {
       await config.removeAsync({ _id: item._id })
       commit("REMOVE_ONE", item)
       commit("SET_REMOVE_LOADING", false)
+      return true
     }
   }
 

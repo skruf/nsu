@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BreadcrumbBar should render the component 1`] = `
+<div class="breadcrumb-bar">
+  <el-breadcrumb-stub separator="/" separatorclass="el-icon-arrow-right"></el-breadcrumb-stub>
+  <div>
+    <el-button-stub type="text" icon="el-icon-arrow-left" nativetype="button"></el-button-stub>
+    <el-button-stub type="text" icon="el-icon-arrow-right" nativetype="button"></el-button-stub>
+  </div>
+</div>
+`;

@@ -7,7 +7,7 @@ module.exports = {
   },
   moduleNameMapper: { "^@/(.*)$": "<rootDir>/src/renderer/$1" },
   snapshotSerializers: [ "jest-serializer-vue" ],
-  "collectCoverage": true,
+  "collectCoverage": false,
   "collectCoverageFrom": [
     "**/*.{js,vue}",
     "!**/(node_modules|coverage|dist|plugins)/**",

@@ -13,7 +13,7 @@
       <el-table
         :data="clubsList"
         :sort-by="clubsSortBy"
-        row-key="_id"
+        row-key="id"
         class="table-clickable"
         empty-text
         @selection-change="clubsSelectionChange"
@@ -42,30 +42,11 @@
         </el-table-column>
 
         <el-table-column
-          prop="name"
-          label="Range Name/Area"
-          sortable="custom"
-          :sort-orders="clubsSortOrders"
-        >
-          <template slot-scope="scope">
-            <h6 class="h6">
-              {{ scope.row.range.name }}
-            </h6>
-            <small class="small">
-              {{ scope.row.range.area }}
-            </small>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="members"
+          prop="membersCount"
           label="Members"
-          sortable="custom"
           width="150px"
           :sort-orders="clubsSortOrders"
-        >
-          23
-        </el-table-column>
+        />
 
         <el-table-column
           prop="createdAt"
@@ -242,7 +223,7 @@ export default {
       if(e.target.className.includes("table-button")) {
         return
       }
-      this.$router.push(`/clubs/${club._id}`)
+      this.$router.push(`/clubs/${club.id}`)
     },
 
     clubsSelectionChange(clubs) {

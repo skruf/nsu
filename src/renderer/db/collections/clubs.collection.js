@@ -9,7 +9,8 @@ const schema = {
       primary: true
     },
     name: {
-      type: "string"
+      type: "string",
+      "index": true
     },
     leader: {
       type: "string"

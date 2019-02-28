@@ -1,5 +1,5 @@
 import { classesService } from "@/services"
-import extend from "@/store/extensions"
+import extend from "@/state/extensions"
 import { classesCategoriesFixture, classesConditionsFixture } from "@/fixtures"
 
 const state = {

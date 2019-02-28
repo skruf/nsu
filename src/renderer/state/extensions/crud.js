@@ -94,16 +94,16 @@ export default (options) => {
     }
 
     mutations.REMOVE_ONE = (state, item) => {
-      state.list.splice(state.list.findIndex(({ _id }) => item._id === _id), 1)
+      state.list.splice(state.list.findIndex(({ id }) => item.id === id), 1)
       state.count -= 1
-      if(state.selected && state.selected._id === item._id) {
+      if(state.selected && state.selected.id === item.id) {
         state.selected = {}
       }
     }
 
     actions.removeAsync = async ({ commit }, item) => {
       commit("SET_REMOVE_LOADING", true)
-      await config.removeAsync({ _id: item._id })
+      await config.removeAsync({ id: item.id })
       commit("REMOVE_ONE", item)
       commit("SET_REMOVE_LOADING", false)
       return true

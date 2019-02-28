@@ -1,5 +1,5 @@
-import { eventsParticipantsService } from "@/services"
-import extend from "@/store/extensions"
+import { eventsDivisionsService } from "@/services"
+import extend from "@/state/extensions"
 
 const state = {}
 const mutations = {}
@@ -18,9 +18,9 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: eventsParticipantsService.list,
-      createAsync: eventsParticipantsService.create,
-      removeAsync: eventsParticipantsService.remove
+      listAsync: eventsDivisionsService.list,
+      createAsync: eventsDivisionsService.create,
+      removeAsync: eventsDivisionsService.remove
     }
   },
   {
@@ -31,7 +31,7 @@ const modules = [
   },
   {
     module: "search",
-    options: { fields: [ "firstName", "lastName" ] }
+    options: { fields: [ "name" ] }
   }
 ]
 

@@ -1,7 +1,6 @@
 export default [
   {
     path: "/ranges",
-    name: "RangesScreen",
     component: require("./RangesScreen").default,
     children: [
       {

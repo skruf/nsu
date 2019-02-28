@@ -1,7 +1,6 @@
 export default [
   {
     path: "/clubs",
-    name: "ClubsScreen",
     component: require("./ClubsScreen").default,
     children: [
       {

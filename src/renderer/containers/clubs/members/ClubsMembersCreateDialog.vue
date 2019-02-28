@@ -89,9 +89,9 @@
           >
             <el-option
               v-for="club in clubsList"
-              :key="club._id"
+              :key="club.id"
               :label="club.name"
-              :value="club._id"
+              :value="club.id"
             />
           </el-select>
         </el-form-item>

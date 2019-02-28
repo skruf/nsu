@@ -1,5 +1,5 @@
 import { eventsService } from "@/services"
-import extend from "@/store/extensions"
+import extend from "@/state/extensions"
 import { queryHelper } from "@/utils"
 import { eventsCategoriesFixture } from "@/fixtures"
 

@@ -1,8 +1,8 @@
-import { rangesService } from "@/services"
-import extend from "@/store/extensions"
+import { clubsMembersService } from "@/services"
+import extend from "@/state/extensions"
 import { countriesFixture } from "@/fixtures"
 
-export const state = {
+const state = {
   countries: countriesFixture
 }
 const mutations = {}
@@ -21,10 +21,9 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: rangesService.list,
-      selectAsync: rangesService.select,
-      createAsync: rangesService.create,
-      removeAsync: rangesService.remove
+      listAsync: clubsMembersService.list,
+      createAsync: clubsMembersService.create,
+      removeAsync: clubsMembersService.remove
     }
   },
   {
@@ -35,7 +34,7 @@ const modules = [
   },
   {
     module: "search",
-    options: { fields: [ "name", "area" ] }
+    options: { fields: [ "firstName", "lastName" ] }
   }
 ]
 

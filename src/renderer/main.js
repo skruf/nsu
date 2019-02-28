@@ -7,7 +7,7 @@ import "./design/index.styl"
 
 import App from "./App"
 import router from "./screens"
-import store from "./store"
+import store from "./state"
 
 if(!process.env.IS_WEB) {
   Vue.use(require("vue-electron"))

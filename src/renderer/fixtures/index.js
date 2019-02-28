@@ -10,3 +10,4 @@ export { default as eventsCategoriesFixture } from "./events.categories.fixture.
 export { default as eventsParticipantsFixture } from "./events.participants.fixture.json"
 export { default as eventsDivisionsFixture } from "./events.divisions.fixture.json"
 export { default as eventsDivisionsContestantsFixture } from "./events.divisions.contestants.fixture.json"
+export { default as dbFixture } from "./db.fixture.json"

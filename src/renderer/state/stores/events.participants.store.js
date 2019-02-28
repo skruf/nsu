@@ -1,10 +1,7 @@
-import { clubsMembersService } from "@/services"
-import extend from "@/store/extensions"
-import { countriesFixture } from "@/fixtures"
+import { eventsParticipantsService } from "@/services"
+import extend from "@/state/extensions"
 
-const state = {
-  countries: countriesFixture
-}
+const state = {}
 const mutations = {}
 const actions = {}
 const getters = {}
@@ -21,8 +18,9 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: clubsMembersService.list,
-      createAsync: clubsMembersService.create
+      listAsync: eventsParticipantsService.list,
+      createAsync: eventsParticipantsService.create,
+      removeAsync: eventsParticipantsService.remove
     }
   },
   {

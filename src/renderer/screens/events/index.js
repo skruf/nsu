@@ -1,7 +1,6 @@
 export default [
   {
     path: "/events",
-    name: "EventsScreen",
     component: require("./EventsScreen").default,
     children: [
       {

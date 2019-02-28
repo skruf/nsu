@@ -105,7 +105,7 @@
           >
             <el-input
               v-model="form.area"
-              placeholder="Enter a area"
+              placeholder="Enter an area"
             />
           </el-form-item>
           <div class="w-full ml-2 flex">

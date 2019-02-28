@@ -31,7 +31,6 @@ const schema = {
   required: [
     "firstName",
     "lastName",
-    "area",
     "country",
     "clubId"
   ]

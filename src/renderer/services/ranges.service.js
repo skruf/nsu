@@ -17,8 +17,8 @@ const create = async (doc = {}, options = {}) => {
 }
 
 const remove = async (filter, options = {}) => {
-  const results = await destroy("ranges", filter, options)
-  return results.toJSON()
+  await destroy("ranges", filter, options)
+  return true
 }
 
 export default {

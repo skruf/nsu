@@ -36,10 +36,11 @@ module.exports = {
     "vue/component-name-in-template-casing": [ "warn", "kebab-case" ],
     "arrow-parens": 0,
     "generator-star-spacing": 0,
-    "quotes": [0],
+    "quotes": [ 0 ],
     "space-before-function-paren": 0,
     "keyword-spacing": 0,
     "no-console": 0,
-    "padded-blocks": 0
+    "padded-blocks": 0,
+    "no-unused-vars": "warn"
   }
 }

@@ -1,5 +1,5 @@
 import flushPromises from "flush-promises"
-import rangesStore from "@/store/modules/ranges"
+import rangesStore from "@/state/stores/ranges.store"
 import { rangesFixture } from "@/fixtures"
 import rangesService from "@/services/ranges.service.js"
 jest.mock("@/services/ranges.service.js")
@@ -8,6 +8,7 @@ jest.mock("@/services/ranges.service.js")
 
 describe("ranges.store", () => {
   const commit = jest.fn()
+  const dispatch = jest.fn()
   const initialState = { ...rangesStore.state }
 
   afterEach(() => {
@@ -29,7 +30,6 @@ describe("ranges.store", () => {
     expect(res.items).toEqual(rangesFixture)
     expect(res.count).toEqual(rangesFixture.length)
   })
-
   it("should set the list and count with ranges", async () => {
     const { mutations, state } = rangesStore
 
@@ -38,6 +38,73 @@ describe("ranges.store", () => {
 
     expect(state.list).toEqual(rangesFixture)
     expect(state.count).toBe(rangesFixture.length)
+  })
+
+  it("should be able to change sorting", async () => {
+    const { actions, state } = rangesStore
+    const sortBy = "area"
+
+    await actions.setSortingAsync({ commit, state, dispatch }, sortBy)
+    await flushPromises()
+
+    expect(commit).toHaveBeenNthCalledWith(1, "SET_SORTING", sortBy)
+    expect(dispatch).toHaveBeenNthCalledWith(1, "listAsync")
+  })
+  it("should be able to set asc/desc sorting", async () => {
+    const { mutations, state } = rangesStore
+    const sortBy = "area"
+
+    expect(state.sortBy).toBe("-createdAt")
+    mutations.SET_SORTING(state, { prop: sortBy })
+    expect(state.sortBy).toBe(sortBy)
+    mutations.SET_SORTING(state, { prop: sortBy, order: "ascending" })
+    expect(state.sortBy).toBe(`-${sortBy}`)
+  })
+
+  it("should be able to search for a range", async () => {
+    const { actions, state } = rangesStore
+    const search = "area"
+
+    await actions.setSearchFilterAsync({ commit, state, dispatch }, search)
+    await flushPromises()
+
+    expect(commit).toHaveBeenNthCalledWith(1, "SET_SEARCH_FILTER", search)
+    expect(dispatch).toHaveBeenNthCalledWith(1, "listAsync")
+  })
+  it("should be able to set search filter", async () => {
+    const { mutations, state } = rangesStore
+    const search = "test"
+
+    mutations.SET_SEARCH_FILTER(state, search)
+    expect(state.searchFilterValue).toBe(search)
+    expect(state.pageCurrent).toBe(1)
+  })
+
+  it("should be able to change pagination", async () => {
+    const { actions, state } = rangesStore
+    const pageSize = 30
+    const pageCurrent = 2
+
+    await actions.setPageSizeAsync({ commit, state, dispatch }, pageSize)
+    await actions.setPageCurrentAsync({ commit, state, dispatch }, pageCurrent)
+    await flushPromises()
+
+    expect(commit).toHaveBeenNthCalledWith(1, "SET_PAGE_SIZE", pageSize)
+    expect(commit).toHaveBeenNthCalledWith(2, "SET_PAGE_CURRENT", pageCurrent)
+    expect(dispatch).toHaveBeenNthCalledWith(1, "listAsync")
+    expect(dispatch).toHaveBeenNthCalledWith(2, "listAsync")
+  })
+  it("should be able to set pagination", async () => {
+    const { mutations, state } = rangesStore
+    const pageSize = 30
+    const pageCurrent = 2
+
+    expect(state.pageSize).toBe(15)
+    expect(state.pageCurrent).toBe(1)
+    mutations.SET_PAGE_SIZE(state, pageSize)
+    expect(state.pageSize).toBe(pageSize)
+    mutations.SET_PAGE_CURRENT(state, pageCurrent)
+    expect(state.pageCurrent).toBe(pageCurrent)
   })
 
   it("should fetch and set a selected range", async () => {
@@ -52,12 +119,9 @@ describe("ranges.store", () => {
     expect(commit).toHaveBeenNthCalledWith(3, "SET_SELECTED_LOADING", false)
     expect(res).toEqual(rangesFixture[0])
   })
-
   it("should set a selected range", async () => {
     const { mutations, state } = rangesStore
-
     mutations.SET_SELECTED(state, rangesFixture[0])
-
     expect(state.selected).toEqual(rangesFixture[0])
   })
 
@@ -73,12 +137,9 @@ describe("ranges.store", () => {
     expect(commit).toHaveBeenNthCalledWith(3, "SET_CREATE_LOADING", false)
     expect(res).toEqual(rangesFixture[0])
   })
-
   it("should add a range to the list", async () => {
     const { mutations, state } = rangesStore
-
     mutations.ADD_ONE(state, rangesFixture[0])
-
     expect(state.list).toEqual(expect.arrayContaining([ rangesFixture[0] ]))
     expect(state.count).toBe(1)
   })
@@ -95,7 +156,6 @@ describe("ranges.store", () => {
     expect(commit).toHaveBeenNthCalledWith(3, "SET_REMOVE_LOADING", false)
     expect(res).toEqual(true)
   })
-
   it("should remove range from the list", async () => {
     const { mutations, state } = rangesStore
     state.list = [ ...rangesFixture ]

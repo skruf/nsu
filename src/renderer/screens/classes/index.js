@@ -1,7 +1,6 @@
 export default [
   {
     path: "/classes",
-    name: "ClassesScreen",
     component: require("./ClassesScreen").default,
     children: [
       {

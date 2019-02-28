@@ -41,11 +41,11 @@
 
         <el-form-item
           label="Email"
-          prop="email"
+          prop="emailAddress"
         >
           <el-input
-            v-model="form.email"
-            placeholder="Enter a email"
+            v-model="form.emailAddress"
+            placeholder="Enter a email address"
           />
         </el-form-item>
 
@@ -65,7 +65,7 @@
         >
           <el-input
             v-model="form.area"
-            placeholder="Enter a area"
+            placeholder="Enter an area"
           />
         </el-form-item>
 

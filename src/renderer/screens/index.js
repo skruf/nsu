@@ -13,6 +13,6 @@ export default new Router({
     ...clubs,
     ...ranges,
     ...classes,
-    { path: "*", redirect: "/ranges" }
+    { path: "*", redirect: "/events" }
   ]
 })

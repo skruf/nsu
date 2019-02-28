@@ -11,12 +11,12 @@ import {
   Pagination,
   Loading
 } from "element-ui"
-import SearchForm from "../../../components/SearchForm"
-import RangesListTable from "../RangesListTable"
+import SearchForm from "@/components/SearchForm"
+import RangesListTable from "@/containers/ranges/RangesListTable"
 
 import { rangesFixture } from "@/fixtures"
-import store from "../../../store/modules/ranges"
-jest.mock("../../../store/modules/ranges")
+import rangesStore from "@/state/stores/ranges.store"
+jest.mock("@/state/stores/ranges.store")
 
 const localVue = tests.createVue([
   Vuex,
@@ -36,7 +36,7 @@ describe("RangesListTable", () => {
       localVue,
       store: new Vuex.Store({
         strict: true,
-        modules: { ranges: store }
+        modules: { ranges: rangesStore }
       })
     })
   }
@@ -59,13 +59,13 @@ describe("RangesListTable", () => {
 
   it("should get a list of ranges", () => {
     const wrapper = build()
-    expect(store.actions.listAsync).toHaveBeenCalled()
+    expect(rangesStore.actions.listAsync).toHaveBeenCalled()
     expect(wrapper.vm.rangesList).toBe(rangesFixture)
   })
 
   it("should filter table by searching for a name", () => {
     const wrapper = build()
     wrapper.vm.rangesSetSearchFilter(rangesFixture[0].name)
-    expect(store.mutations.SET_SEARCH_FILTER).toHaveBeenCalled()
+    expect(rangesStore.mutations.SET_SEARCH_FILTER).toHaveBeenCalled()
   })
 })

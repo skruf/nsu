@@ -1,5 +1,5 @@
-import { clubsService } from "@/services"
-import extend from "@/store/extensions"
+import { rangesService } from "@/services"
+import extend from "@/state/extensions"
 import { countriesFixture } from "@/fixtures"
 
 export const state = {
@@ -21,10 +21,10 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: clubsService.list,
-      selectAsync: clubsService.select,
-      createAsync: clubsService.create,
-      removeAsync: clubsService.remove
+      listAsync: rangesService.list,
+      selectAsync: rangesService.select,
+      createAsync: rangesService.create,
+      removeAsync: rangesService.remove
     }
   },
   {
@@ -35,7 +35,7 @@ const modules = [
   },
   {
     module: "search",
-    options: { fields: [ "name" ] }
+    options: { fields: [ "name", "area" ] }
   }
 ]
 

@@ -1,0 +1,178 @@
+{
+  "name": "nsu",
+  "instanceToken": "319gj8rwx0",
+  "encrypted": false,
+  "passwordHash": "916a85e74e309a1f1784d5074499c7b1",
+  "collections": [
+    {
+      "name": "ranges",
+      "schemaHash": "d966266ffd6fa9925672f9154fa9237f",
+      "encrypted": false,
+      "passwordHash": null,
+      "docs": []
+    },
+    {
+      "name": "classes",
+      "schemaHash": "1f8067364f41df6ae13df3f4bc4d82dd",
+      "encrypted": false,
+      "passwordHash": null,
+      "docs": []
+    },
+    {
+      "name": "clubs",
+      "schemaHash": "9b8b498aa3c7587dba75ce7699819e77",
+      "encrypted": false,
+      "passwordHash": null,
+      "docs": [
+        {
+          "id": "1",
+          "name": "Norske Officerers Pistolklubb",
+          "leader": "Jens Berentzen",
+          "emailAddress": "svartkrutt@nop.no",
+          "address": "Postboks 92 Sentrum",
+          "area": "0101, Oslo",
+          "country": "Norway",
+          "rangeId": "1",
+          "createdAt": "2019-02-27T22:22:45.500Z",
+          "updatedAt": "2019-02-27T22:22:45.500Z"
+        },
+        {
+          "id": "2",
+          "name": "Schedmoe Civile Skydeselskab",
+          "leader": "Frode Høybråten",
+          "emailAddress": "frode.hoybraten@lilleborg.no",
+          "address": "",
+          "area": "1903, Gan",
+          "country": "Norway",
+          "rangeId": "2",
+          "createdAt": "2019-02-22T13:54:33.500Z",
+          "updatedAt": "2019-02-22T13:54:33.500Z"
+        },
+        {
+          "id": "3",
+          "name": "Christiania Skydeselskab",
+          "leader": "Per Erik Andersson",
+          "emailAddress": "pererikandersson51@gmail.com",
+          "address": "",
+          "area": "Oslo",
+          "country": "Norway",
+          "rangeId": "",
+          "createdAt": "2019-02-22T13:54:33.500Z",
+          "updatedAt": "2019-02-22T13:54:33.500Z"
+        },
+        {
+          "id": "4",
+          "name": "Oslo Vestre Sportsskyttere",
+          "leader": "Asle G. Resi",
+          "emailAddress": "",
+          "address": "Olav Aukrustsvei 58 a",
+          "area": "0785 Oslo",
+          "country": "Norway",
+          "rangeId": "",
+          "createdAt": "2019-02-22T13:54:33.500Z",
+          "updatedAt": "2019-02-22T13:54:33.500Z"
+        },
+        {
+          "id": "5",
+          "name": "OKTS Svartkruttgruppa",
+          "leader": "Odd Flomark",
+          "emailAddress": "",
+          "address": "Munkerudåsen 22G",
+          "area": "1165 Oslo",
+          "country": "Norway",
+          "rangeId": "",
+          "createdAt": "2019-02-22T13:54:33.500Z",
+          "updatedAt": "2019-02-22T13:54:33.500Z"
+        },
+        {
+          "id": "6",
+          "name": "ZERO Pistolklubb",
+          "leader": "",
+          "emailAddress": "post@zeropk.com",
+          "address": "Postboks 79",
+          "area": "1338 Sandvika",
+          "country": "Norway",
+          "rangeId": "",
+          "createdAt": "2019-02-22T13:54:33.500Z",
+          "updatedAt": "2019-02-22T13:54:33.500Z"
+        },
+        {
+          "id": "7",
+          "name": "Bærum Pistolklubb",
+          "leader": "Tor Ryden",
+          "emailAddress": "",
+          "address": "Rødskrubbgrenda 5",
+          "area": "1352 Kolsås",
+          "country": "Norway",
+          "rangeId": "",
+          "createdAt": "2019-02-22T13:54:33.500Z",
+          "updatedAt": "2019-02-22T13:54:33.500Z"
+        },
+        {
+          "id": "8",
+          "name": "Oslo Sportsskyttere",
+          "leader": "",
+          "emailAddress": "",
+          "address": "Markalleen 68 A",
+          "area": "1368 Stabekk",
+          "country": "Norway",
+          "rangeId": "",
+          "createdAt": "2019-02-22T13:54:33.500Z",
+          "updatedAt": "2019-02-22T13:54:33.500Z"
+        },
+        {
+          "id": "9",
+          "name": "Asker Skyteklubb Svartkruttgruppa",
+          "leader": "Per Erik Andersson",
+          "emailAddress": "pererikandersson51@gmail.com",
+          "address": "Gamle Drammensvei 357",
+          "area": "1383 Asker",
+          "country": "Norway",
+          "rangeId": "",
+          "createdAt": "2019-02-22T13:54:33.500Z",
+          "updatedAt": "2019-02-22T13:54:33.500Z"
+        },
+        {
+          "id": "10",
+          "name": "Tordenskiolds Soldater Stavern",
+          "leader": "Tor Otto Madsen",
+          "emailAddress": "post@sandefjordpaintball.no",
+          "address": "Postboks 31",
+          "area": "3290 Stavern",
+          "country": "Norway",
+          "rangeId": "",
+          "createdAt": "2019-02-22T13:54:33.500Z",
+          "updatedAt": "2019-02-22T13:54:33.500Z"
+        }
+      ]
+    },
+    {
+      "name": "clubs_members",
+      "schemaHash": "e958a4ae611e50a46b8f00e9e972a376",
+      "encrypted": false,
+      "passwordHash": null,
+      "docs": []
+    },
+    {
+      "name": "events",
+      "schemaHash": "0066348dda930ce23fde43e47175849d",
+      "encrypted": false,
+      "passwordHash": null,
+      "docs": []
+    },
+    {
+      "name": "events_participants",
+      "schemaHash": "56e3e6eaf3b6337c3a92c3fb12108384",
+      "encrypted": false,
+      "passwordHash": null,
+      "docs": []
+    },
+    {
+      "name": "events_divisions",
+      "schemaHash": "3cb9634db0c8105cb260ae5d81e59244",
+      "encrypted": false,
+      "passwordHash": null,
+      "docs": []
+     }
+  ]
+}

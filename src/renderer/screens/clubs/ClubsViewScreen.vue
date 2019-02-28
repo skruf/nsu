@@ -11,7 +11,7 @@
       <breadcrumb-bar
         :paths="[
           { to: '/clubs', label: 'Clubs' },
-          { to: `/clubs/${clubsSelected._id}`, label: clubsSelected.name }
+          { to: `/clubs/${clubsSelected.id}`, label: clubsSelected.name }
         ]"
       />
 
@@ -62,7 +62,10 @@
 
     <el-main>
       <div class="info-grid">
-        <div class="info-grid_item">
+        <div
+          v-if="clubsSelected.email"
+          class="info-grid_item"
+        >
           <h6 class="h6 info-grid_item_key">
             Email:
           </h6>
@@ -70,7 +73,10 @@
             {{ clubsSelected.email }}
           </p>
         </div>
-        <div class="info-grid_item">
+        <div
+          v-if="clubsSelected.leader"
+          class="info-grid_item"
+        >
           <h6 class="h6 info-grid_item_key">
             Leader:
           </h6>
@@ -94,7 +100,7 @@
       <div class="content">
         <clubs-members-list-table
           v-if="!clubsSelectedIsLoading"
-          :club-id="clubsSelected._id"
+          :club-id="clubsSelected.id"
           @clubsMembersOpenCreateDialog="clubsMembersOpenCreateDialog"
         />
       </div>
@@ -111,7 +117,7 @@
 
     <clubs-members-create-dialog
       v-if="!clubsSelectedIsLoading"
-      :club-id="clubsSelected._id"
+      :club-id="clubsSelected.id"
       :club-name="clubsSelected.name"
       :shown.sync="clubsMembersShowCreateDialog"
     />
@@ -145,7 +151,7 @@ export default {
   },
 
   async created() {
-    await this.clubsSelectAsync({ _id: this.$route.params.clubId })
+    await this.clubsSelectAsync({ id: this.$route.params.clubId })
   },
 
   methods: {

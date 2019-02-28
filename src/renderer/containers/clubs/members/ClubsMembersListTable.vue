@@ -9,112 +9,119 @@
       @submit="clubsMembersSetSearchFilterAsync"
     />
 
-    <el-table
-      :data="clubsMembersList"
-      :sort-by="clubsMembersSortBy"
-      row-key="_id"
-      class="table-clickable"
-      empty-text
-      @selection-change="clubsMembersSelectionChange"
-      @row-click="clubsMembersRowClick"
-      @sort-change="clubsMembersSetSortingAsync"
-    >
-      <el-table-column
-        type="selection"
-        width="40"
-      />
-
-      <el-table-column
-        prop="member"
-        width="60px"
+    <div v-loading="clubsMembersListIsLoading || clubsMembersRemoveIsLoading">
+      <el-table
+        :data="clubsMembersList"
+        :sort-by="clubsMembersSortBy"
+        row-key="id"
+        class="table-clickable"
+        empty-text
+        @selection-change="clubsMembersSelectionChange"
+        @row-click="clubsMembersRowClick"
+        @sort-change="clubsMembersSetSortingAsync"
       >
-        <template slot-scope="scope">
-          <avatar
-            :first-name="scope.row.firstName"
-            :last-name="scope.row.lastName"
-          />
-        </template>
-      </el-table-column>
+        <el-table-column
+          type="selection"
+          width="40"
+        />
 
-      <el-table-column
-        prop="name"
-        label="Name/Email"
-        sortable="custom"
-        :sort-orders="clubsMembersSortOrders"
-      >
-        <template slot-scope="scope">
-          <h6 class="h6">
-            {{ scope.row.firstName }} {{ scope.row.lastName }}
-          </h6>
-          <small class="small">
-            {{ scope.row.emailAddress }}
-          </small>
-        </template>
-      </el-table-column>
+        <el-table-column
+          prop="member"
+          width="60px"
+        >
+          <template slot-scope="scope">
+            <avatar
+              :first-name="scope.row.firstName"
+              :last-name="scope.row.lastName"
+            />
+          </template>
+        </el-table-column>
 
-      <el-table-column
-        prop="createdAt"
-        label="Added On"
-        sortable="custom"
-        width="150px"
-        :sort-orders="clubsMembersSortOrders"
-      >
-        <template slot-scope="scope">
-          {{ scope.row.createdAt | moment("MM.DD.YY") }}
-        </template>
-      </el-table-column>
+        <el-table-column
+          prop="name"
+          label="Name/Email"
+          sortable="custom"
+          :sort-orders="clubsMembersSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.firstName }} {{ scope.row.lastName }}
+            </h6>
+            <small class="small">
+              {{ scope.row.emailAddress }}
+            </small>
+          </template>
+        </el-table-column>
 
-      <el-table-column
-        width="50"
-        align="right"
-      >
-        <template slot="header">
-          <div
-            class="table-actions"
-            :class="{ 'disabled': !clubsMembersHasSelection }"
-          >
+        <el-table-column
+          prop="createdAt"
+          label="Added On"
+          sortable="custom"
+          width="150px"
+          :sort-orders="clubsMembersSortOrders"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.createdAt | moment("MM.DD.YY") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          width="50"
+          align="right"
+        >
+          <template slot="header">
+            <div
+              class="table-actions"
+              :class="{ 'disabled': !clubsMembersHasSelection }"
+            >
+              <el-dropdown
+                trigger="click"
+                @command="clubsMembersTableDispatchActions"
+              >
+                <span class="el-dropdown-link">
+                  <i class="table-button el-icon-more" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="removeSelection">
+                    <i class="el-icon-delete el-icon--left" /> Remove selected
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+          </template>
+          <template slot-scope="scope">
             <el-dropdown
               trigger="click"
-              @command="clubsMembersTableDispatchActions"
+              @command="clubsMembersTableRowDispatchActions"
             >
               <span class="el-dropdown-link">
                 <i class="table-button el-icon-more" />
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="removeSelection">
-                  <i class="el-icon-delete el-icon--left" /> Remove selected
+                <el-dropdown-item
+                  :command="{
+                    handler: 'clubsMembersRemove',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-delete el-icon--left" /> Remove member
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </div>
-        </template>
-        <template slot-scope="scope">
-          <el-dropdown
-            trigger="click"
-            @command="clubsMembersTableRowDispatchActions"
-          >
-            <span class="el-dropdown-link">
-              <i class="table-button el-icon-more" />
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item :command="{ handler: 'remove', payload: scope.row }">
-                <i class="el-icon-delete el-icon--left" /> Remove member
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </template>
-      </el-table-column>
+          </template>
+        </el-table-column>
 
-      <template slot="empty">
-        No members yet.
-        <el-button
-          type="text"
-          @click="clubsMembersOpenCreateDialog"
-        >
-          Create new?
-        </el-button>
-      </template>
-    </el-table>
+        <template slot="empty">
+          No members yet.
+          <el-button
+            type="text"
+            @click="clubsMembersOpenCreateDialog"
+          >
+            Create new?
+          </el-button>
+        </template>
+      </el-table>
+    </div>
 
     <el-pagination
       layout="total, sizes, prev, pager, next"
@@ -156,7 +163,9 @@ export default {
       clubsMembersCount: "count",
       clubsMembersPageSize: "pageSize",
       clubsMembersPageCurrent: "pageCurrent",
-      clubsMembersSortBy: "sortBy"
+      clubsMembersSortBy: "sortBy",
+      clubsMembersListIsLoading: "listIsLoading",
+      clubsMembersRemoveIsLoading: "removeIsLoading"
     }),
     clubsMembersHasSelection() {
       return this.clubsMembersSelection.length > 0
@@ -182,7 +191,8 @@ export default {
       clubsMembersSetPageSize: "setPageSizeAsync",
       clubsMembersSetPageCurrent: "setPageCurrentAsync",
       clubsMembersSetSortingAsync: "setSortingAsync",
-      clubsMembersSetSearchFilterAsync: "setSearchFilterAsync"
+      clubsMembersSetSearchFilterAsync: "setSearchFilterAsync",
+      clubsMembersRemoveAsync: "removeAsync"
     }),
     clubsMembersOpenCreateDialog() {
       this.$emit("clubsMembersOpenCreateDialog")
@@ -193,7 +203,39 @@ export default {
 
     clubsMembersRowClick() {},
     clubsMembersTableDispatchActions() {},
-    clubsMembersTableRowDispatchActions() {}
+
+    clubsMembersTableRowDispatchActions({ handler, payload }) {
+      this[handler](payload)
+    },
+
+    async clubsMembersRemove(clubMember) {
+      try {
+        await this.$confirm(
+          `This will remove ${clubMember.firstName} ${clubMember.lastName} from the club. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+
+        try {
+          await this.clubsMembersRemoveAsync({ id: clubMember.id })
+          this.$notify({
+            type: "success",
+            title: "Success",
+            message: `${clubMember.firstName} ${clubMember.lastName} was removed from the clubs database`
+          })
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      } catch(e) {}
+    }
   }
 }
 </script>

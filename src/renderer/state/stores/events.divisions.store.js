@@ -18,9 +18,10 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: eventsDivisionsService.list,
-      createAsync: eventsDivisionsService.create,
-      removeAsync: eventsDivisionsService.remove
+      list: eventsDivisionsService.list,
+      create: eventsDivisionsService.create,
+      removeOne: eventsDivisionsService.removeOne,
+      removeMany: eventsDivisionsService.removeMany
     }
   },
   {

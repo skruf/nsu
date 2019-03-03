@@ -1,5 +1,5 @@
 const defaultOptions = {
-  action: "listAsync",
+  action: "list",
   fields: []
 }
 
@@ -19,7 +19,7 @@ export default (options) => {
     state.pageCurrent = 1
   }
 
-  actions.setSearchFilterAsync = async ({ dispatch, commit }, search) => {
+  actions.setSearchFilter = async ({ dispatch, commit }, search) => {
     commit("SET_SEARCH_FILTER", search)
     await dispatch(config.action)
   }

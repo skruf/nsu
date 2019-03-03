@@ -1,25 +1,34 @@
-import { insert, find, findOne, destroy } from "@/db/queries"
+import { insert, findMany, findOne, destroyOne, destroyMany } from "@/db/queries"
 
 const list = async (filter = {}, options = {}, fetchMode) => {
-  const results = await find("classes", filter, options)
-  return results
+  const result = await findMany("classes", filter, options)
+  result.items = result.items.map((doc) => doc.toJSON())
+  return result
 }
 
 const select = async (filter = {}, options = {}) => {
-  const results = await findOne("classes", filter, options)
-  return results
+  const result = await findOne("classes", filter, options)
+  return result.toJSON()
 }
 
 const create = async (doc = {}, options = {}) => {
-  const results = await insert("classes", doc, options)
-  return results
+  const result = await insert("classes", doc, options)
+  return result.toJSON()
 }
 
-const remove = async (filter, options = {}) => {
-  const results = await destroy("classes", filter, options)
-  return results
+const removeOne = async (filter, options = {}) => {
+  await destroyOne("classes", filter, options)
+  return true
+}
+
+const removeMany = async (items, options = {}) => {
+  const filter = {
+    id: { $in: items.map(({ id }) => id) }
+  }
+  await destroyMany("classes", filter, options)
+  return true
 }
 
 export default {
-  list, select, create, remove
+  list, select, create, removeOne, removeMany
 }

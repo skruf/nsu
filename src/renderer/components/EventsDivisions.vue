@@ -6,7 +6,7 @@
   <div class="events-divisions">
     <div
       v-for="division in divisions"
-      :key="division._id"
+      :key="division.id"
       class="events-results_division"
     >
       <h2 class="h2 pt-8 pb-4">
@@ -15,7 +15,7 @@
 
       <div
         v-for="divisionClass in division.classes"
-        :key="divisionClass._id"
+        :key="divisionClass.id"
         class="division_class"
       >
         <h3 class="h3 py-4">
@@ -72,7 +72,7 @@
           </h3>
           <div
             v-for="contestant in divisionClass.contestants"
-            :key="contestant._id"
+            :key="contestant.id"
             class="flex w-full"
           >
             <div class="">
@@ -106,7 +106,7 @@ export default {
     // participantsSarchFilter: "",
     // participantsPageSize: 15,
     // participantsPageCurrent: 1,
-    // participantsSortBy: "_id",
+    // participantsSortBy: "id",
     // participantsSelection: [],
     // participantsCount: 6
   }),

@@ -16,7 +16,7 @@ mutations.SET_FETCH_MODE = (state, fetchMode) => {
   state.fetchMode = fetchMode
 }
 
-actions.listAsync = async ({ commit, state }, filter = {}) => {
+actions.list = async ({ commit, state }, filter = {}) => {
   commit("SET_LIST_LOADING", true)
   const config = queryHelper(state)
   const results = await eventsService.list(filter, config, state.fetchMode)
@@ -37,10 +37,11 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: eventsService.list,
-      selectAsync: eventsService.select,
-      createAsync: eventsService.create,
-      removeAsync: eventsService.remove
+      list: eventsService.list,
+      select: eventsService.select,
+      create: eventsService.create,
+      removeOne: eventsService.removeOne,
+      removeMany: eventsService.removeMany
     }
   },
   {

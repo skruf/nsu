@@ -2,7 +2,7 @@ import flushPromises from "flush-promises"
 import { rangesFixture } from "@/fixtures"
 import rangesService from "@/services/ranges.service"
 
-import { find, findOne, insert, destroy } from "@/db/queries"
+import { findMany, findOne, insert, destroyOne, destroyMany } from "@/db/queries"
 jest.mock("@/db/queries")
 
 describe("ranges.service", () => {
@@ -17,7 +17,7 @@ describe("ranges.service", () => {
     const res = await rangesService.list(filter, options)
     await flushPromises()
 
-    expect(find).toHaveBeenCalled()
+    expect(findMany).toHaveBeenCalled()
     expect(res.items).toEqual(rangesFixture)
     expect(res.count).toEqual(rangesFixture.length)
   })
@@ -48,10 +48,10 @@ describe("ranges.service", () => {
     const filter = {}
     const options = {}
 
-    const res = await rangesService.remove(filter, options)
+    const res = await rangesService.removeOne(filter, options)
     await flushPromises()
 
-    expect(destroy).toHaveBeenCalled()
+    expect(destroyOne).toHaveBeenCalled()
     expect(res).toEqual(true)
   })
 })

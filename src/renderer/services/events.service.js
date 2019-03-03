@@ -1,4 +1,4 @@
-import { insert, find, findOne, destroy } from "@/db/queries"
+import { insert, findMany, findOne, destroyOne, destroyMany } from "@/db/queries"
 
 const list = async (filter = {}, options = {}, fetchMode) => {
   if(fetchMode === "upcoming") {
@@ -8,60 +8,78 @@ const list = async (filter = {}, options = {}, fetchMode) => {
     filter.startsAt = { $lte: new Date() }
   }
 
-  const results = await find("events", filter, options)
+  const result = await findMany("events", filter, options)
 
-  results.items = await Promise.all(results.items.map((event) => {
+  result.items = await Promise.all(result.items.map((event) => {
+    event = event.toJSON()
+
     return new Promise(async (resolve) => {
-      const club = await findOne("clubs", { _id: event.organizerId })
+      let club = await findOne("clubs", { id: event.organizerId })
       if(club) {
+        club = club.toJSON()
         event.organizerName = club.name
       }
-      event.range = await findOne("ranges", { _id: event.rangeId }) || {}
+
+      let range = await findOne("ranges", { id: event.rangeId })
+      if(range) {
+        range = range.toJSON()
+        event.range = range
+      }
+
       resolve(event)
     })
   }))
 
-  return results
+  return result
 }
 
 const select = async (filter = {}, options = {}) => {
-  const results = await findOne("events", filter, options)
-  const club = await findOne("clubs", { _id: results.organizerId })
+  const event = await findOne("events", filter, options)
+
+  let club = await findOne("clubs", { id: event.organizerId })
   if(club) {
-    results.organizerName = club.name
+    club = club.toJSON()
+    event.organizerName = club.name
   }
-  const range = await findOne("ranges", { _id: results.rangeId })
+
+  let range = await findOne("ranges", { id: event.rangeId })
   if(range) {
-    results.range = range
+    range = range.toJSON()
+    event.range = range
   }
-  return results
+
+  return event
 }
 
 const create = async (doc = {}, options = {}) => {
-  const results = await insert("events", doc, options)
-  return results
+  const event = await insert("events", doc, options)
+  return event.toJSON()
 }
 
-const remove = async (filter, options = {}) => {
+const removeOne = async (filter, options = {}) => {
   const event = await select(filter)
 
   if(!event) {
     throw new Error("Couldnt find event")
   }
 
-  const participants = await find("participants", { eventId: event._id })
+  const participants = await findMany("participants", { eventId: event.id })
 
   await Promise.all(participants.items.map((participant) => {
     return new Promise(async (resolve) => {
-      await destroy("participants", { _id: participant._id })
+      await destroyOne("participants", { id: participant.id })
       resolve()
     })
   }))
 
-  const results = await destroy("events", filter, options)
-  return results
+  const result = await destroyOne("events", filter, options)
+  return result
+}
+
+const removeMany = () => {
+  destroyMany()
 }
 
 export default {
-  list, select, create, remove
+  list, select, create, removeOne, removeMany
 }

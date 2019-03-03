@@ -6,5 +6,6 @@ export default {
   }),
   select: jest.fn().mockResolvedValue(rangesFixture[0]),
   create: jest.fn().mockResolvedValue(rangesFixture[0]),
-  remove: jest.fn().mockResolvedValue(true)
+  removeOne: jest.fn().mockResolvedValue(true),
+  removeMany: jest.fn().mockResolvedValue(true)
 }

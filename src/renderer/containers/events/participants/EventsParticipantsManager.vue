@@ -55,7 +55,7 @@
 <template>
   <div class="events-participants-manager">
     <div
-      v-loading="clubsListIsLoading"
+      v-loading="clubsStateListIsLoading"
       class="content column clubs"
     >
       <h5 class="h5 py-2">
@@ -71,10 +71,10 @@
 
       <ul class="list">
         <li
-          v-for="club in clubsList"
-          :key="club._id"
+          v-for="club in clubsStateList"
+          :key="club.id"
           :class="[ 'list_item', isClubActive(club) ]"
-          @click="fetchClubsMemebersListAsync(club)"
+          @click="fetchClubsMemebersList(club)"
         >
           {{ club.name }} <i class="el-icon-arrow-right" />
         </li>
@@ -82,7 +82,7 @@
     </div>
 
     <div
-      v-loading="clubsSelectedOrListIsLoading"
+      v-loading="clubsIsLoading"
       class="content column clubs_members"
     >
       <h5 class="h5 py-2">
@@ -102,7 +102,7 @@
       >
         <li
           v-for="member in clubsMembersListFilteredByEventsParticipants"
-          :key="member._id"
+          :key="member.id"
           class="list_item"
           @click="eventsParticipantsOpenCreateDialog(member)"
         >
@@ -126,7 +126,7 @@
     </div>
 
     <div
-      v-loading="eventsParticipantsListOrRemoveIsLoading"
+      v-loading="eventsParticipantsIsLoading"
       class="content column event_participants"
     >
       <h5 class="h5 py-2">
@@ -142,10 +142,10 @@
 
       <ul class="list">
         <li
-          v-for="participant in eventsParticipantsList"
-          :key="participant._id"
+          v-for="participant in eventsParticipantsStateList"
+          :key="participant.id"
           class="list_item"
-          @click="eventsParticipantsDeleteAsync(participant)"
+          @click="eventsParticipantsDeleteOne(participant)"
         >
           <div class="list_item_member">
             <avatar
@@ -176,7 +176,7 @@
       @close="eventsParticipantsOnCloseCreateDialog"
     >
       <div
-        v-loading="eventsParticipantsCreateIsLoading"
+        v-loading="eventsParticipantsStateCreateIsLoading"
         class="dialog_content"
       >
         <el-form
@@ -192,13 +192,13 @@
             <el-select
               v-model="eventsParticipantsCreateForm.classes"
               placeholder="Select one or more class(es)"
-              :loading="classesListIsLoading"
+              :loading="classesStateListIsLoading"
             >
               <el-option
-                v-for="classItem in classesList"
-                :key="classItem._id"
+                v-for="classItem in classesStateList"
+                :key="classItem.id"
                 :label="classItem.name"
-                :value="classItem._id"
+                :value="classItem.id"
               />
             </el-select>
           </el-form-item>
@@ -277,91 +277,104 @@ export default {
 
   computed: {
     ...mapState("clubs", {
-      clubsListIsLoading: "listIsLoading",
-      clubsList: "list",
-      clubsSelectedIsLoading: "selectedIsLoading",
-      clubsSelected: "selected"
+      clubsStateListIsLoading: "listIsLoading",
+      clubsStateList: "list",
+      clubsStateSelectedIsLoading: "selectedIsLoading",
+      clubsStateSelected: "selected"
     }),
+
     ...mapState("clubs/members", {
-      clubsMembersList: "list",
-      clubsMembersListIsLoading: "listIsLoading"
+      clubsMembersStateList: "list",
+      clubsMembersStateListIsLoading: "listIsLoading"
     }),
+
     ...mapState("events/participants", {
-      eventsParticipantsList: "list",
-      eventsParticipantsListIsLoading: "listIsLoading",
-      eventsParticipantsCreateIsLoading: "createIsLoading",
-      eventsParticipantsRemoveIsLoading: "removeIsLoading"
+      eventsParticipantsStateList: "list",
+      eventsParticipantsStateListIsLoading: "listIsLoading",
+      eventsParticipantsStateCreateIsLoading: "createIsLoading",
+      eventsParticipantsStateRemoveOneIsLoading: "removeOneIsLoading"
     }),
+
     ...mapState("classes", {
-      classesListIsLoading: "listIsLoading",
-      classesList: "list"
+      classesStateListIsLoading: "listIsLoading",
+      classesStateList: "list"
     }),
+
     showClubMembers() {
-      return Object.keys(this.clubsSelected).length > 0
+      return Object.keys(this.clubsStateSelected).length > 0
     },
+
     clubsMembersListFilteredByEventsParticipants() {
-      return this.clubsMembersList.filter((member) => {
-        return !this.eventsParticipantsList.filter(
+      return this.clubsMembersStateList.filter((member) => {
+        return !this.eventsParticipantsStateList.filter(
           (participant) => {
-            return participant.memberId === member._id
+            return participant.memberId === member.id
           }
         ).length > 0
       })
     },
-    clubsSelectedOrListIsLoading() {
-      return (this.clubsSelectedIsLoading || this.clubsMembersListIsLoading)
+
+    clubsIsLoading() {
+      return (
+        this.clubsStateSelectedIsLoading ||
+        this.clubsMembersStateListIsLoading
+      )
     },
-    eventsParticipantsListOrRemoveIsLoading() {
-      return (this.eventsParticipantsListIsLoading || this.eventsParticipantsRemoveIsLoading)
+
+    eventsParticipantsIsLoading() {
+      return (
+        this.eventsParticipantsStateListIsLoading ||
+        this.eventsParticipantsStateRemoveOneIsLoading
+      )
     }
   },
 
   async created() {
-    this.eventsParticipantsSetListFilter({ eventId: this.event._id })
-    await this.eventsParticipantsListAsync()
-    await this.clubsListAsync()
-    await this.classesListAsync()
+    this.eventsParticipantsMutationsSetListFilter({ eventId: this.event.id })
+    await this.eventsParticipantsActionsList()
+    await this.clubsActionsList()
+    await this.classesActionsList()
   },
 
   methods: {
     isClubActive(club) {
-      if(this.clubsSelected && club._id === this.clubsSelected._id) {
+      if(this.clubsStateSelected && club.id === this.clubsStateSelected.id) {
         return "is-active"
       }
     },
 
     ...mapMutations("events/participants", {
-      eventsParticipantsSetListFilter: "SET_LIST_FILTER"
+      eventsParticipantsMutationsSetListFilter: "SET_LIST_FILTER"
     }),
 
     ...mapActions("events/participants", {
-      eventsParticipantsListAsync: "listAsync",
-      eventsParticipantsCreateAsync: "createAsync",
-      eventsParticipantsRemoveAsync: "removeAsync"
+      eventsParticipantsActionsList: "list",
+      eventsParticipantsActionsCreate: "create",
+      eventsParticipantsActionsRemoveOne: "removeOne"
     }),
 
     ...mapActions("clubs", {
-      clubsListAsync: "listAsync",
-      clubsSelectAsync: "selectAsync"
+      clubsActionsList: "list",
+      clubsActionsSelect: "select"
     }),
 
     ...mapActions("clubs/members", {
-      clubsMembersListAsync: "listAsync"
+      clubsMembersActionsList: "list"
     }),
 
     ...mapMutations("clubs/members", {
-      clubsMembersSetListFilter: "SET_LIST_FILTER"
+      clubsMembersMutationsSetListFilter: "SET_LIST_FILTER"
     }),
 
     ...mapActions("classes", {
-      classesListAsync: "listAsync"
+      classesActionsList: "list"
     }),
 
-    async fetchClubsMemebersListAsync(club) {
+    async fetchClubsMemebersList(club) {
       try {
-        await this.clubsSelectAsync({ _id: club._id })
-        this.clubsMembersSetListFilter({ clubId: club._id })
-        await this.clubsMembersListAsync()
+        await this.clubsActionsSelect({ id: club.id })
+        this.clubsMembersMutationsSetListFilter({ clubId: club.id })
+        await this.clubsMembersActionsList()
       } catch(e) {
         this.$notify({
           type: "error",
@@ -373,8 +386,8 @@ export default {
 
     eventsParticipantsOpenCreateDialog(member) {
       this.eventsParticipantsSelectedMember = member
-      this.eventsParticipantsCreateForm.memberId = member._id
-      this.eventsParticipantsCreateForm.eventId = this.event._id
+      this.eventsParticipantsCreateForm.memberId = member.id
+      this.eventsParticipantsCreateForm.eventId = this.event.id
       this.eventsParticipantsShowCreateDialog = true
     },
 
@@ -389,15 +402,20 @@ export default {
         }
 
         try {
-          await this.eventsParticipantsCreateAsync(this.eventsParticipantsCreateForm)
+          const fullName = `${this.eventsParticipantsSelectedMember.firstName} ${this.eventsParticipantsSelectedMember.lastName}`
+          await this.eventsParticipantsActionsCreate(this.eventsParticipantsCreateForm)
           this.$notify({
             type: "success",
             title: "Success",
-            message: `${this.eventsParticipantsSelectedMember.firstName} ${this.eventsParticipantsSelectedMember.lastName} was added to the event`
+            message: `${fullName} was added to the event`
           })
-          await this.eventsParticipantsListAsync()
+          await this.eventsParticipantsActionsList()
         } catch(e) {
-          this.$notify({ type: "error", title: "Oops!", message: e.message })
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
         }
       })
     },
@@ -411,14 +429,15 @@ export default {
       this.eventsParticipantsShowCreateDialog = false
     },
 
-    async eventsParticipantsDeleteAsync(participant) {
+    async eventsParticipantsDeleteOne(participant) {
       try {
-        // const filter = { eventId: this.event._id, memberId: participant._id }
-        await this.eventsParticipantsRemoveAsync(participant)
+        // const filter = { eventId: this.event.id, memberId: participant.id }
+        const fullName = `${participant.member.firstName} ${participant.member.lastName}`
+        await this.eventsParticipantsActionsRemoveOne(participant)
         this.$notify({
           type: "success",
           title: "Success",
-          message: `${participant.member.firstName} ${participant.member.lastName} was removed from the event`
+          message: `${fullName} was removed from the event`
         })
       } catch(e) {
         this.$notify({

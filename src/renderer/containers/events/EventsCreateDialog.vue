@@ -16,7 +16,7 @@
     @close="close"
   >
     <div
-      v-loading="eventsCreateIsLoading"
+      v-loading="eventsStateCreateIsLoading"
       class="dialog_content"
     >
       <el-form
@@ -59,7 +59,7 @@
               placeholder="Select a category"
             >
               <el-option
-                v-for="(category, index) in eventsCategories"
+                v-for="(category, index) in eventsStateCategories"
                 :key="index"
                 :label="category"
                 :value="category"
@@ -86,13 +86,13 @@
           <el-select
             v-model="form.organizerId"
             placeholder="Select the organizer"
-            :loading="clubsListIsLoading"
+            :loading="clubsStateListIsLoading"
           >
             <el-option
-              v-for="club in clubsList"
-              :key="club._id"
+              v-for="club in clubsStateList"
+              :key="club.id"
               :label="club.name"
-              :value="club._id"
+              :value="club.id"
             />
           </el-select>
         </el-form-item>
@@ -191,12 +191,12 @@ export default {
 
   computed: {
     ...mapState("events", {
-      eventsCreateIsLoading: "createIsLoading",
-      eventsCategories: "categories"
+      eventsStateCreateIsLoading: "createIsLoading",
+      eventsStateCategories: "categories"
     }),
     ...mapState("clubs", {
-      clubsListIsLoading: "createIsLoading",
-      clubsList: "list"
+      clubsStateListIsLoading: "createIsLoading",
+      clubsStateList: "list"
     })
   },
 
@@ -209,18 +209,19 @@ export default {
 
   methods: {
     async open() {
-      await this.clubsListAsync()
+      await this.clubsActionsList()
     },
 
     ...mapActions("events", {
-      eventsCreateAsync: "createAsync"
+      eventsActionsCreate: "create"
     }),
+
     ...mapActions("clubs", {
-      clubsListAsync: "listAsync"
+      clubsActionsList: "list"
     }),
 
     submit() {
-      this.$refs.form.validate((isValid) => {
+      this.$refs.form.validate(async (isValid) => {
         if(!isValid) {
           return this.$notify({
             type: "error",
@@ -233,27 +234,24 @@ export default {
         data.startsAt = data.dates[0]
         data.endsAt = data.dates[1]
         delete data.dates
-        this.eventsCreateFormSubmit(data)
-      })
-    },
 
-    async eventsCreateFormSubmit(form) {
-      try {
-        await this.eventsCreateAsync(form)
-        this.$notify({
-          type: "success",
-          title: "Great success",
-          message: `${form.title} was successfully added to the database`
-        })
-        this.clear()
-        this.close()
-      } catch(e) {
-        this.$notify({
-          type: "error",
-          title: "Oops!",
-          message: e.message
-        })
-      }
+        try {
+          await this.eventsActionsCreate(this.form)
+          this.$notify({
+            type: "success",
+            title: "Great success",
+            message: `${this.form.title} was successfully added to the database`
+          })
+          this.clear()
+          this.close()
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      })
     },
 
     clear() {

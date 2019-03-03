@@ -9,7 +9,7 @@
     @close="close"
   >
     <div
-      v-loading="classesCreateIsLoading"
+      v-loading="classesStateCreateIsLoading"
       class="dialog_content"
     >
       <el-form
@@ -47,7 +47,7 @@
             placeholder="Select a category"
           >
             <el-option
-              v-for="(category, index) in classesCategories"
+              v-for="(category, index) in classesStateCategories"
               :key="index"
               :label="category"
               :value="category"
@@ -64,7 +64,7 @@
             placeholder="Select a condition"
           >
             <el-option
-              v-for="(condition, index) in classesConditions"
+              v-for="(condition, index) in classesStateConditions"
               :key="index"
               :label="condition"
               :value="condition"
@@ -258,9 +258,9 @@ export default {
   },
 
   computed: mapState("classes", {
-    classesCreateIsLoading: "createIsLoading",
-    classesCategories: "categories",
-    classesConditions: "conditions"
+    classesStateCreateIsLoading: "createIsLoading",
+    classesStateCategories: "categories",
+    classesStateConditions: "conditions"
   }),
 
   watch: {
@@ -272,11 +272,11 @@ export default {
 
   methods: {
     ...mapActions("classes", {
-      classesCreateAsync: "createAsync"
+      classesActionsCreate: "create"
     }),
 
     submit() {
-      this.$refs.form.validate((isValid) => {
+      this.$refs.form.validate(async (isValid) => {
         if(!isValid) {
           return this.$notify({
             type: "error",
@@ -284,27 +284,24 @@ export default {
             message: "Please fill in all required fields before saving"
           })
         }
-        this.classesCreateFormSubmit(this.form)
-      })
-    },
 
-    async classesCreateFormSubmit(form) {
-      try {
-        await this.classesCreateAsync(form)
-        this.$notify({
-          type: "success",
-          title: "Great success",
-          message: `${form.name} was successfully added to the database`
-        })
-        this.clear()
-        this.close()
-      } catch(e) {
-        this.$notify({
-          type: "error",
-          title: "Oops!",
-          message: e.message
-        })
-      }
+        try {
+          await this.classesActionsCreate(this.form)
+          this.$notify({
+            type: "success",
+            title: "Great success",
+            message: `${this.form.name} was successfully added to the database`
+          })
+          this.clear()
+          this.close()
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      })
     },
 
     clear() {

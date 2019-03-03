@@ -59,13 +59,13 @@ describe("RangesListTable", () => {
 
   it("should get a list of ranges", () => {
     const wrapper = build()
-    expect(rangesStore.actions.listAsync).toHaveBeenCalled()
-    expect(wrapper.vm.rangesList).toBe(rangesFixture)
+    expect(rangesStore.actions.list).toHaveBeenCalled()
+    expect(wrapper.vm.rangesStateList).toBe(rangesFixture)
   })
 
   it("should filter table by searching for a name", () => {
     const wrapper = build()
-    wrapper.vm.rangesSetSearchFilter(rangesFixture[0].name)
+    wrapper.vm.rangesMutationsSetSearchFilter(rangesFixture[0].name)
     expect(rangesStore.mutations.SET_SEARCH_FILTER).toHaveBeenCalled()
   })
 })

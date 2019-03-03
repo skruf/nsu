@@ -1,15 +1,14 @@
 <style lang="stylus">
-// .events-divisions
 </style>
 
 <template>
   <div
-    v-loading="eventsDivisionsContestantsListIsLoading"
+    v-loading="eventsDivisionsContestantsStateListIsLoading"
     class="events-divisions"
   >
     <el-table
       :data="eventsDivisionsContestantsListLocal"
-      row-key="_id"
+      row-key="id"
       empty-text
     >
       <el-table-column
@@ -127,23 +126,27 @@ export default {
   }),
 
   computed: mapState("events/divisions/contestants", {
-    eventsDivisionsContestantsListIsLoading: "listIsLoading",
-    eventsDivisionsContestantsCount: "count",
-    eventsDivisionsContestantsList: "list"
+    eventsDivisionsContestantsStateListIsLoading: "listIsLoading",
+    eventsDivisionsContestantsStateCount: "count",
+    eventsDivisionsContestantsStateList: "list"
   }),
 
   async created() {
-    this.eventsDivisionsContestantsSetListFilter({ divisionId: this.division._id })
-    await this.eventsDivisionsContestantsListAsync()
-    this.eventsDivisionsContestantsListLocal = [ ...this.eventsDivisionsContestantsList ]
+    this.eventsDivisionsContestantsMutationsSetListFilter({
+      divisionId: this.division.id
+    })
+    await this.eventsDivisionsContestantsActionsList()
+    this.eventsDivisionsContestantsListLocal = [
+      ...this.eventsDivisionsContestantsStateList
+    ]
   },
 
   methods: {
     ...mapMutations("events/divisions/contestants", {
-      "eventsDivisionsContestantsSetListFilter": "SET_LIST_FILTER"
+      "eventsDivisionsContestantsMutationsSetListFilter": "SET_LIST_FILTER"
     }),
     ...mapActions("events/divisions/contestants", {
-      eventsDivisionsContestantsListAsync: "listAsync"
+      eventsDivisionsContestantsActionsList: "list"
     }),
     eventsDivisionsContestantsOpenCreateDialog() {
       this.$emit("eventsDivisionsContestantsOpenCreateDialog")

@@ -18,9 +18,10 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: eventsParticipantsService.list,
-      createAsync: eventsParticipantsService.create,
-      removeAsync: eventsParticipantsService.remove
+      list: eventsParticipantsService.list,
+      create: eventsParticipantsService.create,
+      removeOne: eventsParticipantsService.removeOne,
+      removeMany: eventsParticipantsService.removeMany
     }
   },
   {

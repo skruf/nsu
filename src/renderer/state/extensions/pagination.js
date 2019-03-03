@@ -1,5 +1,5 @@
 const defaultOptions = {
-  action: "listAsync"
+  action: "list"
 }
 
 export default (options) => {
@@ -21,11 +21,11 @@ export default (options) => {
     state.pageCurrent = pageCurrent
   }
 
-  actions.setPageSizeAsync = async ({ commit, dispatch }, pageSize) => {
+  actions.setPageSize = async ({ commit, dispatch }, pageSize) => {
     commit("SET_PAGE_SIZE", pageSize)
     await dispatch(config.action)
   }
-  actions.setPageCurrentAsync = async ({ commit, dispatch }, pageCurrent) => {
+  actions.setPageCurrent = async ({ commit, dispatch }, pageCurrent) => {
     commit("SET_PAGE_CURRENT", pageCurrent)
     await dispatch(config.action)
   }

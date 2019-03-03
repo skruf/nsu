@@ -10,6 +10,6 @@ export default {
     SET_SEARCH_FILTER: jest.fn()
   },
   actions: {
-    listAsync: jest.fn().mockResolvedValue(rangesFixture)
+    list: jest.fn().mockResolvedValue(rangesFixture)
   }
 }

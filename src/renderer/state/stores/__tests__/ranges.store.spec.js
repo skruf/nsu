@@ -19,7 +19,7 @@ describe("ranges.store", () => {
   it("should fetch and set a list of ranges", async () => {
     const { actions, state } = rangesStore
 
-    const res = await actions.listAsync({ commit, state })
+    const res = await actions.list({ commit, state })
     await flushPromises()
 
     expect(rangesService.list).toHaveBeenCalled()
@@ -44,11 +44,11 @@ describe("ranges.store", () => {
     const { actions, state } = rangesStore
     const sortBy = "area"
 
-    await actions.setSortingAsync({ commit, state, dispatch }, sortBy)
+    await actions.setSorting({ commit, state, dispatch }, sortBy)
     await flushPromises()
 
     expect(commit).toHaveBeenNthCalledWith(1, "SET_SORTING", sortBy)
-    expect(dispatch).toHaveBeenNthCalledWith(1, "listAsync")
+    expect(dispatch).toHaveBeenNthCalledWith(1, "list")
   })
   it("should be able to set asc/desc sorting", async () => {
     const { mutations, state } = rangesStore
@@ -65,11 +65,11 @@ describe("ranges.store", () => {
     const { actions, state } = rangesStore
     const search = "area"
 
-    await actions.setSearchFilterAsync({ commit, state, dispatch }, search)
+    await actions.setSearchFilter({ commit, state, dispatch }, search)
     await flushPromises()
 
     expect(commit).toHaveBeenNthCalledWith(1, "SET_SEARCH_FILTER", search)
-    expect(dispatch).toHaveBeenNthCalledWith(1, "listAsync")
+    expect(dispatch).toHaveBeenNthCalledWith(1, "list")
   })
   it("should be able to set search filter", async () => {
     const { mutations, state } = rangesStore
@@ -85,14 +85,14 @@ describe("ranges.store", () => {
     const pageSize = 30
     const pageCurrent = 2
 
-    await actions.setPageSizeAsync({ commit, state, dispatch }, pageSize)
-    await actions.setPageCurrentAsync({ commit, state, dispatch }, pageCurrent)
+    await actions.setPageSize({ commit, state, dispatch }, pageSize)
+    await actions.setPageCurrent({ commit, state, dispatch }, pageCurrent)
     await flushPromises()
 
     expect(commit).toHaveBeenNthCalledWith(1, "SET_PAGE_SIZE", pageSize)
     expect(commit).toHaveBeenNthCalledWith(2, "SET_PAGE_CURRENT", pageCurrent)
-    expect(dispatch).toHaveBeenNthCalledWith(1, "listAsync")
-    expect(dispatch).toHaveBeenNthCalledWith(2, "listAsync")
+    expect(dispatch).toHaveBeenNthCalledWith(1, "list")
+    expect(dispatch).toHaveBeenNthCalledWith(2, "list")
   })
   it("should be able to set pagination", async () => {
     const { mutations, state } = rangesStore
@@ -110,7 +110,7 @@ describe("ranges.store", () => {
   it("should fetch and set a selected range", async () => {
     const { actions, state } = rangesStore
 
-    const res = await actions.selectAsync({ commit, state })
+    const res = await actions.select({ commit, state })
     await flushPromises()
 
     expect(rangesService.select).toHaveBeenCalled()
@@ -128,7 +128,7 @@ describe("ranges.store", () => {
   it("should create and add a range with action", async () => {
     const { actions, state } = rangesStore
 
-    const res = await actions.createAsync({ commit, state }, rangesFixture[0])
+    const res = await actions.create({ commit, state }, rangesFixture[0])
     await flushPromises()
 
     expect(rangesService.create).toHaveBeenCalled()
@@ -147,10 +147,10 @@ describe("ranges.store", () => {
   it("should remove a range with action", async () => {
     const { actions, state } = rangesStore
 
-    const res = await actions.removeAsync({ commit, state }, rangesFixture[0])
+    const res = await actions.removeOne({ commit, state }, rangesFixture[0])
     await flushPromises()
 
-    expect(rangesService.remove).toHaveBeenCalled()
+    expect(rangesService.removeOne).toHaveBeenCalled()
     expect(commit).toHaveBeenNthCalledWith(1, "SET_REMOVE_LOADING", true)
     expect(commit).toHaveBeenNthCalledWith(2, "REMOVE_ONE", rangesFixture[0])
     expect(commit).toHaveBeenNthCalledWith(3, "SET_REMOVE_LOADING", false)

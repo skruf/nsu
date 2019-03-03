@@ -6,21 +6,21 @@
   "collections": [
     {
       "name": "ranges",
-      "schemaHash": "d966266ffd6fa9925672f9154fa9237f",
+      "schemaHash": "3acd71c958fc6d97ddc6ea636b624674",
       "encrypted": false,
       "passwordHash": null,
       "docs": []
     },
     {
       "name": "classes",
-      "schemaHash": "1f8067364f41df6ae13df3f4bc4d82dd",
+      "schemaHash": "c878d70b304d2f3e89de92fd6aa8c486",
       "encrypted": false,
       "passwordHash": null,
       "docs": []
     },
     {
       "name": "clubs",
-      "schemaHash": "9b8b498aa3c7587dba75ce7699819e77",
+      "schemaHash": "224e6a7acb94cbfb9814b9a738293a6a",
       "encrypted": false,
       "passwordHash": null,
       "docs": [
@@ -148,28 +148,28 @@
     },
     {
       "name": "clubs_members",
-      "schemaHash": "e958a4ae611e50a46b8f00e9e972a376",
+      "schemaHash": "3c3e71b09691cb24225da1af1bf67d57",
       "encrypted": false,
       "passwordHash": null,
       "docs": []
     },
     {
       "name": "events",
-      "schemaHash": "0066348dda930ce23fde43e47175849d",
+      "schemaHash": "776529c9257e63672f498dc82e268fe4",
       "encrypted": false,
       "passwordHash": null,
       "docs": []
     },
     {
       "name": "events_participants",
-      "schemaHash": "56e3e6eaf3b6337c3a92c3fb12108384",
+      "schemaHash": "7b6540e4946e10e1cf17a6dc03270e62",
       "encrypted": false,
       "passwordHash": null,
       "docs": []
     },
     {
       "name": "events_divisions",
-      "schemaHash": "3cb9634db0c8105cb260ae5d81e59244",
+      "schemaHash": "bb2535d03e92d99f9b1be218d8f19a65",
       "encrypted": false,
       "passwordHash": null,
       "docs": []

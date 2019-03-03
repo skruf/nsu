@@ -21,10 +21,11 @@ const modules = [
   {
     module: "crud",
     options: {
-      listAsync: rangesService.list,
-      selectAsync: rangesService.select,
-      createAsync: rangesService.create,
-      removeAsync: rangesService.remove
+      list: rangesService.list,
+      select: rangesService.select,
+      create: rangesService.create,
+      removeOne: rangesService.removeOne,
+      removeMany: rangesService.removeMany
     }
   },
   {

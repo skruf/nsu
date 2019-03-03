@@ -11,7 +11,7 @@
     @close="close"
   >
     <div
-      v-loading="clubsMembersCreateIsLoading"
+      v-loading="clubsMembersStateCreateIsLoading"
       class="dialog_content"
     >
       <el-form
@@ -69,7 +69,7 @@
             placeholder="Select a country"
           >
             <el-option
-              v-for="(country, index) in clubsMembersCountries"
+              v-for="(country, index) in clubsMembersStateCountries"
               :key="index"
               :label="country"
               :value="country"
@@ -85,10 +85,10 @@
           <el-select
             v-model="form.clubId"
             placeholder="Select a club"
-            :loading="clubsListIsLoading"
+            :loading="clubsStateListIsLoading"
           >
             <el-option
-              v-for="club in clubsList"
+              v-for="club in clubsStateList"
               :key="club.id"
               :label="club.name"
               :value="club.id"
@@ -144,13 +144,15 @@ export default {
 
   computed: {
     ...mapState("clubs", {
-      clubsListIsLoading: "listIsLoading",
-      clubsList: "list"
+      clubsStateListIsLoading: "listIsLoading",
+      clubsStateList: "list"
     }),
+
     ...mapState("clubs/members", {
-      clubsMembersCreateIsLoading: "createIsLoading",
-      clubsMembersCountries: "countries"
+      clubsMembersStateCreateIsLoading: "createIsLoading",
+      clubsMembersStateCountries: "countries"
     }),
+
     clubNotProvided() {
       return !(this.clubId && this.clubName)
     }
@@ -166,20 +168,20 @@ export default {
   methods: {
     async open() {
       if(this.clubNotProvided) {
-        await this.clubsListAsync()
+        await this.clubsActionsList()
       }
     },
 
     ...mapActions("clubs/members", {
-      clubsMembersCreateAsync: "createAsync"
+      clubsMembersActionsCreate: "create"
     }),
 
     ...mapActions("clubs", {
-      clubsListAsync: "listAsync"
+      clubsActionsList: "list"
     }),
 
     submit() {
-      this.$refs.form.validate((isValid) => {
+      this.$refs.form.validate(async (isValid) => {
         if(!isValid) {
           return this.$notify({
             type: "error",
@@ -187,30 +189,29 @@ export default {
             message: "Please fill in all required fields before saving"
           })
         }
+
         if(!this.clubNotProvided) {
           this.form.clubId = this.clubId
         }
-        this.clubsMembersCreateFormSubmit(this.form)
-      })
-    },
 
-    async clubsMembersCreateFormSubmit(form) {
-      try {
-        await this.clubsMembersCreateAsync(form)
-        this.$notify({
-          type: "success",
-          title: "Great success",
-          message: `${form.firstName} ${form.lastName} was successfully added to the database`
-        })
-        this.clear()
-        this.close()
-      } catch(e) {
-        this.$notify({
-          title: "Oops!",
-          type: "error",
-          message: e.message
-        })
-      }
+        try {
+          await this.clubsMembersActionsCreate(this.form)
+          const fullName = `${this.form.firstName} ${this.form.lastName}`
+          this.$notify({
+            type: "success",
+            title: "Great success",
+            message: `${fullName} was successfully added to the database`
+          })
+          this.clear()
+          this.close()
+        } catch(e) {
+          this.$notify({
+            title: "Oops!",
+            type: "error",
+            message: e.message
+          })
+        }
+      })
     },
 
     clear() {

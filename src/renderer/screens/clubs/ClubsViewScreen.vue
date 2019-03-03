@@ -4,31 +4,31 @@
 <template>
   <el-container
     id="clubs-view-screen"
-    v-loading="clubsSelectedIsLoading"
+    v-loading="clubsStateSelectedIsLoading"
     class="screen"
   >
     <el-header height="auto">
       <breadcrumb-bar
         :paths="[
           { to: '/clubs', label: 'Clubs' },
-          { to: `/clubs/${clubsSelected.id}`, label: clubsSelected.name }
+          { to: `/clubs/${clubsStateSelected.id}`, label: clubsStateSelected.name }
         ]"
       />
 
       <div class="page-meta">
         <div class="page-titles">
           <h1 class="h1">
-            {{ clubsSelected.name }}
+            {{ clubsStateSelected.name }}
           </h1>
           <small class="small">
-            <span v-if="clubsSelected.address">
-              {{ clubsSelected.address }}
+            <span v-if="clubsStateSelected.address">
+              {{ clubsStateSelected.address }}
             </span>
-            <span v-if="clubsSelected.area">
-              , {{ clubsSelected.area }}
+            <span v-if="clubsStateSelected.area">
+              , {{ clubsStateSelected.area }}
             </span>
-            <span v-if="clubsSelected.country">
-              , {{ clubsSelected.country }}
+            <span v-if="clubsStateSelected.country">
+              , {{ clubsStateSelected.country }}
             </span>
           </small>
         </div>
@@ -36,7 +36,7 @@
         <div class="page-controls">
           <el-dropdown
             trigger="click"
-            @command="clubsSelectedDispatchActions"
+            @command="clubsDispatchActions"
           >
             <el-button type="text">
               <div class="flex items-center">
@@ -63,44 +63,44 @@
     <el-main>
       <div class="info-grid">
         <div
-          v-if="clubsSelected.email"
+          v-if="clubsStateSelected.email"
           class="info-grid_item"
         >
           <h6 class="h6 info-grid_item_key">
             Email:
           </h6>
           <p class="info-grid_item_value">
-            {{ clubsSelected.email }}
+            {{ clubsStateSelected.email }}
           </p>
         </div>
         <div
-          v-if="clubsSelected.leader"
+          v-if="clubsStateSelected.leader"
           class="info-grid_item"
         >
           <h6 class="h6 info-grid_item_key">
             Leader:
           </h6>
           <p class="info-grid_item_value">
-            {{ clubsSelected.leader }}
+            {{ clubsStateSelected.leader }}
           </p>
         </div>
         <div
-          v-if="clubsSelected.range"
+          v-if="clubsStateSelected.range"
           class="info-grid_item"
         >
           <h6 class="h6 info-grid_item_key">
             Range:
           </h6>
           <p class="info-grid_item_value">
-            {{ clubsSelected.range.name }} ({{ clubsSelected.range.area }})
+            {{ clubsStateSelected.range.name }} ({{ clubsStateSelected.range.area }})
           </p>
         </div>
       </div>
 
       <div class="content">
         <clubs-members-list-table
-          v-if="!clubsSelectedIsLoading"
-          :club-id="clubsSelected.id"
+          v-if="!clubsStateSelectedIsLoading"
+          :club-id="clubsStateSelected.id"
           @clubsMembersOpenCreateDialog="clubsMembersOpenCreateDialog"
         />
       </div>
@@ -116,9 +116,9 @@
     </el-footer>
 
     <clubs-members-create-dialog
-      v-if="!clubsSelectedIsLoading"
-      :club-id="clubsSelected.id"
-      :club-name="clubsSelected.name"
+      v-if="!clubsStateSelectedIsLoading"
+      :club-id="clubsStateSelected.id"
+      :club-name="clubsStateSelected.name"
       :shown.sync="clubsMembersShowCreateDialog"
     />
   </el-container>
@@ -143,23 +143,21 @@ export default {
     clubsMembersShowCreateDialog: false
   }),
 
-  computed: {
-    ...mapState("clubs", {
-      clubsSelectedIsLoading: "selectedIsLoading",
-      clubsSelected: "selected"
-    })
-  },
+  computed: mapState("clubs", {
+    clubsStateSelectedIsLoading: "selectedIsLoading",
+    clubsStateSelected: "selected"
+  }),
 
   async created() {
-    await this.clubsSelectAsync({ id: this.$route.params.clubId })
+    await this.clubsActionsSelect({ id: this.$route.params.clubId })
   },
 
   methods: {
     ...mapActions("clubs", {
-      clubsSelectAsync: "selectAsync"
+      clubsActionsSelect: "select"
     }),
 
-    clubsSelectedDispatchActions() {},
+    clubsDispatchActions() {},
 
     clubsMembersOpenCreateDialog() {
       this.clubsMembersShowCreateDialog = true

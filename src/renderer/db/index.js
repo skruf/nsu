@@ -30,11 +30,10 @@ export default async () => {
 
   // db.$.subscribe((event) => { console.log(event) })
 
-  const timestamp = { type: "string", index: true }
   await Promise.all(collections.map(
     (collection) => {
-      collection.schema.properties.updatedAt = timestamp
-      collection.schema.properties.createdAt = timestamp
+      collection.schema.properties.updatedAt = { type: "string" }
+      collection.schema.properties.createdAt = { type: "string", index: true }
       return db.collection(collection)
     })
   )

@@ -90,7 +90,7 @@
     @close="eventsDivisionsCreateDialogClose"
   >
     <div
-      v-loading="eventsDivisionsCreateIsLoading || eventsDivisionsContestantsCreateIsLoading"
+      v-loading="eventsDivisionsIsLoading"
       class="dialog_content flex flex-1"
     >
       <div class="pr-5 w-full">
@@ -175,7 +175,7 @@
 
         <div
           v-if="eventsDivisionsContestantsForms.length > 0"
-          v-loading="eventsParticipantsListIsLoading"
+          v-loading="eventsParticipantsStateListIsLoading"
           class="border-t"
         >
           <h4 class="h4 mt-4 mb-6">
@@ -216,7 +216,7 @@
               <el-select
                 v-model="contestantForm.memberId"
                 placeholder="Select a participant"
-                :loading="eventsParticipantsListIsLoading"
+                :loading="eventsParticipantsStateListIsLoading"
                 clearable
                 @change="eventsParticipantsSetUnavailable"
               >
@@ -238,13 +238,13 @@
               <el-select
                 v-model="contestantForm.classId"
                 placeholder="Select a class"
-                :loading="classesListIsLoading"
+                :loading="classesStateListIsLoading"
               >
                 <el-option
-                  v-for="classItem in classesList"
-                  :key="classItem._id"
+                  v-for="classItem in classesStateList"
+                  :key="classItem.id"
                   :label="classItem.name"
-                  :value="classItem._id"
+                  :value="classItem.id"
                 />
               </el-select>
             </el-form-item>
@@ -275,7 +275,7 @@
           <div class="">
             <h6 class="h6 inline">
               Contestants:
-            </h6> {{ eventsParticipantsList.length }}
+            </h6> {{ eventsParticipantsStateList.length }}
           </div>
           <div class="">
             <h6 class="h6 inline">
@@ -287,7 +287,7 @@
         <ul class="my-4">
           <li
             v-for="participant in eventsParticipantsListAvailable"
-            :key="participant._id"
+            :key="participant.id"
             class="px-5"
           >
             {{ participant.member.firstName }} {{ participant.member.lastName }}
@@ -378,45 +378,55 @@ export default {
 
   computed: {
     ...mapState("events/divisions", {
-      eventsDivisionsCreateIsLoading: "createIsLoading"
+      eventsDivisionsStateCreateIsLoading: "createIsLoading"
     }),
 
     ...mapState("events/divisions/contestants", {
-      eventsDivisionsContestantsCreateIsLoading: "createIsLoading",
-      eventsDivisionsContestantsCount: "count",
-      eventsDivisionsContestantsList: "list"
+      eventsDivisionsContestantsStateCreateIsLoading: "createIsLoading",
+      eventsDivisionsContestantsStateCount: "count",
+      eventsDivisionsContestantsStateList: "list"
     }),
 
     ...mapState("events/participants", {
-      eventsParticipantsListIsLoading: "listIsLoading",
-      eventsParticipantsCount: "count",
-      eventsParticipantsList: "list"
+      eventsParticipantsStateListIsLoading: "listIsLoading",
+      eventsParticipantsStateCount: "count",
+      eventsParticipantsStateList: "list"
     }),
 
     ...mapState("classes", {
-      classesListIsLoading: "listIsLoading",
-      classesList: "list"
+      classesStateListIsLoading: "listIsLoading",
+      classesStateList: "list"
     }),
 
     eventsDivisionsContestantsIsConfigured() {
       return this.eventsDivisionsForm.startsAt && this.eventsDivisionsForm.interval
     },
+
     starts() {
       return parseTimeInput(this.eventsDivisionsForm.startsAt)
     },
+
     interval() {
       return parseTimeInput(this.eventsDivisionsForm.interval)
     },
+
     eventsDivisionsEndsAt() {
       if(!this.eventsDivisionsContestantsIsConfigured) {
         return
       }
 
-      const amount = this.eventsParticipantsList.length
+      const amount = this.eventsParticipantsStateList.length
       const starts = toMinutes(this.starts.hours, this.starts.minutes)
       const interval = toMinutes(this.interval.hours, this.interval.minutes)
 
       return formatTime(starts + (interval * amount))
+    },
+
+    eventsDivisionsIsLoading() {
+      return (
+        this.eventsDivisionsStateCreateIsLoading ||
+        this.eventsDivisionsContestantsStateCreateIsLoading
+      )
     }
   },
 
@@ -429,20 +439,23 @@ export default {
 
   methods: {
     ...mapActions("events/divisions", {
-      eventsDivisionsCreateAsync: "createAsync"
+      eventsDivisionsActionsCreate: "create"
     }),
+
     ...mapActions("events/divisions/contestants", {
-      eventsDivisionsContestantsCreateAsync: "createAsync"
+      eventsDivisionsContestantsActionsCreate: "create"
     }),
 
     ...mapMutations("events/participants", {
-      eventsParticipantsSetListFilter: "SET_LIST_FILTER"
+      eventsParticipantsMutationsSetListFilter: "SET_LIST_FILTER"
     }),
+
     ...mapActions("events/participants", {
-      eventsParticipantsListAsync: "listAsync"
+      eventsParticipantsActionsList: "list"
     }),
+
     ...mapActions("classes", {
-      classesListAsync: "listAsync"
+      classesActionsList: "list"
     }),
 
     eventsDivisionsFormDayPickerOptionsDisabledDate(day) {
@@ -459,8 +472,8 @@ export default {
     // eventsParticipantsSetAavailable() {
     //   console.log(participantId)
     //
-    //   // const participant = this.eventsParticipantsList.filter(
-    //   //   ({ _id }) => _id === participantId
+    //   // const participant = this.eventsParticipantsStateList.filter(
+    //   //   ({ id }) => id === participantId
     //   // )[0]
     //
     //   // console.log(participant)
@@ -472,15 +485,15 @@ export default {
     // },
 
     async eventsDivisionsCreateDialogOpen() {
-      this.eventsParticipantsSetListFilter({ eventId: this.event._id })
-      await this.eventsParticipantsListAsync()
-      await this.classesListAsync()
-      this.eventsParticipantsListAvailable = [ ...this.eventsParticipantsList ]
+      this.eventsParticipantsMutationsSetListFilter({ eventId: this.event.id })
+      await this.eventsParticipantsActionsList()
+      await this.classesActionsList()
+      this.eventsParticipantsListAvailable = [ ...this.eventsParticipantsStateList ]
     },
 
     generateContestantList() {
       const contestantsForm = []
-      for(let i = 0; this.eventsParticipantsList.length > i; i++) {
+      for(let i = 0; this.eventsParticipantsStateList.length > i; i++) {
         const stub = { ...eventsDivisionsContestantsStub }
 
         const starts = toMinutes(this.starts.hours, this.starts.minutes)
@@ -493,7 +506,7 @@ export default {
     },
 
     eventsDivisionsCreateDialogSave() {
-      this.$refs.eventsDivisionsForm.validate((isValid) => {
+      this.$refs.eventsDivisionsForm.validate(async (isValid) => {
         if(!isValid) {
           return this.$notify({
             type: "error",
@@ -501,31 +514,35 @@ export default {
             message: "Please fill in all required fields before saving"
           })
         }
+
+        const division = this.eventsDivisionsForm
+        const contestants = this.eventsDivisionsContestantsForms
+
+        division.eventId = this.event.id
+        division.endsAt = this.eventsDivisionsEndsAt
+
+        try {
+          const createdDivision = await this.eventsDivisionsActionsCreate(division)
+          const contestantsWithDivision = contestants
+            .filter((contestant) => !!contestant.memberId)
+            .map((contestant) => ({ ...contestant, divisionId: createdDivision.id }))
+
+          await this.eventsDivisionsContestantsActionsCreate(contestantsWithDivision)
+          this.$notify({
+            type: "success",
+            title: "Great success",
+            message: `${division.name} was successfully added to the database`
+          })
+          this.eventsDivisionsFormClear()
+          this.eventsDivisionsCreateDialogClose()
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
       })
-
-      this.eventsDivisionsCreate(this.eventsDivisionsForm, this.eventsDivisionsContestantsForms)
-    },
-
-    async eventsDivisionsCreate(division, contestants) {
-      division.eventId = this.event._id
-      division.endsAt = this.eventsDivisionsEndsAt
-
-      try {
-        const createdDivision = await this.eventsDivisionsCreateAsync(division)
-        const contestantsWithDivision = contestants
-          .filter((contestant) => !!contestant.memberId)
-          .map((contestant) => ({ ...contestant, divisionId: createdDivision._id }))
-        await this.eventsDivisionsContestantsCreateAsync(contestantsWithDivision)
-        this.$notify({
-          type: "success",
-          title: "Great success",
-          message: `${division.name} was successfully added to the database`
-        })
-        this.eventsDivisionsFormClear()
-        this.eventsDivisionsCreateDialogClose()
-      } catch(e) {
-        this.$notify({ type: "error", title: "Oops!", message: e.message })
-      }
     },
 
     eventsDivisionsFormClear() {

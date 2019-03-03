@@ -6,19 +6,19 @@
     <search-form
       v-model="classesSearchFilter"
       placeholder="Search for a class by name"
-      @submit="classesSetSearchFilterAsync"
+      @submit="classesActionsSetSearchFilter"
     />
 
-    <div v-loading="classesListIsLoading || classesRemoveIsLoading">
+    <div v-loading="classesIsLoading">
       <el-table
-        :data="classesList"
-        :sort-by="classesSortBy"
-        row-key="_id"
+        :data="classesStateList"
+        :sort-by="classesStateSortBy"
+        row-key="id"
         class="table-clickable"
         empty-text
         @selection-change="classesSelectionChange"
         @row-click="classesRowClick"
-        @sort-change="classesSetSortingAsync"
+        @sort-change="classesActionsSetSorting"
       >
         <el-table-column
           type="selection"
@@ -84,23 +84,28 @@
             >
               <el-dropdown
                 trigger="click"
-                @command="classesTableDispatchActions"
+                @command="classesDispatchActions"
               >
                 <span class="el-dropdown-link">
                   <i class="table-button el-icon-more" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="removeSelection">
+                  <el-dropdown-item
+                    :command="{
+                      handler: 'classesRemoveMany'
+                    }"
+                  >
                     <i class="el-icon-delete el-icon--left" /> Remove selected
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
           </template>
+
           <template slot-scope="scope">
             <el-dropdown
               trigger="click"
-              @command="classesTableRowDispatchActions"
+              @command="classesDispatchActions"
             >
               <span class="el-dropdown-link">
                 <i class="table-button el-icon-more" />
@@ -109,8 +114,13 @@
                 <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
                   <i class="el-icon-edit el-icon--left"></i> Rediger
                 </el-dropdown-item> -->
-                <el-dropdown-item :command="{ handler: 'classesDelete', payload: scope.row }">
-                  <i class="el-icon-delete el-icon--left" /> Slett
+                <el-dropdown-item
+                  :command="{
+                    handler: 'classesRemoveOne',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-delete el-icon--left" /> Remove class
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -130,12 +140,12 @@
 
       <el-pagination
         layout="total, sizes, prev, pager, next"
-        :page-size="classesPageSize"
-        :current-page="classesPageCurrent"
+        :page-size="classesStatePageSize"
+        :current-page="classesStatePageCurrent"
         :page-sizes="[ 15, 30, 45, 60 ]"
-        :total="classesCount"
-        @size-change="classesSetPageSizeAsync"
-        @current-change="classesSetPageCurrentAsync"
+        :total="classesStateCount"
+        @size-change="classesActionsSetPageSize"
+        @current-change="classesActionsSetPageCurrent"
       />
     </div>
   </div>
@@ -159,91 +169,127 @@ export default {
 
   computed: {
     ...mapState("classes", {
-      classesListIsLoading: "listIsLoading",
-      classesRemoveIsLoading: "removeIsLoading",
-      classesSortBy: "sortBy",
-      classesPageSize: "pageSize",
-      classesPageCurrent: "pageCurrent",
-      classesCount: "count",
-      classesList: "list"
+      classesStateListIsLoading: "listIsLoading",
+      classesStateRemoveOneIsLoading: "removeOneIsLoading",
+      classesStateRemoveManyIsLoading: "removeManyIsLoading",
+      classesStateSortBy: "sortBy",
+      classesStatePageSize: "pageSize",
+      classesStatePageCurrent: "pageCurrent",
+      classesStateCount: "count",
+      classesStateList: "list"
     }),
     classesHasSelection() {
       return this.classesSelection.length > 0
     },
     classesSearchFilter: {
       get() { return this.$store.state.classes.searchFilterValue },
-      set(search) { this.classesSetSearchFilter(search) }
+      set(search) { this.classesMutationsSetSearchFilter(search) }
+    },
+    classesIsLoading() {
+      return (
+        this.classesStateListIsLoading ||
+        this.classesStateRemoveOneIsLoading ||
+        this.classesStateRemoveManyIsLoading
+      )
     }
   },
 
   async created() {
-    await this.classesListAsync()
+    await this.classesActionsList()
   },
 
   methods: {
     ...mapMutations("classes", {
-      classesSetSearchFilter: "SET_SEARCH_FILTER"
+      classesMutationsSetSearchFilter: "SET_SEARCH_FILTER"
     }),
 
     ...mapActions("classes", {
-      classesListAsync: "listAsync",
-      classesRemoveAsync: "removeAsync",
-      classesSetSortingAsync: "setSortingAsync",
-      classesSetPageSizeAsync: "setPageSizeAsync",
-      classesSetPageCurrentAsync: "setPageCurrentAsync",
-      classesSetSearchFilterAsync: "setSearchFilterAsync"
+      classesActionsList: "list",
+      classesActionsRemoveOne: "removeOne",
+      classesActionsRemoveMany: "removeMany",
+      classesActionsSetSorting: "setSorting",
+      classesActionsSetPageSize: "setPageSize",
+      classesActionsSetPageCurrent: "setPageCurrent",
+      classesActionsSetSearchFilter: "setSearchFilter"
     }),
 
     classesOpenCreateDialog() {
       this.$emit("classesOpenCreateDialog")
     },
 
-    classesTableRowDispatchActions({ handler, payload }) {
-      switch(handler) {
-        case "classesDelete":
-          this.classesDeleteAsync(payload)
-          break
-      }
-    },
-
-    async classesDeleteAsync(weaponClass) {
-      await this.$confirm(
-        `This will remove ${weaponClass.name} permanently. Continue?`,
-        "Warning!", {
-          confirmButtonText: "Yes, I am sure",
-          cancelButtonText: "Cancel",
-          customClass: "dangerous-confirmation",
-          type: "warning"
-        }
-      )
-      try {
-        await this.classesRemoveAsync(weaponClass)
-        this.$notify({
-          type: "success",
-          title: "Success",
-          message: `${weaponClass.name} was removed from the database`
-        })
-      } catch(e) {
-        this.$notify({
-          type: "error",
-          title: "Oops!",
-          message: e.message
-        })
-      }
-    },
-
-    classesRowClick(weaponClass, e) {
+    classesRowClick(weaponClass, column, e) {
       if(e.target.className.includes("table-button")) {
         return
       }
-      this.$router.push(`/classes/${weaponClass._id}`)
+      this.$router.push(`/classes/${weaponClass.id}`)
     },
 
     classesSelectionChange(classes) {
       this.classesSelection = classes
     },
 
-    classesTableDispatchActions({ handler, payload }) {}
+    classesDispatchActions({ handler, payload }) {
+      this[handler](payload)
+    },
+
+    async classesRemoveOne(weaponClass) {
+      try {
+        await this.$confirm(
+          `This will remove ${weaponClass.name} permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+
+        try {
+          await this.classesActionsRemoveOne(weaponClass)
+          this.$notify({
+            type: "success",
+            title: "Success",
+            message: `${weaponClass.name} was removed from the database`
+          })
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      } catch(e) {}
+    },
+
+    async classesRemoveMany() {
+      try {
+        const count = this.classesSelection.length
+        await this.$confirm(
+          `This will remove ${count} classes permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+
+        try {
+          await this.classesActionsRemoveMany(this.classesSelection)
+          this.$notify({
+            type: "success",
+            title: "Success",
+            message: `${count} classes were removed from the database`
+          })
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      } catch(e) {}
+    }
   }
 }
 </script>

@@ -6,19 +6,19 @@
     <search-form
       v-model="eventsSearchFilter"
       placeholder="Search for an event by title or club"
-      @submit="eventsSubmitSearchFilterAsync"
+      @submit="eventsActionsSetSearchFilter"
     />
 
-    <div v-loading="eventsListIsLoading || eventsRemoveIsLoading">
+    <div v-loading="eventsIsLoading">
       <el-table
-        :data="eventsList"
-        :sort-by="eventsSortBy"
-        row-key="_id"
+        :data="eventsStateList"
+        :sort-by="eventsStateSortBy"
+        row-key="id"
         class="table-clickable"
         empty-text
         @selection-change="eventsSelectionChange"
         @row-click="eventsRowClick"
-        @sort-change="eventsSetSortingAsync"
+        @sort-change="eventsActionsSetSorting"
       >
         <el-table-column
           type="selection"
@@ -106,13 +106,17 @@
             >
               <el-dropdown
                 trigger="click"
-                @command="eventsTableDispatchActions"
+                @command="eventsDispatchActions"
               >
                 <span class="el-dropdown-link">
                   <i class="table-button el-icon-more" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="removeSelection">
+                  <el-dropdown-item
+                    :command="{
+                      handler: 'eventsRemoveMany'
+                    }"
+                  >
                     <i class="el-icon-delete el-icon--left" /> Remove selected
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -123,7 +127,7 @@
           <template slot-scope="scope">
             <el-dropdown
               trigger="click"
-              @command="eventsTableRowDispatchActions"
+              @command="eventsDispatchActions"
             >
               <span class="el-dropdown-link">
                 <i class="table-button el-icon-more" />
@@ -132,8 +136,13 @@
                 <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
                   <i class="el-icon-edit el-icon--left"></i> Rediger
                 </el-dropdown-item> -->
-                <el-dropdown-item :command="{ handler: 'eventsDelete', payload: scope.row }">
-                  <i class="el-icon-delete el-icon--left" /> Slett
+                <el-dropdown-item
+                  :command="{
+                    handler: 'eventsRemoveOne',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-delete el-icon--left" /> Remove event
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -153,12 +162,12 @@
 
       <el-pagination
         layout="total, sizes, prev, pager, next"
-        :page-size="eventsPageSize"
-        :current-page="eventsPageCurrent"
+        :page-size="eventsStatePageSize"
+        :current-page="eventsStatePageCurrent"
         :page-sizes="[ 15, 30, 45, 60 ]"
-        :total="eventsCount"
-        @size-change="eventsSetPageSizeAsync"
-        @current-change="eventsSetPageCurrentAsync"
+        :total="eventsStateCount"
+        @size-change="eventsActionsSetPageSize"
+        @current-change="eventsActionsSetPageCurrent"
       />
     </div>
   </div>
@@ -182,87 +191,124 @@ export default {
 
   computed: {
     ...mapState("events", {
-      eventsListIsLoading: "listIsLoading",
-      eventsRemoveIsLoading: "removeIsLoading",
-      eventsSortBy: "sortBy",
-      eventsPageSize: "pageSize",
-      eventsPageCurrent: "pageCurrent",
-      eventsCount: "count",
-      eventsList: "list"
+      eventsStateListIsLoading: "listIsLoading",
+      eventsStateRemoveOneIsLoading: "removeOneIsLoading",
+      eventsStateRemoveManyIsLoading: "removeManyIsLoading",
+      eventsStateSortBy: "sortBy",
+      eventsStatePageSize: "pageSize",
+      eventsStatePageCurrent: "pageCurrent",
+      eventsStateCount: "count",
+      eventsStateList: "list"
     }),
+
     eventsHasSelection() {
       return this.eventsSelection.length > 0
     },
+
     eventsSearchFilter: {
       get() { return this.$store.state.events.searchFilterValue },
-      set(search) { this.eventsSetSearchFilter(search) }
+      set(search) { this.eventsMutationsSetSearchFilter(search) }
+    },
+
+    eventsIsLoading() {
+      return (
+        this.eventsStateListIsLoading ||
+        this.eventsStateRemoveOneIsLoading ||
+        this.eventsStateRemoveManyIsLoading
+      )
     }
   },
 
   methods: {
     ...mapMutations("events", {
-      eventsSetSearchFilter: "SET_SEARCH_FILTER"
+      eventsMutationsSetSearchFilter: "SET_SEARCH_FILTER"
     }),
     ...mapActions("events", {
-      eventsListAsync: "listAsync",
-      eventsRemoveAsync: "removeAsync",
-      eventsSetSortingAsync: "setSortingAsync",
-      eventsSetPageSizeAsync: "setPageSizeAsync",
-      eventsSetPageCurrentAsync: "setPageCurrentAsync"
+      eventsActionsList: "list",
+      eventsActionsRemoveOne: "removeOne",
+      eventsActionsRemoveMany: "removeMany",
+      eventsActionsSetSorting: "setSorting",
+      eventsActionsSetPageSize: "setPageSize",
+      eventsActionsSetPageCurrent: "setPageCurrent",
+      eventsActionsSetSearchFilter: "setSearchFilter"
     }),
 
     eventsOpenCreateDialog() {
       this.$emit("eventsOpenCreateDialog")
     },
 
-    async eventsSubmitSearchFilterAsync(search) {
-      await this.eventsListAsync()
-    },
-
-    eventsTableRowDispatchActions({ handler, payload }) {
-      switch(handler) {
-        case "eventsDelete":
-          this.eventsDeleteAsync(payload)
-          break
-      }
-    },
-    async eventsDeleteAsync(event) {
-      await this.$confirm(
-        `This will remove ${event.title} permanently. Continue?`,
-        "Warning!", {
-          confirmButtonText: "Yes, I am sure",
-          cancelButtonText: "Cancel",
-          customClass: "dangerous-confirmation",
-          type: "warning"
-        }
-      )
-      try {
-        await this.eventsRemoveAsync(event)
-        this.$notify({
-          title: "Success",
-          message: `${event.title} was removed from the database`,
-          type: "success"
-        })
-      } catch(e) {
-        this.$notify({
-          title: "Oops!",
-          message: e.message,
-          type: "error"
-        })
-      }
-    },
-
-    eventsRowClick(event, e) {
+    eventsRowClick(event, column, e) {
       if(e.target.className.includes("table-button")) {
         return
       }
-      this.$router.push(`/events/${event._id}`)
+      this.$router.push(`/events/${event.id}`)
     },
 
-    eventsTableDispatchActions({ handler, payload }) {
-    },
     eventsSelectionChange(events) {
       this.eventsSelection = events
+    },
+
+    eventsDispatchActions({ handler, payload }) {
+      this[handler](payload)
+    },
+
+    async eventsRemoveOne(event) {
+      try {
+        await this.$confirm(
+          `This will remove ${event.title} permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+
+        try {
+          await this.eventsActionsRemoveOne(event)
+          this.$notify({
+            title: "Success",
+            message: `${event.title} was removed from the database`,
+            type: "success"
+          })
+        } catch(e) {
+          this.$notify({
+            title: "Oops!",
+            message: e.message,
+            type: "error"
+          })
+        }
+      } catch(e) {}
+    },
+
+    async eventsRemoveMany() {
+      try {
+        const count = this.eventsSelection.length
+        await this.$confirm(
+          `This will remove ${count} events permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+
+        try {
+          await this.eventsActionsRemoveMany(this.eventsSelection)
+          this.$notify({
+            type: "success",
+            title: "Success",
+            message: `${count} events were removed from the database`
+          })
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      } catch(e) {}
     }
   }
 }

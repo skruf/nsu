@@ -6,19 +6,19 @@
     <search-form
       v-model="clubsSearchFilter"
       placeholder="Search for a club by name"
-      @submit="clubsSetSearchFilterAsync"
+      @submit="clubsActionsSetSearchFilter"
     />
 
-    <div v-loading="clubsListIsLoading || clubsRemoveIsLoading">
+    <div v-loading="clubsIsLoading">
       <el-table
-        :data="clubsList"
-        :sort-by="clubsSortBy"
+        :data="clubsStateList"
+        :sort-by="clubsStateSortBy"
         row-key="id"
         class="table-clickable"
         empty-text
         @selection-change="clubsSelectionChange"
         @row-click="clubsRowClick"
-        @sort-change="clubsSetSortingAsync"
+        @sort-change="clubsActionsSetSorting"
       >
         <el-table-column
           type="selection"
@@ -64,30 +64,34 @@
           width="50"
           align="right"
         >
-          <template slot="header">
+          <template
+            slot="header"
+            slot-scope="scope"
+          >
             <div
               class="table-actions"
               :class="{ 'disabled': !clubsHasSelection }"
             >
               <el-dropdown
                 trigger="click"
-                @command="clubsTableDispatchActions"
+                @command="clubsDispatchActions"
               >
                 <span class="el-dropdown-link">
                   <i class="table-button el-icon-more" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="removeSelection">
+                  <el-dropdown-item :command="{ handler: 'clubsDeleteMany' }">
                     <i class="el-icon-delete el-icon--left" /> Remove selected
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
           </template>
+
           <template slot-scope="scope">
             <el-dropdown
               trigger="click"
-              @command="clubsTableRowDispatchActions"
+              @command="clubsDispatchActions"
             >
               <span class="el-dropdown-link">
                 <i class="table-button el-icon-more" />
@@ -96,8 +100,13 @@
                 <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
                   <i class="el-icon-edit el-icon--left"></i> Rediger
                 </el-dropdown-item> -->
-                <el-dropdown-item :command="{ handler: 'clubsDelete', payload: scope.row }">
-                  <i class="el-icon-delete el-icon--left" /> Slett
+                <el-dropdown-item
+                  :command="{
+                    handler: 'clubsRemoveOne',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-delete el-icon--left" /> Remove club
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -117,12 +126,12 @@
 
       <el-pagination
         layout="total, sizes, prev, pager, next"
-        :page-size="clubsPageSize"
-        :current-page="clubsPageCurrent"
+        :page-size="clubsStatePageSize"
+        :current-page="clubsStatePageCurrent"
         :page-sizes="[ 15, 30, 45, 60 ]"
-        :total="clubsCount"
-        @size-change="clubsSetPageSizeAsync"
-        @current-change="clubsSetPageCurrentAsync"
+        :total="clubsStateCount"
+        @size-change="clubsActionsSetPageSize"
+        @current-change="clubsActionsSetPageCurrent"
       />
     </div>
   </div>
@@ -146,80 +155,55 @@ export default {
 
   computed: {
     ...mapState("clubs", {
-      clubsListIsLoading: "listIsLoading",
-      clubsRemoveIsLoading: "removeIsLoading",
-      clubsSortBy: "sortBy",
-      clubsPageSize: "pageSize",
-      clubsPageCurrent: "pageCurrent",
-      clubsCount: "count",
-      clubsList: "list"
+      clubsStateListIsLoading: "listIsLoading",
+      clubsStateRemoveOneIsLoading: "removeOneIsLoading",
+      clubsStateRemoveManyIsLoading: "removeManyIsLoading",
+      clubsStateSortBy: "sortBy",
+      clubsStatePageSize: "pageSize",
+      clubsStatePageCurrent: "pageCurrent",
+      clubsStateCount: "count",
+      clubsStateList: "list"
     }),
     clubsHasSelection() {
       return this.clubsSelection.length > 0
     },
     clubsSearchFilter: {
       get() { return this.$store.state.clubs.searchFilterValue },
-      set(search) { this.clubsSetSearchFilter(search) }
+      set(search) { this.clubsMutationsSetSearchFilter(search) }
+    },
+    clubsIsLoading() {
+      return (
+        this.clubsStateListIsLoading ||
+        this.clubsStateRemoveOneIsLoading ||
+        this.clubsStateRemoveManyIsLoading
+      )
     }
   },
 
   async created() {
-    await this.clubsListAsync()
+    await this.clubsActionsList()
   },
 
   methods: {
     ...mapMutations("clubs", {
-      clubsSetSearchFilter: "SET_SEARCH_FILTER"
+      clubsMutationsSetSearchFilter: "SET_SEARCH_FILTER"
     }),
 
     ...mapActions("clubs", {
-      clubsListAsync: "listAsync",
-      clubsRemoveAsync: "removeAsync",
-      clubsSetSortingAsync: "setSortingAsync",
-      clubsSetPageSizeAsync: "setPageSizeAsync",
-      clubsSetPageCurrentAsync: "setPageCurrentAsync",
-      clubsSetSearchFilterAsync: "setSearchFilterAsync"
+      clubsActionsList: "list",
+      clubsActionsRemoveOne: "removeOne",
+      clubsActionsRemoveMany: "removeMany",
+      clubsActionsSetSorting: "setSorting",
+      clubsActionsSetPageSize: "setPageSize",
+      clubsActionsSetPageCurrent: "setPageCurrent",
+      clubsActionsSetSearchFilter: "setSearchFilter"
     }),
 
     clubsOpenCreateDialog() {
       this.$emit("clubsOpenCreateDialog")
     },
 
-    clubsTableRowDispatchActions({ handler, payload }) {
-      switch(handler) {
-        case "clubsDelete":
-          this.clubsDeleteAsync(payload)
-          break
-      }
-    },
-
-    async clubsDeleteAsync(club) {
-      await this.$confirm(
-        `This will remove ${club.name} permanently. Continue?`,
-        "Warning!", {
-          confirmButtonText: "Yes, I am sure",
-          cancelButtonText: "Cancel",
-          customClass: "dangerous-confirmation",
-          type: "warning"
-        }
-      )
-      try {
-        await this.clubsRemoveAsync(club)
-        this.$notify({
-          type: "success",
-          title: "Success",
-          message: `${club.name} was removed from the database`
-        })
-      } catch(e) {
-        this.$notify({
-          type: "error",
-          title: "Oops!",
-          message: e.message
-        })
-      }
-    },
-
-    clubsRowClick(club, e) {
+    clubsRowClick(club, column, e) {
       if(e.target.className.includes("table-button")) {
         return
       }
@@ -230,7 +214,68 @@ export default {
       this.clubsSelection = clubs
     },
 
-    clubsTableDispatchActions({ handler, payload }) {}
+    clubsDispatchActions({ handler, payload }) {
+      this[handler](payload)
+    },
+
+    async clubsRemoveOne(club) {
+      try {
+        await this.$confirm(
+          `This will remove ${club.name} and its ${club.membersCount} members permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+
+        try {
+          await this.clubsActionsRemoveOne(club)
+          this.$notify({
+            type: "success",
+            title: "Success",
+            message: `${club.name} was removed from the database`
+          })
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      } catch(e) {}
+    },
+
+    async clubsDeleteMany() {
+      try {
+        const count = this.clubsSelection.length
+        await this.$confirm(
+          `This will remove ${count} clubs and their members permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+
+        try {
+          await this.clubsActionsRemoveMany(this.clubsSelection)
+          this.$notify({
+            type: "success",
+            title: "Success",
+            message: `${count} clubs were removed from the database`
+          })
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      } catch(e) {}
+    }
   }
 }
 </script>

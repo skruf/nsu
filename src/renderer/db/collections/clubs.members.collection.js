@@ -9,7 +9,8 @@ const schema = {
       primary: true
     },
     firstName: {
-      type: "string"
+      type: "string",
+      index: true
     },
     lastName: {
       type: "string"

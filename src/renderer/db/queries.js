@@ -19,6 +19,11 @@ const buildQuery = async (collection, method, filter = {}, options = {}) => {
   let operation = db[collection][method](filter)
 
   if(options.sort) {
+    // @TODO: bugfix sorting while searching
+    if(options.search && options.search.value) {
+      return
+    }
+
     operation = operation.sort(options.sort)
   }
 
@@ -33,7 +38,7 @@ const buildQuery = async (collection, method, filter = {}, options = {}) => {
   return operation
 }
 
-export const find = async (collection, filter = {}, options = {}) => {
+export const findMany = async (collection, filter = {}, options = {}) => {
   const query = await buildQuery(collection, "find", filter, options)
   const items = await query.exec()
   return { items, count: items.length }
@@ -53,7 +58,12 @@ export const insert = async (collection, doc) => {
   return newDoc
 }
 
-export const destroy = async (collection, filter = {}, options = {}) => {
+export const destroyOne = async (collection, filter = {}, options = {}) => {
   const doc = await findOne(collection, filter, options)
   await doc.remove()
+}
+
+export const destroyMany = async (collection, filter = {}, options = {}) => {
+  const docs = await findMany(collection, filter, options)
+  await Promise.all(docs.items.map((doc) => doc.remove()))
 }

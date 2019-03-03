@@ -10,7 +10,7 @@ const schema = {
     },
     name: {
       type: "string",
-      "index": true
+      index: true
     },
     leader: {
       type: "string"

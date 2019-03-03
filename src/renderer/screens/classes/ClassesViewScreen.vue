@@ -11,31 +11,31 @@
 <template>
   <el-container
     id="classes-view-screen"
-    v-loading="classesSelectedIsLoading"
+    v-loading="classesStateSelectedIsLoading"
     class="screen"
   >
     <el-header height="auto">
       <breadcrumb-bar
         :paths="[
           { to: '/classes', label: 'Classes' },
-          { to: `/classes/${classesSelected._id}`, label: classesSelected.name }
+          { to: `/classes/${classesStateSelected.id}`, label: classesStateSelected.name }
         ]"
       />
 
       <div class="page-meta">
         <div class="page-titles -mb-1">
           <h1 class="h1 mb-1">
-            {{ classesSelected.name }}
+            {{ classesStateSelected.name }}
           </h1>
           <small class="small">
-            # {{ classesSelected.number }}
+            # {{ classesStateSelected.number }}
           </small>
         </div>
 
         <div class="page-controls">
           <el-dropdown
             trigger="click"
-            @command="classesSelectedDispatchActions"
+            @command="classesDispatchActions"
           >
             <el-button type="text">
               <div class="flex items-center">
@@ -43,12 +43,12 @@
               </div>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="classesSelectedUpdate">
+              <el-dropdown-item command="">
                 <i class="el-icon-edit el-icon--left" /> Edit
               </el-dropdown-item>
               <el-dropdown-item
                 class="dropdown-menu-delete"
-                command="classesSelectedRemove"
+                command=""
                 divided
               >
                 <i class="el-icon-delete el-icon--left" /> Delete
@@ -66,7 +66,7 @@
             category:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.category }}
+            {{ classesStateSelected.category }}
           </p>
         </div>
 
@@ -75,7 +75,7 @@
             condition:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.condition }}
+            {{ classesStateSelected.condition }}
           </p>
         </div>
 
@@ -84,7 +84,7 @@
             target:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.target }}
+            {{ classesStateSelected.target }}
           </p>
         </div>
 
@@ -93,7 +93,7 @@
             position:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.position }}
+            {{ classesStateSelected.position }}
           </p>
         </div>
 
@@ -102,7 +102,7 @@
             distance:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.distance }}
+            {{ classesStateSelected.distance }}
           </p>
         </div>
 
@@ -111,7 +111,7 @@
             type:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.type }}
+            {{ classesStateSelected.type }}
           </p>
         </div>
 
@@ -120,7 +120,7 @@
             sight:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.sight }}
+            {{ classesStateSelected.sight }}
           </p>
         </div>
 
@@ -129,7 +129,7 @@
             trigger:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.trigger }}
+            {{ classesStateSelected.trigger }}
           </p>
         </div>
 
@@ -138,7 +138,7 @@
             calibre:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.calibre }}
+            {{ classesStateSelected.calibre }}
           </p>
         </div>
 
@@ -147,7 +147,7 @@
             bulletType:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.bulletType }}
+            {{ classesStateSelected.bulletType }}
           </p>
         </div>
 
@@ -156,7 +156,7 @@
             loadingRod:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.loadingRod }}
+            {{ classesStateSelected.loadingRod }}
           </p>
         </div>
 
@@ -165,7 +165,7 @@
             cleaning:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.cleaning }}
+            {{ classesStateSelected.cleaning }}
           </p>
         </div>
 
@@ -174,7 +174,7 @@
             team:
           </h6>
           <p class="info-grid_item_value">
-            {{ classesSelected.team }}
+            {{ classesStateSelected.team }}
           </p>
         </div>
       </div>
@@ -184,20 +184,20 @@
         style="calc(100% - 50px)"
       >
         <div
-          v-if="classesSelected.remarks"
+          v-if="classesStateSelected.remarks"
           class="class_remarks"
         >
           <h6 class="h6">
             Remarks:
           </h6>
           <p class="p mt-5">
-            {{ classesSelected.remarks }}
+            {{ classesStateSelected.remarks }}
           </p>
         </div>
 
         <img
-          v-if="classesSelected.pictureUrl"
-          :src="classesSelected.pictureUrl"
+          v-if="classesStateSelected.pictureUrl"
+          :src="classesStateSelected.pictureUrl"
           class="class_picture mt-10"
         >
       </div>
@@ -216,21 +216,21 @@ export default {
 
   computed: {
     ...mapState("classes", {
-      classesSelectedIsLoading: "selectedIsLoading",
-      classesSelected: "selected"
+      classesStateSelectedIsLoading: "selectedIsLoading",
+      classesStateSelected: "selected"
     })
   },
 
   async created() {
-    await this.classesSelectAsync({ _id: this.$route.params.classId })
+    await this.classesActionsSelect({ id: this.$route.params.classId })
   },
 
   methods: {
     ...mapActions("classes", {
-      classesSelectAsync: "selectAsync"
+      classesActionsSelect: "select"
     }),
 
-    classesSelectedDispatchActions() {}
+    classesDispatchActions() {}
   }
 }
 </script>

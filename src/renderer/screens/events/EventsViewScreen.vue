@@ -4,37 +4,37 @@
 <template>
   <el-container
     id="events-view-screen"
-    v-loading="eventsSelectedIsLoading"
+    v-loading="eventsStateSelectedIsLoading"
     class="screen"
   >
     <el-header height="auto">
       <breadcrumb-bar
         :paths="[
           { to: '/events', label: 'Events' },
-          { to: `/events/${eventsSelected._id}`, label: eventsSelected.title }
+          { to: `/events/${eventsStateSelected.id}`, label: eventsStateSelected.title }
         ]"
       />
 
       <div class="page-meta">
         <div class="page-titles">
           <h1 class="h1">
-            {{ eventsSelected.title }}
+            {{ eventsStateSelected.title }}
           </h1>
           <small class="small">
-            <template v-if="eventsSelected.approbated">
+            <template v-if="eventsStateSelected.approbated">
               <i class="el-icon-star-on" /> Officially approbated,
             </template>
             <template v-else>
               <i class="el-icon-star-off" /> Isn't approbated,
             </template>
-            {{ eventsSelected.organizerName }}, {{ eventsSelected.area }}
+            {{ eventsStateSelected.organizerName }}, {{ eventsStateSelected.area }}
           </small>
         </div>
 
         <div class="page-controls">
           <el-dropdown
             trigger="click"
-            @command="eventsSelectedDispatchActions"
+            @command="eventsDispatchActions"
           >
             <el-button type="text">
               <div class="flex items-center">
@@ -42,15 +42,15 @@
               </div>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="eventsSelectedPrint">
+              <el-dropdown-item command="">
                 <i class="el-icon-printer el-icon--left" /> Print
               </el-dropdown-item>
-              <el-dropdown-item command="eventsSelectedUpdate">
+              <el-dropdown-item command="">
                 <i class="el-icon-edit el-icon--left" /> Edit
               </el-dropdown-item>
               <el-dropdown-item
                 class="dropdown-menu-delete"
-                command="eventsSelectedRemove"
+                command=""
                 divided
               >
                 <i class="el-icon-delete el-icon--left" /> Delete
@@ -68,7 +68,7 @@
             Starts at:
           </h6>
           <p class="info-grid_item_value">
-            <date-with-tooltip :date="eventsSelected.startsAt" />
+            <date-with-tooltip :date="eventsStateSelected.startsAt" />
           </p>
         </div>
         <div class="info-grid_item">
@@ -76,7 +76,7 @@
             End at:
           </h6>
           <p class="info-grid_item_value">
-            <date-with-tooltip :date="eventsSelected.endsAt" />
+            <date-with-tooltip :date="eventsStateSelected.endsAt" />
           </p>
         </div>
         <div class="info-grid_item">
@@ -92,7 +92,7 @@
             Category:
           </h6>
           <p class="info-grid_item_value">
-            {{ eventsSelected.category }}
+            {{ eventsStateSelected.category }}
           </p>
         </div>
         <div class="info-grid_item">
@@ -100,18 +100,18 @@
             Branch:
           </h6>
           <p class="info-grid_item_value">
-            {{ eventsSelected.branch }}
+            {{ eventsStateSelected.branch }}
           </p>
         </div>
         <div
-          v-if="eventsSelected.lat && eventsSelected.lng"
+          v-if="eventsStateSelected.lat && eventsStateSelected.lng"
           class="info-grid_item"
         >
           <h6 class="h6 info-grid_item_key">
             Lat/Lng:
           </h6>
           <p class="info-grid_item_value">
-            {{ eventsSelected.lat }} {{ eventsSelected.lng }}
+            {{ eventsStateSelected.lat }} {{ eventsStateSelected.lng }}
           </p>
         </div>
       </div>
@@ -123,8 +123,8 @@
         >
           <div class="content">
             <events-participants-list-table
-              v-if="!eventsSelectedIsLoading"
-              :event="eventsSelected"
+              v-if="!eventsStateSelectedIsLoading"
+              :event="eventsStateSelected"
               @eventsParticipantsOpenManageDialog="eventsParticipantsOpenManageDialog"
             />
           </div>
@@ -151,8 +151,8 @@
         >
           <div class="content">
             <events-divisions-list
-              v-if="!eventsSelectedIsLoading"
-              :event="eventsSelected"
+              v-if="!eventsStateSelectedIsLoading"
+              :event="eventsStateSelected"
             />
           </div>
 
@@ -197,14 +197,14 @@
     />
 
     <events-divisions-create-dialog
-      v-if="!eventsSelectedIsLoading"
-      :event="eventsSelected"
+      v-if="!eventsStateSelectedIsLoading"
+      :event="eventsStateSelected"
       :shown.sync="eventsDivisionsShowCreateDialog"
     />
 
     <events-participants-manager-dialog
-      v-if="!eventsSelectedIsLoading"
-      :event="eventsSelected"
+      v-if="!eventsStateSelectedIsLoading"
+      :event="eventsStateSelected"
       :shown.sync="eventsParticipantsShowManageDialog"
     />
   </el-container>
@@ -248,34 +248,36 @@ export default {
 
   computed: {
     ...mapState("events", {
-      eventsSelectedIsLoading: "selectedIsLoading",
-      eventsSelected: "selected"
+      eventsStateSelectedIsLoading: "selectedIsLoading",
+      eventsStateSelected: "selected"
     }),
-    ...mapState("events/participants", {
-      eventsParticipantsCreateIsLoading: "createIsLoading"
-    }),
+
+    // ...mapState("events/participants", {
+    //   eventsParticipantsStateCreateIsLoading: "createIsLoading"
+    // }),
+
     eventsSelectedDuration() {
-      if(!Object.keys(this.eventsSelected).length) {
+      if(!Object.keys(this.eventsStateSelected).length) {
         return
       }
-      const { startsAt, endsAt } = this.eventsSelected
+      const { startsAt, endsAt } = this.eventsStateSelected
       return moment.duration(moment(endsAt).diff(startsAt)).humanize()
     }
   },
 
   async created() {
-    await this.eventsSelectAsync({ _id: this.$route.params.eventId })
+    await this.eventsActionsSelect({ id: this.$route.params.eventId })
   },
 
   methods: {
     ...mapActions("events", {
-      eventsSelectAsync: "selectAsync"
+      eventsActionsSelect: "select"
     }),
-    ...mapActions("events/participants", {
-      eventsParticipantsCreateFormSubmit: "createAsync"
-    }),
+    // ...mapActions("events/participants", {
+    //   eventsParticipantsActionsCreate: "create"
+    // }),
 
-    eventsSelectedDispatchActions() {},
+    eventsDispatchActions() {},
 
     clubsMembersOpenCreateDialog() {
       this.clubsMembersShowCreateDialog = true

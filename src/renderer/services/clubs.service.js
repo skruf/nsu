@@ -1,33 +1,49 @@
-import { insert, find, findOne, destroy } from "@/db/queries"
+import { insert, findMany, findOne, destroyOne, destroyMany } from "@/db/queries"
+
+const withMembersCount = async (club) => {
+  const members = await findMany("clubs_members", { clubId: club.id })
+  club.membersCount = members.count
+  return club
+}
 
 const list = async (filter = {}, options = {}) => {
-  const results = await find("clubs", filter, options)
-
-  results.items = await Promise.all(results.items.map(async (club) => {
+  const result = await findMany("clubs", filter, options)
+  result.items = await Promise.all(result.items.map(async (club) => {
     club = club.toJSON()
-    const members = await find("clubs_members", { clubId: club.id })
-    club.membersCount = members.count
+    club = await withMembersCount(club)
     return club
   }))
-
-  return results
+  return result
 }
 
 const select = async (filter = {}, options = {}) => {
-  const results = await findOne("clubs", filter, options)
-  return results.toJSON()
+  const result = await findOne("clubs", filter, options)
+  let club = result.toJSON()
+  club = await withMembersCount(club)
+  return club
 }
 
 const create = async (doc = {}, options = {}) => {
-  const results = await insert("clubs", doc, options)
-  return results.toJSON()
+  const result = await insert("clubs", doc, options)
+  const club = result.toJSON()
+  club.membersCount = 0
+  return club
 }
 
-const remove = async (filter, options = {}) => {
-  await destroy("clubs", filter, options)
+const removeOne = async (club, options = {}) => {
+  await destroyMany("clubs_members", { clubId: club.id })
+  await destroyOne("clubs", { id: club.id }, options)
+  return true
+}
+
+const removeMany = async (items, options = {}) => {
+  const filter = {
+    id: { $in: items.map(({ id }) => id) }
+  }
+  await destroyMany("clubs", filter, options)
   return true
 }
 
 export default {
-  list, select, create, remove
+  list, select, create, removeOne, removeMany
 }

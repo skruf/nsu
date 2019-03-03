@@ -6,19 +6,19 @@
     <search-form
       v-model="rangesSearchFilter"
       placeholder="Search for a range by name or area"
-      @submit="rangesSetSearchFilterAsync"
+      @submit="rangesActionsSetSearchFilter"
     />
 
-    <div v-loading="rangesListIsLoading || rangesRemoveIsLoading">
+    <div v-loading="rangesIsLoading">
       <el-table
-        :data="rangesList"
-        :sort-by="rangesSortBy"
-        row-key="_id"
+        :data="rangesStateList"
+        :sort-by="rangesStateSortBy"
+        row-key="id"
         class="table-clickable"
         empty-text
         @selection-change="rangesSelectionChange"
         @row-click="rangesRowClick"
-        @sort-change="rangesSetSortingAsync"
+        @sort-change="rangesActionsSetSorting"
       >
         <el-table-column
           type="selection"
@@ -71,7 +71,10 @@
           width="50"
           align="right"
         >
-          <template slot="header">
+          <template
+            slot="header"
+            slot-scope="scope"
+          >
             <div
               class="table-actions"
               :class="{ 'disabled': !rangesHasSelection }"
@@ -84,17 +87,22 @@
                   <i class="table-button el-icon-more" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="removeSelection">
+                  <el-dropdown-item
+                    :command="{
+                      handler: 'rangesRemoveMany'
+                    }"
+                  >
                     <i class="el-icon-delete el-icon--left" /> Remove selected
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
           </template>
+
           <template slot-scope="scope">
             <el-dropdown
               trigger="click"
-              @command="rangesTableRowDispatchActions"
+              @command="rangesTableDispatchActions"
             >
               <span class="el-dropdown-link">
                 <i class="table-button el-icon-more" />
@@ -103,7 +111,12 @@
                 <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
                   <i class="el-icon-edit el-icon--left"></i> Rediger
                 </el-dropdown-item> -->
-                <el-dropdown-item :command="{ handler: 'rangesDelete', payload: scope.row }">
+                <el-dropdown-item
+                  :command="{
+                    handler: 'rangesRemoveOne',
+                    payload: scope.row
+                  }"
+                >
                   <i class="el-icon-delete el-icon--left" /> Slett
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -124,12 +137,12 @@
 
       <el-pagination
         layout="total, sizes, prev, pager, next"
-        :page-size="rangesPageSize"
-        :current-page="rangesPageCurrent"
+        :page-size="rangesStatePageSize"
+        :current-page="rangesStatePageCurrent"
         :page-sizes="[ 15, 30, 45, 60 ]"
-        :total="rangesCount"
-        @size-change="rangesSetPageSizeAsync"
-        @current-change="rangesSetPageCurrentAsync"
+        :total="rangesStateCount"
+        @size-change="rangesActionsSetPageSize"
+        @current-change="rangesActionsSetPageCurrent"
       />
     </div>
   </div>
@@ -153,54 +166,70 @@ export default {
 
   computed: {
     ...mapState("ranges", {
-      rangesListIsLoading: "listIsLoading",
-      rangesRemoveIsLoading: "removeIsLoading",
-      rangesSortBy: "sortBy",
-      rangesPageSize: "pageSize",
-      rangesPageCurrent: "pageCurrent",
-      rangesCount: "count",
-      rangesList: "list"
+      rangesStateListIsLoading: "listIsLoading",
+      rangesStateRemoveOneIsLoading: "removeOneIsLoading",
+      rangesStateRemoveManyIsLoading: "removeManyIsLoading",
+      rangesStateSortBy: "sortBy",
+      rangesStatePageSize: "pageSize",
+      rangesStatePageCurrent: "pageCurrent",
+      rangesStateCount: "count",
+      rangesStateList: "list"
     }),
     rangesHasSelection() {
       return this.rangesSelection.length > 0
     },
     rangesSearchFilter: {
       get() { return this.$store.state.ranges.searchFilterValue },
-      set(search) { this.rangesSetSearchFilter(search) }
+      set(search) { this.rangesMutationsSetSearchFilter(search) }
+    },
+    rangesIsLoading() {
+      return (
+        this.rangesStateListIsLoading ||
+        this.rangesStateRemoveOneIsLoading ||
+        this.rangesStateRemoveManyIsLoading
+      )
     }
   },
 
   async created() {
-    await this.rangesListAsync()
+    await this.rangesActionsList()
   },
 
   methods: {
     ...mapMutations("ranges", {
-      rangesSetSearchFilter: "SET_SEARCH_FILTER"
+      rangesMutationsSetSearchFilter: "SET_SEARCH_FILTER"
     }),
 
     ...mapActions("ranges", {
-      rangesListAsync: "listAsync",
-      rangesRemoveAsync: "removeAsync",
-      rangesSetSortingAsync: "setSortingAsync",
-      rangesSetPageSizeAsync: "setPageSizeAsync",
-      rangesSetPageCurrentAsync: "setPageCurrentAsync",
-      rangesSetSearchFilterAsync: "setSearchFilterAsync"
+      rangesActionsList: "list",
+      rangesActionsRemoveOne: "removeOne",
+      rangesActionsSetSorting: "setSorting",
+      rangesActionsSetPageSize: "setPageSize",
+      rangesActionsSetPageCurrent: "setPageCurrent",
+      rangesActionsSetSearchFilter: "setSearchFilter",
+      rangesActionsRemoveMany: "removeMany"
     }),
 
     rangesOpenCreateDialog() {
       this.$emit("rangesOpenCreateDialog")
     },
 
-    rangesTableRowDispatchActions({ handler, payload }) {
-      switch(handler) {
-        case "rangesDelete":
-          this.rangesDeleteAsync(payload)
-          break
+    rangesRowClick(range, column, e) {
+      if(e.target.className.includes("table-button")) {
+        return
       }
+      this.$router.push(`/ranges/${range.id}`)
     },
 
-    async rangesDeleteAsync(range) {
+    rangesSelectionChange(ranges) {
+      this.rangesSelection = ranges
+    },
+
+    rangesTableDispatchActions({ handler, payload }) {
+      this[handler](payload)
+    },
+
+    async rangesRemoveOne(range) {
       await this.$confirm(
         `This will remove ${range.name} permanently. Continue?`,
         "Warning!", {
@@ -210,8 +239,9 @@ export default {
           type: "warning"
         }
       )
+
       try {
-        await this.rangesRemoveAsync(range)
+        await this.rangesActionsRemoveOne(range)
         this.$notify({
           type: "success",
           title: "Success",
@@ -226,18 +256,35 @@ export default {
       }
     },
 
-    rangesRowClick(range, e) {
-      if(e.target.className.includes("table-button")) {
-        return
-      }
-      this.$router.push(`/ranges/${range._id}`)
-    },
+    async rangesRemoveMany() {
+      try {
+        const count = this.rangesSelection.length
+        await this.$confirm(
+          `This will remove ${count} ranges permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
 
-    rangesSelectionChange(ranges) {
-      this.rangesSelection = ranges
-    },
-
-    rangesTableDispatchActions({ handler, payload }) {}
+        try {
+          await this.rangesActionsRemoveMany(this.rangesSelection)
+          this.$notify({
+            type: "success",
+            title: "Success",
+            message: `${count} ranges were removed from the database`
+          })
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      } catch(e) {}
+    }
   }
 }
 </script>

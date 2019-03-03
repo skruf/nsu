@@ -34,6 +34,7 @@ module.exports = {
     "jest/valid-expect": "error",
     "vue/name-property-casing": [ "warn", "PascalCase" ],
     "vue/component-name-in-template-casing": [ "warn", "kebab-case" ],
+    "vue/no-unused-vars": 0,
     "arrow-parens": 0,
     "generator-star-spacing": 0,
     "quotes": [ 0 ],

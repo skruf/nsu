@@ -18,7 +18,7 @@
   <div class="events-results">
     <div
       v-for="division in divisions"
-      :key="division._id"
+      :key="division.id"
       class="events-results_division mb-8"
     >
       <h2 class="h2 pb-4">
@@ -27,7 +27,7 @@
 
       <div
         v-for="divisionClass in division.classes"
-        :key="divisionClass._id"
+        :key="divisionClass.id"
         class="division_class"
       >
         <h3 class="h3 py-4">
@@ -83,7 +83,7 @@
 
           <div
             v-for="contestant in getResults(divisionClass.contestants)"
-            :key="contestant._id"
+            :key="contestant.id"
             class="flex w-full"
           >
             <div class="results-cell w-24">
@@ -118,7 +118,7 @@
 
 const participantsMock = [
   {
-    _id: 0,
+    id: 0,
     firstName: "Ola",
     lastName: "Dunk",
     club: "Skedsmo Civile Skydeselskab",
@@ -126,7 +126,7 @@ const participantsMock = [
     country: "Norway",
     phoneNumber: "4044404"
   }, {
-    _id: 1,
+    id: 1,
     firstName: "Per",
     lastName: "Arne",
     club: "Skedsmo Civile Skydeselskab",
@@ -134,7 +134,7 @@ const participantsMock = [
     country: "Norway",
     phoneNumber: "9045423"
   }, {
-    _id: 2,
+    id: 2,
     firstName: "Ingar",
     lastName: "Hagen",
     club: "Skedsmo Civile Skydeselskab",
@@ -142,7 +142,7 @@ const participantsMock = [
     country: "Sweden",
     phoneNumber: "3234814"
   }, {
-    _id: 3,
+    id: 3,
     firstName: "Ola",
     lastName: "Dunk",
     club: "Skedsmo Civile Skydeselskab",
@@ -150,7 +150,7 @@ const participantsMock = [
     country: "Norway",
     phoneNumber: "4044404"
   }, {
-    _id: 4,
+    id: 4,
     firstName: "Per",
     lastName: "Arne",
     club: "Skedsmo Civile Skydeselskab",
@@ -158,7 +158,7 @@ const participantsMock = [
     country: "Norway",
     phoneNumber: "9045423"
   }, {
-    _id: 5,
+    id: 5,
     firstName: "Ingar",
     lastName: "Hagen",
     club: "Skedsmo Civile Skydeselskab",
@@ -187,13 +187,13 @@ const contestantsMock = participantsMock.map((participant) => ({
 
 const classesMock = [
   {
-    _id: 0,
+    id: 0,
     number: 1,
     name: "Miquelet",
     contestants: contestantsMock
   },
   {
-    _id: 1,
+    id: 1,
     number: 2,
     name: "Maximilian",
     contestants: contestantsMock
@@ -202,12 +202,12 @@ const classesMock = [
 
 const divisionsMock = [
   {
-    _id: 0,
+    id: 0,
     title: "Day 1",
     classes: classesMock
   },
   {
-    _id: 1,
+    id: 1,
     title: "Day 2",
     classes: classesMock
   }

@@ -1,5 +1,5 @@
 const defaultOptions = {
-  action: "listAsync"
+  action: "list"
 }
 
 export default (options) => {
@@ -19,7 +19,7 @@ export default (options) => {
     }
   }
 
-  actions.setSortingAsync = async ({ commit, dispatch }, sorting) => {
+  actions.setSorting = async ({ commit, dispatch }, sorting) => {
     commit("SET_SORTING", sorting)
     await dispatch(config.action)
   }

@@ -21,7 +21,7 @@
       </div>
     </el-header>
 
-    <el-main v-loading="eventsCreateIsLoading">
+    <el-main v-loading="eventsStateCreateIsLoading">
       <el-tabs v-model="activeTab">
         <el-tab-pane
           label="Step 1: Event details"
@@ -77,7 +77,7 @@
                     placeholder="Select a category"
                   >
                     <el-option
-                      v-for="(category, index) in eventsCategories"
+                      v-for="(category, index) in eventsStateCategories"
                       :key="index"
                       :label="category"
                       :value="category"
@@ -92,13 +92,13 @@
                   <el-select
                     v-model="eventDetailsForm.organizerId"
                     placeholder="Select the organizer"
-                    :loading="clubsListIsLoading"
+                    :loading="clubsStateListIsLoading"
                   >
                     <el-option
-                      v-for="club in clubsList"
-                      :key="club._id"
+                      v-for="club in clubsStateList"
+                      :key="club.id"
                       :label="club.name"
-                      :value="club._id"
+                      :value="club.id"
                     />
                   </el-select>
                 </el-form-item>
@@ -110,13 +110,13 @@
                   <el-select
                     v-model="eventDetailsForm.rangeId"
                     placeholder="Select the range"
-                    :loading="rangesListIsLoading"
+                    :loading="rangesStateListIsLoading"
                   >
                     <el-option
-                      v-for="range in rangesList"
-                      :key="range._id"
+                      v-for="range in rangesStateList"
+                      :key="range.id"
                       :label="range.name"
-                      :value="range._id"
+                      :value="range.id"
                     />
                   </el-select>
                 </el-form-item>
@@ -245,7 +245,7 @@ import ClubsMembersCreateDialog from "@/containers/clubs/members/ClubsMembersCre
 import EventsDivisionsList from "@/containers/events/divisions/EventsDivisionsList"
 import EventsDivisionsCreateDialog from "@/containers/events/divisions/EventsDivisionsCreateDialog"
 
-const MOCK = {"title":"NM Felt","startsAt":{"$$date":1557007200000},"endsAt":{"$$date":1557093600000},"category":"Norwegian Championship","approbated":"","organizerId":"nkcq7eblPs4mGy68","rangeId":"vVsa8ZEKEjiprExt","createdAt":{"$$date":1546463725649},"updatedAt":{"$$date":1546463725649},"_id":"8aZR53hJC3K3aQPv"} // eslint-disable-line
+const MOCK = {"title":"NM Felt","startsAt":{"$$date":1557007200000},"endsAt":{"$$date":1557093600000},"category":"Norwegian Championship","approbated":"","organizerId":"nkcq7eblPs4mGy68","rangeId":"vVsa8ZEKEjiprExt","createdAt":{"$$date":1546463725649},"updatedAt":{"$$date":1546463725649},"id":"8aZR53hJC3K3aQPv"} // eslint-disable-line
 
 export default {
   name: "EventsCreateScreen",
@@ -280,33 +280,33 @@ export default {
     eventsSelected: () => MOCK,
 
     ...mapState("events", {
-      eventsCreateIsLoading: "createIsLoading",
-      eventsCategories: "categories"
+      eventsStateCreateIsLoading: "createIsLoading",
+      eventsStateCategories: "categories"
     }),
     ...mapState("clubs", {
-      clubsListIsLoading: "listIsLoading",
-      clubsList: "list"
+      clubsStateListIsLoading: "listIsLoading",
+      clubsStateList: "list"
     }),
     ...mapState("ranges", {
-      rangesListIsLoading: "listIsLoading",
-      rangesList: "list"
+      rangesStateListIsLoading: "listIsLoading",
+      rangesStateList: "list"
     })
   },
 
   async created() {
-    await this.clubsListAsync()
-    await this.rangesListAsync()
+    await this.clubsActionsList()
+    await this.rangesActionsList()
   },
 
   methods: {
     ...mapActions("events", {
-      eventsCreateAsync: "createAsync"
+      eventsActionsCreate: "create"
     }),
     ...mapActions("clubs", {
-      clubsListAsync: "listAsync"
+      clubsActionsList: "list"
     }),
     ...mapActions("ranges", {
-      rangesListAsync: "listAsync"
+      rangesActionsList: "list"
     }),
 
     navToStep1() {
@@ -343,7 +343,7 @@ export default {
         delete data.dates
 
         try {
-          await this.eventsCreateAsync(data)
+          await this.eventsActionsCreate(data)
           this.$notify({
             type: "success",
             title: "Great success",
@@ -352,7 +352,11 @@ export default {
           this.navToStep2()
           this.eventsDetailsFormClear()
         } catch(e) {
-          this.$notify({ type: "error", title: "Oops!", message: e.message })
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
         }
       })
     },

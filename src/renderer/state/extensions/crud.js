@@ -1,7 +1,7 @@
 import { queryHelper } from "@/utils"
 
 const defaultOptions = {
-  action: "listAsync"
+  action: "list"
 }
 
 export default (options) => {
@@ -12,11 +12,16 @@ export default (options) => {
   const actions = {}
   const getters = {}
 
-  if(config.listAsync || config.createAsync || config.removeAsync) {
+  if(
+    config.list ||
+    config.create ||
+    config.removeOne ||
+    config.removeMany
+  ) {
     state.count = 0
   }
 
-  if(config.listAsync) {
+  if(config.list) {
     state.listIsLoading = false
     state.listFilter = {}
     state.list = []
@@ -34,10 +39,10 @@ export default (options) => {
       state.listFilter = listFilter
     }
 
-    actions.listAsync = async function({ commit, state }) {
+    actions.list = async function({ commit, state }) {
       commit("SET_LIST_LOADING", true)
       const cfg = queryHelper(state)
-      const results = await config.listAsync(state.listFilter, cfg)
+      const results = await config.list(state.listFilter, cfg)
       commit("SET_LIST", results.items)
       commit("SET_COUNT", results.count)
       commit("SET_LIST_LOADING", false)
@@ -45,7 +50,7 @@ export default (options) => {
     }
   }
 
-  if(config.selectAsync) {
+  if(config.select) {
     state.selectedIsLoading = false
     state.selected = {}
 
@@ -56,16 +61,16 @@ export default (options) => {
       state.selected = item
     }
 
-    actions.selectAsync = async ({ commit }, filter = {}) => {
+    actions.select = async ({ commit }, filter = {}) => {
       commit("SET_SELECTED_LOADING", true)
-      const item = await config.selectAsync(filter)
+      const item = await config.select(filter)
       commit("SET_SELECTED", item)
       commit("SET_SELECTED_LOADING", false)
       return item
     }
   }
 
-  if(config.createAsync) {
+  if(config.create) {
     state.createIsLoading = false
 
     mutations.SET_CREATE_LOADING = (state, loading) => {
@@ -77,20 +82,20 @@ export default (options) => {
       state.count += 1
     }
 
-    actions.createAsync = async ({ commit }, item) => {
+    actions.create = async ({ commit }, item) => {
       commit("SET_CREATE_LOADING", true)
-      const created = await config.createAsync(item)
+      const created = await config.create(item)
       commit("ADD_ONE", created)
       commit("SET_CREATE_LOADING", false)
       return created
     }
   }
 
-  if(config.removeAsync) {
-    state.removeIsLoading = false
+  if(config.removeOne) {
+    state.removeOneIsLoading = false
 
     mutations.SET_REMOVE_LOADING = (state, loading) => {
-      state.removeIsLoading = loading
+      state.removeOneIsLoading = loading
     }
 
     mutations.REMOVE_ONE = (state, item) => {
@@ -101,11 +106,41 @@ export default (options) => {
       }
     }
 
-    actions.removeAsync = async ({ commit }, item) => {
+    actions.removeOne = async ({ commit }, item) => {
       commit("SET_REMOVE_LOADING", true)
-      await config.removeAsync({ id: item.id })
+      await config.removeOne(item)
       commit("REMOVE_ONE", item)
       commit("SET_REMOVE_LOADING", false)
+      return true
+    }
+  }
+
+  if(config.removeMany) {
+    state.removeManyIsLoading = false
+
+    mutations.SET_REMOVE_MANY_LOADING = (state, loading) => {
+      state.removeManyIsLoading = loading
+    }
+
+    mutations.REMOVE_MANY = (state, items) => {
+      items.forEach((item) => {
+        state.list.splice(
+          state.list.findIndex(({ id }) => item.id === id), 1
+        )
+
+        if(state.selected && state.selected.id === item.id) {
+          state.selected = {}
+        }
+      })
+
+      state.count -= items.length
+    }
+
+    actions.removeMany = async ({ commit }, items) => {
+      commit("SET_REMOVE_MANY_LOADING", true)
+      await config.removeMany(items)
+      commit("REMOVE_MANY", items)
+      commit("SET_REMOVE_MANY_LOADING", false)
       return true
     }
   }

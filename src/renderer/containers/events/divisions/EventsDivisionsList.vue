@@ -1,12 +1,11 @@
 <style lang="stylus">
-// .events-divisions-list
 </style>
 
 <template>
   <div class="events-divisions-list">
     <div
-      v-for="division in eventsDivisionsList"
-      :key="division._id"
+      v-for="division in eventsDivisionsStateList"
+      :key="division.id"
       class="events-results_division mb-8"
     >
       <h2 class="h2 mb-2">
@@ -40,23 +39,23 @@ export default {
 
   computed: {
     ...mapState("events/divisions", {
-      eventsDivisionsListIsLoading: "listIsLoading",
-      eventsDivisionsCount: "count",
-      eventsDivisionsList: "list"
+      eventsDivisionsStateListIsLoading: "listIsLoading",
+      eventsDivisionsStateCount: "count",
+      eventsDivisionsStateList: "list"
     })
   },
 
   async created() {
-    this.eventsDivisionsSetListFilter({ eventId: this.event._id })
-    await this.eventsDivisionsListAsync()
+    this.eventsDivisionsMutationsSetListFilter({ eventId: this.event.id })
+    await this.eventsDivisionsActionsList()
   },
 
   methods: {
     ...mapMutations("events/divisions", {
-      "eventsDivisionsSetListFilter": "SET_LIST_FILTER"
+      "eventsDivisionsMutationsSetListFilter": "SET_LIST_FILTER"
     }),
     ...mapActions("events/divisions", {
-      eventsDivisionsListAsync: "listAsync"
+      eventsDivisionsActionsList: "list"
     }),
     eventsDivisionsOpenCreateDialog() {
       this.$emit("eventsDivisionsOpenCreateDialog")

@@ -66,13 +66,14 @@ export default {
 
   computed: {
     ...mapState("events", {
-      eventsFetchMode: "fetchMode"
+      eventsStateFetchMode: "fetchMode"
     }),
+
     breadcrumbLabel() {
-      if(this.eventsFetchMode === "history") {
+      if(this.eventsStateFetchMode === "history") {
         return "Past"
       }
-      return this.eventsFetchMode || "All"
+      return this.eventsStateFetchMode || "All"
     }
   },
 
@@ -80,19 +81,19 @@ export default {
     "$route.query.filter": {
       immediate: true,
       handler: async function(mode) {
-        this.eventsSetFetchMode(mode)
-        await this.eventsListAsync()
+        this.eventsMutationsSetFetchMode(mode)
+        await this.eventsActionsList()
       }
     }
   },
 
   methods: {
     ...mapMutations("events", {
-      eventsSetFetchMode: "SET_FETCH_MODE"
+      eventsMutationsSetFetchMode: "SET_FETCH_MODE"
     }),
 
     ...mapActions("events", {
-      eventsListAsync: "listAsync"
+      eventsActionsList: "list"
     }),
 
     eventsOpenCreateDialog() {

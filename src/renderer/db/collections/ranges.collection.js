@@ -9,7 +9,8 @@ const schema = {
       primary: true
     },
     name: {
-      type: "string"
+      type: "string",
+      index: true
     },
     address: {
       type: "string"
@@ -18,7 +19,8 @@ const schema = {
       type: "string"
     },
     country: {
-      type: "string"
+      type: "string",
+      index: true
     },
     lat: {
       type: "string"
@@ -27,13 +29,8 @@ const schema = {
       type: "string"
     },
     type: {
-      type: "string"
-    },
-    createdAt: {
-      type: "string"
-    },
-    updatedAt: {
-      type: "string"
+      type: "string",
+      index: true
     }
   },
   required: [

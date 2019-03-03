@@ -4,31 +4,31 @@
 <template>
   <el-container
     id="ranges-view-screen"
-    v-loading="rangesSelectedIsLoading"
+    v-loading="rangesStateSelectedIsLoading"
     class="screen"
   >
     <el-header height="auto">
       <breadcrumb-bar
         :paths="[
           { to: '/ranges', label: 'Ranges' },
-          { to: `/ranges/${rangesSelected._id}`, label: rangesSelected.name }
+          { to: `/ranges/${rangesStateSelected.id}`, label: rangesStateSelected.name }
         ]"
       />
 
       <div class="page-meta">
         <div class="page-titles">
           <h1 class="h1">
-            {{ rangesSelected.name }}
+            {{ rangesStateSelected.name }}
           </h1>
           <small class="small">
-            <span v-if="rangesSelected.address">
-              {{ rangesSelected.address }}
+            <span v-if="rangesStateSelected.address">
+              {{ rangesStateSelected.address }}
             </span>
-            <span v-if="rangesSelected.area">
-              , {{ rangesSelected.area }}
+            <span v-if="rangesStateSelected.area">
+              , {{ rangesStateSelected.area }}
             </span>
-            <span v-if="rangesSelected.country">
-              , {{ rangesSelected.country }}
+            <span v-if="rangesStateSelected.country">
+              , {{ rangesStateSelected.country }}
             </span>
           </small>
         </div>
@@ -36,7 +36,7 @@
         <div class="page-controls">
           <el-dropdown
             trigger="click"
-            @command="rangesSelectedDispatchActions"
+            @command="rangesDispatchActions"
           >
             <el-button type="text">
               <div class="flex items-center">
@@ -44,12 +44,12 @@
               </div>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="rangesSelectedUpdate">
+              <el-dropdown-item command="">
                 <i class="el-icon-edit el-icon--left" /> Edit
               </el-dropdown-item>
               <el-dropdown-item
                 class="dropdown-menu-delete"
-                command="rangesSelectedRemove"
+                command=""
                 divided
               >
                 <i class="el-icon-delete el-icon--left" /> Delete
@@ -67,7 +67,7 @@
             Address:
           </h6>
           <p class="info-grid_item_value">
-            {{ rangesSelected.address }}
+            {{ rangesStateSelected.address }}
           </p>
         </div>
       </div>
@@ -88,21 +88,21 @@ export default {
 
   computed: {
     ...mapState("ranges", {
-      rangesSelectedIsLoading: "selectedIsLoading",
-      rangesSelected: "selected"
+      rangesStateSelectedIsLoading: "selectedIsLoading",
+      rangesStateSelected: "selected"
     })
   },
 
   async created() {
-    await this.rangesSelectAsync({ _id: this.$route.params.rangeId })
+    await this.rangesActionsSelect({ id: this.$route.params.rangeId })
   },
 
   methods: {
     ...mapActions("ranges", {
-      rangesSelectAsync: "selectAsync"
+      rangesActionsSelect: "select"
     }),
 
-    rangesSelectedDispatchActions() {}
+    rangesDispatchActions() {}
   }
 }
 </script>

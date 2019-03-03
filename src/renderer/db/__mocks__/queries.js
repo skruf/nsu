@@ -5,9 +5,10 @@ const mocks = rangesFixture.map((fixture) => ({
   toJSON: jest.fn().mockReturnValue(fixture)
 }))
 
-export const find = jest.fn().mockResolvedValue({
+export const findMany = jest.fn().mockResolvedValue({
   items: mocks, count: mocks.length
 })
 export const findOne = jest.fn().mockResolvedValue(mocks[0])
 export const insert = jest.fn().mockResolvedValue(mocks[0])
-export const destroy = jest.fn().mockResolvedValue(true)
+export const destroyOne = jest.fn().mockResolvedValue(true)
+export const destroyMany = jest.fn().mockResolvedValue(true)

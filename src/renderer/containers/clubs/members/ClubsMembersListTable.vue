@@ -6,19 +6,17 @@
     <search-form
       v-model="clubsMembersSearchFilter"
       placeholder="Search for members by first or last name"
-      @submit="clubsMembersSetSearchFilterAsync"
+      @submit="clubsMembersActionsSetSearchFilter"
     />
 
-    <div v-loading="clubsMembersListIsLoading || clubsMembersRemoveIsLoading">
+    <div v-loading="clubsMembersIsLoading">
       <el-table
         :data="clubsMembersList"
         :sort-by="clubsMembersSortBy"
         row-key="id"
-        class="table-clickable"
         empty-text
         @selection-change="clubsMembersSelectionChange"
-        @row-click="clubsMembersRowClick"
-        @sort-change="clubsMembersSetSortingAsync"
+        @sort-change="clubsMembersActionsSetSorting"
       >
         <el-table-column
           type="selection"
@@ -38,7 +36,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="name"
+          prop="firstName"
           label="Name/Email"
           sortable="custom"
           :sort-orders="clubsMembersSortOrders"
@@ -76,7 +74,7 @@
             >
               <el-dropdown
                 trigger="click"
-                @command="clubsMembersTableDispatchActions"
+                @command="clubsMembersDispatchActions"
               >
                 <span class="el-dropdown-link">
                   <i class="table-button el-icon-more" />
@@ -92,7 +90,7 @@
           <template slot-scope="scope">
             <el-dropdown
               trigger="click"
-              @command="clubsMembersTableRowDispatchActions"
+              @command="clubsMembersDispatchActions"
             >
               <span class="el-dropdown-link">
                 <i class="table-button el-icon-more" />
@@ -100,7 +98,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
                   :command="{
-                    handler: 'clubsMembersRemove',
+                    handler: 'clubsMembersRemoveOne',
                     payload: scope.row
                   }"
                 >
@@ -129,8 +127,8 @@
       :current-page="clubsMembersPageCurrent"
       :page-sizes="[ 15, 30, 45, 60 ]"
       :total="clubsMembersCount"
-      @size-change="clubsMembersSetPageSize"
-      @current-change="clubsMembersSetPageCurrent"
+      @size-change="clubsMembersActionsSetPageSize"
+      @current-change="clubsMembersActionsSetPageCurrent"
     />
   </div>
 </template>
@@ -165,34 +163,43 @@ export default {
       clubsMembersPageCurrent: "pageCurrent",
       clubsMembersSortBy: "sortBy",
       clubsMembersListIsLoading: "listIsLoading",
-      clubsMembersRemoveIsLoading: "removeIsLoading"
+      clubsMembersRemoveOneIsLoading: "removeOneIsLoading",
+      clubsMembersRemoveManyIsLoading: "removeManyIsLoading"
     }),
     clubsMembersHasSelection() {
       return this.clubsMembersSelection.length > 0
     },
     clubsMembersSearchFilter: {
       get() { return this.$store.state.clubs.searchFilterValue },
-      set(search) { this.clubsMembersSetSearchFilter(search) }
+      set(search) { this.clubsMembersMutationsSetSearchFilter(search) }
+    },
+    clubsMembersIsLoading() {
+      return (
+        this.clubsMembersListIsLoading ||
+        this.clubsMembersRemoveOneIsLoading ||
+        this.clubsMembersRemoveManyIsLoading
+      )
     }
   },
 
   async created() {
-    this.clubsMembersSetListFilter({ clubId: this.clubId })
-    await this.clubsMembersListAsync()
+    this.clubsMembersMutationsSetListFilter({ clubId: this.clubId })
+    await this.clubsMembersActionsList()
   },
 
   methods: {
     ...mapMutations("clubs/members", {
-      clubsMembersSetListFilter: "SET_LIST_FILTER",
-      clubsMembersSetSearchFilter: "SET_SEARCH_FILTER"
+      clubsMembersMutationsSetListFilter: "SET_LIST_FILTER",
+      clubsMembersMutationsSetSearchFilter: "SET_SEARCH_FILTER"
     }),
     ...mapActions("clubs/members", {
-      clubsMembersListAsync: "listAsync",
-      clubsMembersSetPageSize: "setPageSizeAsync",
-      clubsMembersSetPageCurrent: "setPageCurrentAsync",
-      clubsMembersSetSortingAsync: "setSortingAsync",
-      clubsMembersSetSearchFilterAsync: "setSearchFilterAsync",
-      clubsMembersRemoveAsync: "removeAsync"
+      clubsMembersActionsList: "list",
+      clubsMembersActionsSetPageSize: "setPageSize",
+      clubsMembersActionsSetPageCurrent: "setPageCurrent",
+      clubsMembersActionsSetSorting: "setSorting",
+      clubsMembersActionsSetSearchFilter: "setSearchFilter",
+      clubsMembersActionsRemoveOne: "removeOne",
+      clubsMembersActionsRemoveMany: "removeMany"
     }),
     clubsMembersOpenCreateDialog() {
       this.$emit("clubsMembersOpenCreateDialog")
@@ -201,17 +208,15 @@ export default {
       this.clubsMembersSelection = members
     },
 
-    clubsMembersRowClick() {},
-    clubsMembersTableDispatchActions() {},
-
-    clubsMembersTableRowDispatchActions({ handler, payload }) {
+    clubsMembersDispatchActions({ handler, payload }) {
       this[handler](payload)
     },
 
-    async clubsMembersRemove(clubMember) {
+    async clubsMembersRemoveOne(clubMember) {
       try {
+        const fullName = `${clubMember.firstName} ${clubMember.lastName}`
         await this.$confirm(
-          `This will remove ${clubMember.firstName} ${clubMember.lastName} from the club. Continue?`,
+          `This will remove ${fullName} from the club. Continue?`,
           "Warning!", {
             confirmButtonText: "Yes, I am sure",
             cancelButtonText: "Cancel",
@@ -221,11 +226,41 @@ export default {
         )
 
         try {
-          await this.clubsMembersRemoveAsync({ id: clubMember.id })
+          await this.clubsMembersActionsRemoveOne({ id: clubMember.id })
           this.$notify({
             type: "success",
             title: "Success",
-            message: `${clubMember.firstName} ${clubMember.lastName} was removed from the clubs database`
+            message: `${fullName} was removed from the clubs database`
+          })
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      } catch(e) {}
+    },
+
+    async clubsMembersRemoveMany() {
+      try {
+        const count = this.clubsMembersSelection.length
+        await this.$confirm(
+          `This will remove ${count} club members permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+
+        try {
+          await this.clubsMembersActionsRemoveMany(this.clubsMembersSelection)
+          this.$notify({
+            type: "success",
+            title: "Success",
+            message: `${count} club members were removed from the database`
           })
         } catch(e) {
           this.$notify({

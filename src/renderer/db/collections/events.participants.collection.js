@@ -10,7 +10,7 @@ const schema = {
     },
     memberId: {
       type: "string",
-      ref: "clubsMembers"
+      ref: "clubs_members"
     },
     eventId: {
       type: "string",

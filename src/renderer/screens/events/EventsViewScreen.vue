@@ -27,7 +27,12 @@
             <template v-else>
               <i class="el-icon-star-off" /> Isn't approbated,
             </template>
-            {{ eventsStateSelected.organizerName }}, {{ eventsStateSelected.area }}
+            <template v-if="eventsStateSelected.range">
+              {{ eventsStateSelected.range.name }},
+            </template>
+            <template v-if="eventsStateSelected.club">
+              {{ eventsStateSelected.club.name }}
+            </template>
           </small>
         </div>
 
@@ -67,7 +72,10 @@
           <h6 class="h6 info-grid_item_key">
             Starts at:
           </h6>
-          <p class="info-grid_item_value">
+          <p
+            v-if="eventsStateSelected.startsAt"
+            class="info-grid_item_value"
+          >
             <date-with-tooltip :date="eventsStateSelected.startsAt" />
           </p>
         </div>
@@ -75,7 +83,10 @@
           <h6 class="h6 info-grid_item_key">
             End at:
           </h6>
-          <p class="info-grid_item_value">
+          <p
+            v-if="eventsStateSelected.endsAt"
+            class="info-grid_item_value"
+          >
             <date-with-tooltip :date="eventsStateSelected.endsAt" />
           </p>
         </div>
@@ -93,14 +104,6 @@
           </h6>
           <p class="info-grid_item_value">
             {{ eventsStateSelected.category }}
-          </p>
-        </div>
-        <div class="info-grid_item">
-          <h6 class="h6 info-grid_item_key">
-            Branch:
-          </h6>
-          <p class="info-grid_item_value">
-            {{ eventsStateSelected.branch }}
           </p>
         </div>
         <div
@@ -153,6 +156,7 @@
             <events-divisions-list
               v-if="!eventsStateSelectedIsLoading"
               :event="eventsStateSelected"
+              @eventsDivisionsOpenCreateDialog="eventsDivisionsOpenCreateDialog"
             />
           </div>
 

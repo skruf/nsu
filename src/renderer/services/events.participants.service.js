@@ -1,18 +1,65 @@
-import { insert, findMany, destroyOne, destroyMany } from "@/db/queries"
+import { insert, findMany, findOne, destroyOne, destroyMany } from "@/db/queries"
 
-const list = async (filter = {}, options = {}, fetchMode) => {
+// @TODO: fix search on clubs_members model
+// let a
+// const result = await findMany("events_participants", filter)
+// const ids = result.items.map(({ id }) => id)
+// if(options.relations.length) {
+//   const collection = options.relations[0].collection
+//   const filter = { id: { $in: ids } }
+//   const cfg = { search: { fields: options.relations[0].fields } }
+//   a = await findMany(collection, filter, cfg)
+// }
+
+const populate = async (doc) => {
+  const member = await doc.populate("memberId")
+  const club = await member.populate("clubId")
+  const classes = await doc.populate("classes")
+
+  const participant = doc.toJSON()
+
+  participant.member = member.toJSON()
+  participant.member.club = club.toJSON()
+  participant.classes = classes.map((d) => d.toJSON())
+
+  return participant
+}
+
+const list = async (filter = {}, options = {}) => {
   const result = await findMany("events_participants", filter, options)
-  result.items = result.items.map((doc) => doc.toJSON())
+
+  result.items = await Promise.all(
+    result.items.map((doc) => populate(doc))
+  )
+
   return result
 }
 
-const create = async (doc = {}, options = {}) => {
-  const result = await insert("events_participants", doc, options)
-  return result.toJSON()
+const select = async (filter = {}, options = {}) => {
+  const doc = await findOne("events_participants", filter, options)
+  const participant = await populate(doc)
+  return participant
 }
 
-const removeOne = async (filter, options = {}) => {
-  await destroyOne("events_participants", filter, options)
+const create = async (data = {}, options = {}) => {
+  const doc = await insert("events_participants", data, options)
+  const participant = await populate(doc)
+  return participant
+}
+
+const removeOne = async (participant, options = {}) => {
+  const divisionsFilter = { eventId: participant.eventId }
+  const divisions = await findMany("events_divisions", divisionsFilter)
+  const divisionIds = divisions.items.map((d) => d.toJSON().id)
+
+  await destroyMany("events_divisions_contestants", {
+    memberId: participant.memberId,
+    divisionId: { $in: divisionIds }
+  })
+
+  const participantFilter = { id: participant.id }
+  await destroyOne("events_participants", participantFilter, options)
+
   return true
 }
 
@@ -25,5 +72,5 @@ const removeMany = async (items, options = {}) => {
 }
 
 export default {
-  list, create, removeOne, removeMany
+  list, select, create, removeOne, removeMany
 }

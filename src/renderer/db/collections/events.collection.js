@@ -9,16 +9,21 @@ const schema = {
       primary: true
     },
     title: {
-      type: "string"
+      type: "string",
+      index: true
     },
     startsAt: {
-      type: "string"
+      type: "string",
+      format: "date-time",
+      index: true
     },
     endsAt: {
-      type: "string"
+      type: "string",
+      format: "date-time"
     },
     category: {
-      type: "string"
+      type: "string",
+      index: true
     },
     approbated: {
       type: "boolean",
@@ -26,7 +31,8 @@ const schema = {
     },
     organizerId: {
       type: "string",
-      ref: "clubs"
+      ref: "clubs",
+      index: true
     },
     rangeId: {
       type: "string",

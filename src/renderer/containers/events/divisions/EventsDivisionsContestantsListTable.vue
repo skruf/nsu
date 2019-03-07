@@ -103,6 +103,16 @@
           Add a member?
         </el-button>
       </template> -->
+
+      <template slot="empty">
+        No contestants yet.
+        <el-button
+          type="text"
+          disabled
+        >
+          Add one?
+        </el-button>
+      </template>
     </el-table>
   </div>
 </template>

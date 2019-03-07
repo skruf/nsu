@@ -3,11 +3,11 @@
 
 <template>
   <div class="events-participants-list-table">
-    <search-form
+    <!-- <search-form
       v-model="eventsParticipantsSearchFilter"
       placeholder="Search for participants by first or last name"
       @submit="eventsParticipantsActionsSetSearchFilter"
-    />
+    /> -->
 
     <div v-loading="eventsParticipantsIsLoading">
       <el-table
@@ -54,17 +54,17 @@
         </el-table-column>
 
         <el-table-column
-          prop="member.clubName"
+          prop="memberId"
           label="Club Name/Area"
           sortable="custom"
           :sort-orders="eventsParticipantsSortOrders"
         >
           <template slot-scope="scope">
             <h6 class="h6">
-              {{ scope.row.member.clubName }}
+              {{ scope.row.member.club.name }}
             </h6>
             <small class="small">
-              {{ scope.row.member.clubArea }}
+              {{ scope.row.member.club.area }}
             </small>
           </template>
         </el-table-column>
@@ -156,20 +156,27 @@
         @current-change="eventsParticipantsActionsSetPageCurrent"
       />
     </div>
+
+    <events-participants-view-dialog
+      :shown.sync="eventsParticipantsShowViewDialog"
+      :events-participants-id="eventsParticipantsViewId"
+    />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState, mapMutations } from "vuex"
-import SearchForm from "@/components/SearchForm"
+// import SearchForm from "@/components/SearchForm"
 import Avatar from "@/components/Avatar"
+import EventsParticipantsViewDialog from "@/containers/events/participants/EventsParticipantsViewDialog"
 
 export default {
   name: "EventsParticipantsListTable",
 
   components: {
-    SearchForm,
-    Avatar
+    // SearchForm,
+    Avatar,
+    EventsParticipantsViewDialog
   },
 
   props: {
@@ -178,7 +185,9 @@ export default {
 
   data: () => ({
     eventsParticipantsSelection: [],
-    eventsParticipantsSortOrders: [ "descending", "ascending" ]
+    eventsParticipantsSortOrders: [ "descending", "ascending" ],
+    eventsParticipantsViewId: "",
+    eventsParticipantsShowViewDialog: false
   }),
 
   computed: {
@@ -192,13 +201,16 @@ export default {
       eventsParticipantsStatePageCurrent: "pageCurrent",
       eventsParticipantsStateSortBy: "sortBy"
     }),
+
     eventsParticipantsHasSelection() {
       return this.eventsParticipantsSelection.length > 0
     },
-    eventsParticipantsSearchFilter: {
-      get() { return this.$store.state.clubs.searchFilterValue },
-      set(search) { this.eventsParticipantsMutationsSetSearchFilter(search) }
-    },
+
+    // eventsParticipantsSearchFilter: {
+    //   get() { return this.$store.state.clubs.searchFilterValue },
+    //   set(search) { this.eventsParticipantsMutationsSetSearchFilter(search) }
+    // },
+
     eventsParticipantsIsLoading() {
       return (
         this.eventsParticipantsStateListIsLoading ||
@@ -215,8 +227,8 @@ export default {
 
   methods: {
     ...mapMutations("events/participants", {
-      eventsParticipantsMutationsSetListFilter: "SET_LIST_FILTER",
-      eventsParticipantsMutationsSetSearchFilter: "SET_SEARCH_FILTER"
+      eventsParticipantsMutationsSetListFilter: "SET_LIST_FILTER"
+      // eventsParticipantsMutationsSetSearchFilter: "SET_SEARCH_FILTER"
     }),
 
     ...mapActions("events/participants", {
@@ -237,7 +249,13 @@ export default {
       this.eventsParticipantsSelection = participants
     },
 
-    eventsParticipantsRowClick() {},
+    eventsParticipantsRowClick(participant, column, e) {
+      if(e.target.className.includes("table-button")) {
+        return
+      }
+      this.eventsParticipantsViewId = participant.id
+      this.eventsParticipantsShowViewDialog = true
+    },
 
     eventsParticipantsDispatchActions({ handler, payload }) {
       this[handler](payload)
@@ -247,7 +265,7 @@ export default {
       try {
         const fullName = `${participant.member.firstName} ${participant.member.lastName}`
         await this.$confirm(
-          `This will remove ${fullName} permanently. Continue?`,
+          `This will remove ${fullName} permanently from the event. Continue?`,
           "Warning!", {
             confirmButtonText: "Yes, I am sure",
             cancelButtonText: "Cancel",

@@ -213,14 +213,14 @@
               prop="participant"
               class="px-2 w-full"
             >
+              <!-- clearable -->
+              <!-- @clear="eventsParticipantsSetAavailable($event)" -->
               <el-select
                 v-model="contestantForm.memberId"
                 placeholder="Select a participant"
                 :loading="eventsParticipantsStateListIsLoading"
-                clearable
                 @change="eventsParticipantsSetUnavailable"
               >
-                <!-- @clear="eventsParticipantsSetAavailable($event)" -->
                 <el-option
                   v-for="participant in eventsParticipantsListAvailable"
                   :key="participant.memberId"
@@ -382,7 +382,7 @@ export default {
     }),
 
     ...mapState("events/divisions/contestants", {
-      eventsDivisionsContestantsStateCreateIsLoading: "createIsLoading",
+      eventsDivisionsContestantsStateCreateManyIsLoading: "createManyIsLoading",
       eventsDivisionsContestantsStateCount: "count",
       eventsDivisionsContestantsStateList: "list"
     }),
@@ -425,7 +425,7 @@ export default {
     eventsDivisionsIsLoading() {
       return (
         this.eventsDivisionsStateCreateIsLoading ||
-        this.eventsDivisionsContestantsStateCreateIsLoading
+        this.eventsDivisionsContestantsStateCreateManyIsLoading
       )
     }
   },
@@ -443,7 +443,7 @@ export default {
     }),
 
     ...mapActions("events/divisions/contestants", {
-      eventsDivisionsContestantsActionsCreate: "create"
+      eventsDivisionsContestantsActionsCreateMany: "createMany"
     }),
 
     ...mapMutations("events/participants", {
@@ -464,25 +464,11 @@ export default {
     },
 
     eventsParticipantsSetUnavailable(id) {
+      // @TODO: fix clearable or implement drag n drop
       this.eventsParticipantsListAvailable = this.eventsParticipantsListAvailable.filter(
         ({ memberId }) => memberId !== id
       )
     },
-
-    // eventsParticipantsSetAavailable() {
-    //   console.log(participantId)
-    //
-    //   // const participant = this.eventsParticipantsStateList.filter(
-    //   //   ({ id }) => id === participantId
-    //   // )[0]
-    //
-    //   // console.log(participant)
-    //
-    //   this.eventsParticipantsListAvailable = [
-    //     ...this.eventsParticipantsListAvailable
-    //     // { ...participant }
-    //   ]
-    // },
 
     async eventsDivisionsCreateDialogOpen() {
       this.eventsParticipantsMutationsSetListFilter({ eventId: this.event.id })
@@ -515,10 +501,12 @@ export default {
           })
         }
 
-        const division = this.eventsDivisionsForm
-        const contestants = this.eventsDivisionsContestantsForms
+        const division = { ...this.eventsDivisionsForm }
+        const contestants = [ ...this.eventsDivisionsContestantsForms ]
 
         division.eventId = this.event.id
+        division.day = division.day.toISOString()
+        division.startsAt = this.eventsDivisionsEndsAt
         division.endsAt = this.eventsDivisionsEndsAt
 
         try {
@@ -527,12 +515,14 @@ export default {
             .filter((contestant) => !!contestant.memberId)
             .map((contestant) => ({ ...contestant, divisionId: createdDivision.id }))
 
-          await this.eventsDivisionsContestantsActionsCreate(contestantsWithDivision)
+          await this.eventsDivisionsContestantsActionsCreateMany(contestantsWithDivision)
+
           this.$notify({
             type: "success",
             title: "Great success",
             message: `${division.name} was successfully added to the database`
           })
+
           this.eventsDivisionsFormClear()
           this.eventsDivisionsCreateDialogClose()
         } catch(e) {

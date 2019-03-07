@@ -17,6 +17,19 @@
 
       <events-divisions-contestants-list-table :division="division" />
     </div>
+
+    <div
+      v-if="!eventsDivisionsExists"
+      class="data-placeholder"
+    >
+      No divisions yet.
+      <el-button
+        type="text"
+        @click="eventsDivisionsOpenCreateDialog"
+      >
+        Create one?
+      </el-button>
+    </div>
   </div>
 </template>
 
@@ -42,7 +55,13 @@ export default {
       eventsDivisionsStateListIsLoading: "listIsLoading",
       eventsDivisionsStateCount: "count",
       eventsDivisionsStateList: "list"
-    })
+    }),
+    eventsDivisionsExists() {
+      return (
+        this.eventsDivisionsStateList &&
+        this.eventsDivisionsStateList.length > 0
+      )
+    }
   },
 
   async created() {

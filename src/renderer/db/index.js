@@ -32,8 +32,15 @@ export default async () => {
 
   await Promise.all(collections.map(
     (collection) => {
-      collection.schema.properties.updatedAt = { type: "string" }
-      collection.schema.properties.createdAt = { type: "string", index: true }
+      collection.schema.properties.updatedAt = {
+        type: "string",
+        format: "date-time"
+      }
+      collection.schema.properties.createdAt = {
+        type: "string",
+        format: "date-time",
+        index: true
+      }
       return db.collection(collection)
     })
   )

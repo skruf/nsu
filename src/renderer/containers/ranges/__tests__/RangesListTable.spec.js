@@ -67,5 +67,7 @@ describe("RangesListTable", () => {
     const wrapper = build()
     wrapper.vm.rangesMutationsSetSearchFilter(rangesFixture[0].name)
     expect(rangesStore.mutations.SET_SEARCH_FILTER).toHaveBeenCalled()
+    wrapper.vm.rangesActionsSetSearchFilter()
+    expect(rangesStore.actions.list).toHaveBeenCalled()
   })
 })

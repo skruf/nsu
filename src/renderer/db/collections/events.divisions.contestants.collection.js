@@ -14,9 +14,13 @@ const schema = {
     calibre: {
       type: "string"
     },
+    divisionId: {
+      type: "string",
+      ref: "events_divisions"
+    },
     memberId: {
       type: "string",
-      ref: "clubsMembers"
+      ref: "clubs_members"
     },
     classId: {
       type: "string",
@@ -26,6 +30,7 @@ const schema = {
   required: [
     "time",
     "calibre",
+    "divisionId",
     "memberId",
     "classId"
   ]

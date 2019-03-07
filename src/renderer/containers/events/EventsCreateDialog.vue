@@ -9,7 +9,7 @@
 
 <template>
   <el-dialog
-    title="Opprett et nytt stevne"
+    title="Create an event"
     custom-class="create-dialog"
     :visible.sync="visible"
     @open="open"
@@ -48,36 +48,22 @@
           />
         </el-form-item>
 
-        <div class="flex">
-          <el-form-item
-            label="Category"
-            prop="category"
-            class="w-full mr-2"
+        <el-form-item
+          label="Category"
+          prop="category"
+        >
+          <el-select
+            v-model="form.category"
+            placeholder="Select a category"
           >
-            <el-select
-              v-model="form.category"
-              placeholder="Select a category"
-            >
-              <el-option
-                v-for="(category, index) in eventsStateCategories"
-                :key="index"
-                :label="category"
-                :value="category"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item
-            label="Branch"
-            prop="branch"
-            class="w-full ml-2"
-          >
-            <el-input
-              v-model="form.branch"
-              placeholder="Enter a branch"
+            <el-option
+              v-for="(category, index) in eventsStateCategories"
+              :key="index"
+              :label="category"
+              :value="category"
             />
-          </el-form-item>
-        </div>
+          </el-select>
+        </el-form-item>
 
         <el-form-item
           label="Organizer"
@@ -91,46 +77,29 @@
             <el-option
               v-for="club in clubsStateList"
               :key="club.id"
-              :label="club.name"
+              :label="`${club.name} (${club.area})`"
               :value="club.id"
             />
           </el-select>
         </el-form-item>
 
-        <div class="flex">
-          <el-form-item
-            label="Area"
-            prop="area"
-            class="w-full mr-2"
+        <el-form-item
+          label="Range"
+          prop="rangeId"
+        >
+          <el-select
+            v-model="form.rangeId"
+            placeholder="Select the range"
+            :loading="rangesStateListIsLoading"
           >
-            <el-input
-              v-model="form.area"
-              placeholder="Enter an area"
+            <el-option
+              v-for="range in rangesStateList"
+              :key="range.id"
+              :label="`${range.name} (${range.area})`"
+              :value="range.id"
             />
-          </el-form-item>
-          <div class="w-full ml-2 flex">
-            <el-form-item
-              label="Lat"
-              prop="lat"
-              class="w-full mr-2"
-            >
-              <el-input
-                v-model="form.lat"
-                placeholder="Enter latitude"
-              />
-            </el-form-item>
-            <el-form-item
-              label="Lng"
-              prop="lng"
-              class="w-full mr-2"
-            >
-              <el-input
-                v-model="form.lng"
-                placeholder="Enter longitude"
-              />
-            </el-form-item>
-          </div>
-        </div>
+          </el-select>
+        </el-form-item>
 
         <el-form-item
           label="Approbated"
@@ -182,9 +151,8 @@ export default {
         title: { required: true, message: "Title is a required field" },
         dates: { required: true, message: "Dates is a required field" },
         category: { required: true, message: "Category is a required field" },
-        branch: { required: true, message: "Branch is a required field" },
         organizerId: { required: true, message: "Organizer is a required field" },
-        area: { required: true, message: "Area is a required field" }
+        rangeId: { required: true, message: "Range is a required field" }
       }
     }
   },
@@ -194,9 +162,15 @@ export default {
       eventsStateCreateIsLoading: "createIsLoading",
       eventsStateCategories: "categories"
     }),
+
     ...mapState("clubs", {
       clubsStateListIsLoading: "createIsLoading",
       clubsStateList: "list"
+    }),
+
+    ...mapState("ranges", {
+      rangesStateListIsLoading: "listIsLoading",
+      rangesStateList: "list"
     })
   },
 
@@ -210,6 +184,7 @@ export default {
   methods: {
     async open() {
       await this.clubsActionsList()
+      await this.rangesActionsList()
     },
 
     ...mapActions("events", {
@@ -218,6 +193,10 @@ export default {
 
     ...mapActions("clubs", {
       clubsActionsList: "list"
+    }),
+
+    ...mapActions("ranges", {
+      rangesActionsList: "list"
     }),
 
     submit() {
@@ -231,16 +210,16 @@ export default {
         }
 
         const data = { ...this.form }
-        data.startsAt = data.dates[0]
-        data.endsAt = data.dates[1]
+        data.startsAt = data.dates[0].toISOString()
+        data.endsAt = data.dates[1].toISOString()
         delete data.dates
 
         try {
-          await this.eventsActionsCreate(this.form)
+          await this.eventsActionsCreate(data)
           this.$notify({
             type: "success",
             title: "Great success",
-            message: `${this.form.title} was successfully added to the database`
+            message: `${data.title} was successfully added to the database`
           })
           this.clear()
           this.close()

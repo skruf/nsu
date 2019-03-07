@@ -64,36 +64,27 @@
         </el-table-column>
 
         <el-table-column
-          prop="category"
-          label="Category/Branch"
+          prop="rangeId"
+          label="Range/Organizer"
           sortable="custom"
           :sort-orders="eventsSortOrders"
         >
           <template slot-scope="scope">
             <h6 class="h6">
-              {{ scope.row.category }}
+              {{ scope.row.range.name }}
             </h6>
             <small class="small">
-              {{ scope.row.branch }}
+              {{ scope.row.club.name }}
             </small>
           </template>
         </el-table-column>
 
         <el-table-column
-          prop="organizerName"
-          label="Area/Organizer"
+          prop="category"
+          label="Category"
           sortable="custom"
           :sort-orders="eventsSortOrders"
-        >
-          <template slot-scope="scope">
-            <h6 class="h6">
-              {{ scope.row.area }}
-            </h6>
-            <small class="small">
-              {{ scope.row.organizerName }}
-            </small>
-          </template>
-        </el-table-column>
+        />
 
         <el-table-column
           width="50"

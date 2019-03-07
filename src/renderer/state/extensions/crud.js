@@ -15,10 +15,20 @@ export default (options) => {
   if(
     config.list ||
     config.create ||
+    config.createMany ||
     config.removeOne ||
     config.removeMany
   ) {
     state.count = 0
+  }
+
+  if(config.list || config.createMany) {
+    mutations.SET_LIST = (state, items) => {
+      state.list = items
+    }
+    mutations.SET_COUNT = (state, count) => {
+      state.count = count
+    }
   }
 
   if(config.list) {
@@ -28,12 +38,6 @@ export default (options) => {
 
     mutations.SET_LIST_LOADING = (state, loading) => {
       state.listIsLoading = loading
-    }
-    mutations.SET_LIST = (state, items) => {
-      state.list = items
-    }
-    mutations.SET_COUNT = (state, count) => {
-      state.count = count
     }
     mutations.SET_LIST_FILTER = (state, listFilter) => {
       state.listFilter = listFilter
@@ -88,6 +92,23 @@ export default (options) => {
       commit("ADD_ONE", created)
       commit("SET_CREATE_LOADING", false)
       return created
+    }
+  }
+
+  if(config.createMany) {
+    state.createManyIsLoading = false
+
+    mutations.SET_CREATE_MANY_LOADING = (state, loading) => {
+      state.createManyIsLoading = loading
+    }
+
+    actions.createMany = async ({ commit }, items) => {
+      commit("SET_CREATE_MANY_LOADING", true)
+      const results = await config.createMany(items)
+      commit("SET_LIST", results.items)
+      commit("SET_COUNT", results.count)
+      commit("SET_CREATE_MANY_LOADING", false)
+      return results
     }
   }
 

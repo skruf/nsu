@@ -19,6 +19,7 @@ const modules = [
     module: "crud",
     options: {
       list: eventsParticipantsService.list,
+      select: eventsParticipantsService.select,
       create: eventsParticipantsService.create,
       removeOne: eventsParticipantsService.removeOne,
       removeMany: eventsParticipantsService.removeMany
@@ -29,11 +30,11 @@ const modules = [
   },
   {
     module: "sorting"
-  },
-  {
-    module: "search",
-    options: { fields: [ "firstName", "lastName" ] }
   }
+  // {
+  //   module: "search",
+  //   options: { fields: [ "firstName", "lastName" ] }
+  // }
 ]
 
 export default extend(store, modules)

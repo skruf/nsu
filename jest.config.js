@@ -15,11 +15,7 @@ module.exports = {
     "!tailwind.js",
     "!src/main/index.dev.js"
   ],
-  "coverageReporters": [
-    "text"
-    // "html",
-    // "text-summary"
-  ],
+  "coverageReporters": [ "text" ],
   testMatch: [
     "**/tests/unit/**/*.spec.(js|jsx|ts|tsx)|**/__tests__/*.(js|jsx|ts|tsx)"
   ],

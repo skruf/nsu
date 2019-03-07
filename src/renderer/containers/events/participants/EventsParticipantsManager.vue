@@ -168,77 +168,11 @@
       </ul>
     </div>
 
-    <el-dialog
-      v-if="eventsParticipantsShowCreateDialog"
-      :title="`Add ${eventsParticipantsSelectedMember.firstName} ${eventsParticipantsSelectedMember.lastName} to the event`"
-      custom-class="create-dialog"
-      :visible.sync="eventsParticipantsShowCreateDialog"
-      @close="eventsParticipantsOnCloseCreateDialog"
-    >
-      <div
-        v-loading="eventsParticipantsStateCreateIsLoading"
-        class="dialog_content"
-      >
-        <el-form
-          ref="eventsParticipantsCreateForm"
-          label-position="top"
-          :model="eventsParticipantsCreateForm"
-          :rules="eventsParticipantsCreateFormRules"
-        >
-          <el-form-item
-            label="Class(es)"
-            prop="classes"
-          >
-            <el-select
-              v-model="eventsParticipantsCreateForm.classes"
-              placeholder="Select one or more class(es)"
-              :loading="classesStateListIsLoading"
-            >
-              <el-option
-                v-for="classItem in classesStateList"
-                :key="classItem.id"
-                :label="classItem.name"
-                :value="classItem.id"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item
-            label="Calibre(s)"
-            prop="calibres"
-          >
-            <el-select
-              v-model="eventsParticipantsCreateForm.calibres"
-              placeholder="Select one or more calibre(s)"
-            >
-              <el-option
-                v-for="(calibre, index) in [ '5mm', '10mm', '15mm', '20mm', '25mm', '30mm', '35mm' ]"
-                :key="index"
-                :label="calibre"
-                :value="calibre"
-              />
-            </el-select>
-          </el-form-item>
-        </el-form>
-      </div>
-
-      <template slot="footer">
-        <el-button
-          class="block"
-          type="text"
-          @click="eventsParticipantsCloseCreateDialog"
-        >
-          Cancel
-        </el-button>
-        <el-button
-          class="block"
-          type="primary"
-          @click="eventsParticipantsSubmitCreateDialog"
-        >
-          Save
-        </el-button>
-      </template>
-    </el-dialog>
+    <events-participants-create-dialog
+      :event="event"
+      :member="eventsParticipantsSelectedMember"
+      :shown.sync="eventsParticipantsShowCreateDialog"
+    />
   </div>
 </template>
 
@@ -246,14 +180,15 @@
 import { mapActions, mapState, mapMutations } from "vuex"
 import Avatar from "@/components/Avatar"
 import SearchForm from "@/components/SearchForm"
-import { eventsParticipantsStub } from "@/stubs"
+import EventsParticipantsCreateDialog from "@/containers/events/participants/EventsParticipantsCreateDialog"
 
 export default {
   name: "EventsParticipantsManager",
 
   components: {
     Avatar,
-    SearchForm
+    SearchForm,
+    EventsParticipantsCreateDialog
   },
 
   props: {
@@ -264,11 +199,6 @@ export default {
     return {
       eventsParticipantsShowCreateDialog: false,
       eventsParticipantsSelectedMember: {},
-      eventsParticipantsCreateForm: { ...eventsParticipantsStub },
-      eventsParticipantsCreateFormRules: {
-        memberId: { required: true, message: "Member is a required field" },
-        eventId: { required: true, message: "Event is a required field" }
-      },
       clubsSearch: "",
       membersSearch: "",
       participantsSearch: ""
@@ -291,13 +221,7 @@ export default {
     ...mapState("events/participants", {
       eventsParticipantsStateList: "list",
       eventsParticipantsStateListIsLoading: "listIsLoading",
-      eventsParticipantsStateCreateIsLoading: "createIsLoading",
       eventsParticipantsStateRemoveOneIsLoading: "removeOneIsLoading"
-    }),
-
-    ...mapState("classes", {
-      classesStateListIsLoading: "listIsLoading",
-      classesStateList: "list"
     }),
 
     showClubMembers() {
@@ -333,7 +257,6 @@ export default {
     this.eventsParticipantsMutationsSetListFilter({ eventId: this.event.id })
     await this.eventsParticipantsActionsList()
     await this.clubsActionsList()
-    await this.classesActionsList()
   },
 
   methods: {
@@ -349,7 +272,6 @@ export default {
 
     ...mapActions("events/participants", {
       eventsParticipantsActionsList: "list",
-      eventsParticipantsActionsCreate: "create",
       eventsParticipantsActionsRemoveOne: "removeOne"
     }),
 
@@ -364,10 +286,6 @@ export default {
 
     ...mapMutations("clubs/members", {
       clubsMembersMutationsSetListFilter: "SET_LIST_FILTER"
-    }),
-
-    ...mapActions("classes", {
-      classesActionsList: "list"
     }),
 
     async fetchClubsMemebersList(club) {
@@ -386,52 +304,11 @@ export default {
 
     eventsParticipantsOpenCreateDialog(member) {
       this.eventsParticipantsSelectedMember = member
-      this.eventsParticipantsCreateForm.memberId = member.id
-      this.eventsParticipantsCreateForm.eventId = this.event.id
       this.eventsParticipantsShowCreateDialog = true
-    },
-
-    async eventsParticipantsSubmitCreateDialog() {
-      this.$refs.eventsParticipantsCreateForm.validate(async (isValid) => {
-        if(!isValid) {
-          return this.$notify({
-            type: "error",
-            title: "Oops!",
-            message: "Please fill in all required fields before saving"
-          })
-        }
-
-        try {
-          const fullName = `${this.eventsParticipantsSelectedMember.firstName} ${this.eventsParticipantsSelectedMember.lastName}`
-          await this.eventsParticipantsActionsCreate(this.eventsParticipantsCreateForm)
-          this.$notify({
-            type: "success",
-            title: "Success",
-            message: `${fullName} was added to the event`
-          })
-          await this.eventsParticipantsActionsList()
-        } catch(e) {
-          this.$notify({
-            type: "error",
-            title: "Oops!",
-            message: e.message
-          })
-        }
-      })
-    },
-
-    eventsParticipantsOnCloseCreateDialog() {
-      this.eventsParticipantsSelectedMember = {}
-      this.eventsParticipantsCreateForm = { ...eventsParticipantsStub }
-    },
-
-    eventsParticipantsCloseCreateDialog() {
-      this.eventsParticipantsShowCreateDialog = false
     },
 
     async eventsParticipantsDeleteOne(participant) {
       try {
-        // const filter = { eventId: this.event.id, memberId: participant.id }
         const fullName = `${participant.member.firstName} ${participant.member.lastName}`
         await this.eventsParticipantsActionsRemoveOne(participant)
         this.$notify({

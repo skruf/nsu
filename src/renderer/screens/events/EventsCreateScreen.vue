@@ -156,7 +156,7 @@
           name="step2"
         >
           <template v-if="!step2Disabled">
-            <events-participants-manager :event="eventsSelected" />
+            <events-participants-manager :event="eventsStateSelected" />
           </template>
 
           <el-footer height="auto">
@@ -195,7 +195,7 @@
             v-if="!step3Disabled"
             class="content"
           >
-            <events-divisions-list :event="eventsSelected" />
+            <events-divisions-list :event="eventsStateSelected" />
           </div>
 
           <el-footer height="auto">
@@ -229,7 +229,7 @@
     />
 
     <events-divisions-create-dialog
-      :event="eventsSelected"
+      :event="eventsStateSelected"
       :shown.sync="eventsDivisionsShowCreateDialog"
     />
   </el-container>
@@ -277,7 +277,7 @@ export default {
   },
 
   computed: {
-    eventsSelected: () => MOCK,
+    eventsStateSelected: () => MOCK,
 
     ...mapState("events", {
       eventsStateCreateIsLoading: "createIsLoading",
@@ -338,8 +338,8 @@ export default {
         }
 
         const data = { ...this.eventDetailsForm }
-        data.startsAt = data.dates[0]
-        data.endsAt = data.dates[1]
+        data.startsAt = data.dates[0].toISOString()
+        data.endsAt = data.dates[1].toISOString()
         delete data.dates
 
         try {
@@ -352,6 +352,7 @@ export default {
           this.navToStep2()
           this.eventsDetailsFormClear()
         } catch(e) {
+          console.log(e.message)
           this.$notify({
             type: "error",
             title: "Oops!",

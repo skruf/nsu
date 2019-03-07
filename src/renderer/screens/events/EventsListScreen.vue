@@ -28,15 +28,18 @@
     </el-main>
 
     <el-footer height="auto">
-      <el-button
+      <!-- <el-button
         type="primary"
         @click="navToCreate"
       >
         <i class="el-icon-plus el-icon--left" /> Create event
-      </el-button>
-      <!-- <el-button @click="eventsOpenCreateDialog" type="primary">
-        <i class="el-icon-plus el-icon--left"></i> Create event
       </el-button> -->
+      <el-button
+        type="primary"
+        @click="eventsOpenCreateDialog"
+      >
+        <i class="el-icon-plus el-icon--left" /> Create event
+      </el-button>
     </el-footer>
 
     <events-create-dialog

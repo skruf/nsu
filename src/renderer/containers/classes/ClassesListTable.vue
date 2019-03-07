@@ -58,7 +58,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="category"
+          prop="distance"
           label="Distance/Position"
           sortable="custom"
           :sort-orders="classesSortOrders"

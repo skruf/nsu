@@ -21,6 +21,7 @@ const modules = [
       list: eventsDivisionsContestantsService.list,
       select: eventsDivisionsContestantsService.select,
       create: eventsDivisionsContestantsService.create,
+      createMany: eventsDivisionsContestantsService.createMany,
       removeOne: eventsDivisionsContestantsService.removeOne,
       removeMany: eventsDivisionsContestantsService.removeMany
     }

@@ -12,10 +12,12 @@ const schema = {
       type: "string"
     },
     name: {
-      type: "string"
+      type: "string",
+      index: true
     },
     category: {
-      type: "string"
+      type: "string",
+      index: true
     },
     condition: {
       type: "string"
@@ -27,7 +29,8 @@ const schema = {
       type: "string"
     },
     distance: {
-      type: "string"
+      type: "string",
+      index: true
     },
     type: {
       type: "string"

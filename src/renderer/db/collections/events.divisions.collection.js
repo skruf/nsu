@@ -12,6 +12,10 @@ const schema = {
       type: "string"
     },
     day: {
+      type: "string",
+      format: "date-time"
+    },
+    startsAt: {
       type: "string"
     },
     endsAt: {

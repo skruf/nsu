@@ -15,7 +15,9 @@
         Starts on: {{ division.day | moment("DD.MM") }} ends at: {{ division.endsAt }}
       </small>
 
-      <events-divisions-contestants-list-table :division="division" />
+      <events-divisions-contestants-list-table
+        :division="division"
+      />
     </div>
 
     <div
@@ -35,12 +37,14 @@
 
 <script>
 import { mapMutations, mapActions, mapState } from "vuex"
-import EventsDivisionsContestantsListTable from "@/containers/events/divisions/EventsDivisionsContestantsListTable"
+import EventsDivisionsContestantsListTable from "@/containers/events/divisions/contestants/EventsDivisionsContestantsListTable"
 
 export default {
   name: "EventsDivisionsList",
 
-  components: { EventsDivisionsContestantsListTable },
+  components: {
+    EventsDivisionsContestantsListTable
+  },
 
   props: {
     event: { type: Object, required: true }

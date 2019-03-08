@@ -6,6 +6,7 @@ import eventsCollection from "./events.collection"
 import eventsParticipantsCollection from "./events.participants.collection"
 import eventsDivisionsCollection from "./events.divisions.collection"
 import eventsDivisionsContestantsCollection from "./events.divisions.contestants.collection"
+import eventsDivisionsContestantsResultsCollection from "./events.divisions.contestants.results.collection"
 
 export default [
   rangesCollection,
@@ -15,5 +16,6 @@ export default [
   eventsCollection,
   eventsParticipantsCollection,
   eventsDivisionsCollection,
-  eventsDivisionsContestantsCollection
+  eventsDivisionsContestantsCollection,
+  eventsDivisionsContestantsResultsCollection
 ]

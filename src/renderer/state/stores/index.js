@@ -6,6 +6,7 @@ import eventsStore from "./events.store"
 import eventsParticipantsStore from "./events.participants.store"
 import eventsDivisionsStore from "./events.divisions.store"
 import eventsDivisionsContestantsStore from "./events.divisions.contestants.store"
+import eventsDivisionsContestantsResultsStore from "./events.divisions.contestants.results.store"
 
 export default {
   events: {
@@ -15,7 +16,12 @@ export default {
       divisions: {
         ...eventsDivisionsStore,
         modules: {
-          contestants: eventsDivisionsContestantsStore
+          contestants: {
+            ...eventsDivisionsContestantsStore,
+            modules: {
+              results: eventsDivisionsContestantsResultsStore
+            }
+          }
         }
       }
     }

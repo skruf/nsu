@@ -175,21 +175,18 @@
           name="results"
         >
           <div class="content">
-            <events-results />
+            <events-divisions-contestants-results-list
+              v-if="!eventsStateSelectedIsLoading"
+              :event="eventsStateSelected"
+            />
           </div>
 
           <el-footer height="auto">
             <el-button
               type="primary"
-              @click="eventsParticipantsOpenManageDialog"
+              @click="eventsDivisionsContestantsResultsOpenCreateDialog"
             >
               <i class="ion-ios-keypad el-icon--left" /> Input results
-            </el-button>
-            <el-button
-              type="text"
-              @click="clubsMembersOpenCreateDialog"
-            >
-              <i class="el-icon-plus el-icon--left" /> Create club member
             </el-button>
           </el-footer>
         </el-tab-pane>
@@ -211,6 +208,12 @@
       :event="eventsStateSelected"
       :shown.sync="eventsParticipantsShowManageDialog"
     />
+
+    <!-- v-if="!eventsStateSelectedIsLoading" -->
+    <events-divisions-contestants-results-create-dialog
+      :event="eventsStateSelected"
+      :shown.sync="eventsDivisionsContestantsResultsShowCreateDialog"
+    />
   </el-container>
 </template>
 
@@ -225,8 +228,8 @@ import EventsParticipantsManagerDialog from "@/containers/events/participants/Ev
 import ClubsMembersCreateDialog from "@/containers/clubs/members/ClubsMembersCreateDialog"
 import EventsDivisionsList from "@/containers/events/divisions/EventsDivisionsList"
 import EventsDivisionsCreateDialog from "@/containers/events/divisions/EventsDivisionsCreateDialog"
-
-import EventsResults from "@/components/EventsResults"
+import EventsDivisionsContestantsResultsList from "@/containers/events/divisions/contestants/results/EventsDivisionsContestantsResultsList"
+import EventsDivisionsContestantsResultsCreateDialog from "@/containers/events/divisions/contestants/results/EventsDivisionsContestantsResultsCreateDialog"
 
 export default {
   name: "EventsViewScreen",
@@ -239,15 +242,16 @@ export default {
     ClubsMembersCreateDialog,
     EventsDivisionsList,
     EventsDivisionsCreateDialog,
-
-    EventsResults
+    EventsDivisionsContestantsResultsList,
+    EventsDivisionsContestantsResultsCreateDialog
   },
 
   data: () => ({
     activeTab: "participants",
     eventsParticipantsShowManageDialog: false,
     eventsDivisionsShowCreateDialog: false,
-    clubsMembersShowCreateDialog: false
+    clubsMembersShowCreateDialog: false,
+    eventsDivisionsContestantsResultsShowCreateDialog: false
   }),
 
   computed: {
@@ -255,10 +259,6 @@ export default {
       eventsStateSelectedIsLoading: "selectedIsLoading",
       eventsStateSelected: "selected"
     }),
-
-    // ...mapState("events/participants", {
-    //   eventsParticipantsStateCreateIsLoading: "createIsLoading"
-    // }),
 
     eventsSelectedDuration() {
       if(!Object.keys(this.eventsStateSelected).length) {
@@ -277,9 +277,6 @@ export default {
     ...mapActions("events", {
       eventsActionsSelect: "select"
     }),
-    // ...mapActions("events/participants", {
-    //   eventsParticipantsActionsCreate: "create"
-    // }),
 
     eventsDispatchActions() {},
 
@@ -293,6 +290,10 @@ export default {
 
     eventsDivisionsOpenCreateDialog() {
       this.eventsDivisionsShowCreateDialog = true
+    },
+
+    eventsDivisionsContestantsResultsOpenCreateDialog() {
+      this.eventsDivisionsContestantsResultsShowCreateDialog = true
     }
   }
 }

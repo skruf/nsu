@@ -28,6 +28,7 @@
   <el-form
     ref="form"
     class="search-form"
+    :disabled="disabled"
     @submit.prevent.native="submit"
   >
     <el-input
@@ -46,7 +47,8 @@ export default {
   name: "SearchForm",
   props: {
     value: { type: String, default: "" },
-    placeholder: { type: String, default: "Enter search words.." }
+    placeholder: { type: String, default: "Enter search words.." },
+    disabled: { type: Boolean, default: false }
   },
   data: function() {
     return {

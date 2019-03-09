@@ -9,6 +9,13 @@
     @open="eventsParticipantsViewDialogOpen"
     @close="eventsParticipantsViewDialogClose"
   >
+    <el-alert
+      title="Work in progress"
+      description="Fremstillingen av denne visningen er ikke ferdig implementert. Feltene under er bare rå data printet ut."
+      type="warning"
+      show-icon
+    />
+
     <template v-if="hasEventsParticipant">
       <div
         v-loading="eventsParticipantsStateSelectedIsLoading"

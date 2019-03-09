@@ -81,6 +81,10 @@
           v-if="clubNotProvided"
           label="Club"
           prop="club"
+          :rules="{
+            required: true,
+            message: 'Please select a club'
+          }"
         >
           <el-select
             v-model="form.clubId"

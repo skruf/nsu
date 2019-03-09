@@ -42,9 +42,7 @@
             @command="eventsDispatchActions"
           >
             <el-button type="text">
-              <div class="flex items-center">
-                <i class="ml-3 text-xl el-icon-arrow-down el-icon-more el-icon--left" />
-              </div>
+              <i class="el-icon-arrow-down el-icon-more" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="">
@@ -153,6 +151,14 @@
           name="divisions"
         >
           <div class="content">
+            <el-alert
+              title="Work in progress"
+              description="Vi har kun implementert mulighet for å opprette divisions. Redigere og slette divisions er ikke ferdig og kommer i neste versjon."
+              type="warning"
+              show-icon
+              class="mb-5"
+            />
+
             <events-divisions-list
               v-if="!eventsStateSelectedIsLoading"
               :event="eventsStateSelected"
@@ -165,7 +171,7 @@
               type="primary"
               @click="eventsDivisionsOpenCreateDialog"
             >
-              <i class="ion-ios-keypad el-icon--left" /> Create division
+              <i class="el-icon-plus el-icon--left" /> Create division
             </el-button>
           </el-footer>
         </el-tab-pane>
@@ -184,9 +190,10 @@
           <el-footer height="auto">
             <el-button
               type="primary"
+              disabled
               @click="eventsDivisionsContestantsResultsOpenCreateDialog"
             >
-              <i class="ion-ios-keypad el-icon--left" /> Input results
+              <i class="el-icon-plus el-icon--left" /> Input results
             </el-button>
           </el-footer>
         </el-tab-pane>
@@ -278,7 +285,13 @@ export default {
       eventsActionsSelect: "select"
     }),
 
-    eventsDispatchActions() {},
+    eventsDispatchActions() {
+      this.$notify({
+        type: "warning",
+        title: "Oops!",
+        message: "Denne funksjonen er enda ikke implementert"
+      })
+    },
 
     clubsMembersOpenCreateDialog() {
       this.clubsMembersShowCreateDialog = true

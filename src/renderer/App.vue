@@ -58,6 +58,24 @@
   right 0
   top 0
 
+.app-warning
+  position absolute
+  top 0
+  left 0
+  right 0
+  height 25px
+  z-index 1
+  padding 0
+  border-radius 0
+  .el-alert__title
+    font-size 12px
+    font-weight 400
+  .el-alert__closebtn
+    top 6px
+    font-size 14px
+#app
+  padding-top 25px
+
 </style>
 
 <template>
@@ -65,6 +83,13 @@
     id="app"
     :class="{ 'sidebar-open': isSidebarOpen}"
   >
+    <el-alert
+      class="app-warning"
+      title="Dette er en forhåndsvisning av programvaren og feil kan derfor oppstå."
+      type="warning"
+      center
+    />
+
     <div class="titlebar" />
 
     <el-aside
@@ -170,20 +195,33 @@
       </el-button>
     </el-aside>
 
+    <app-onboarding-dialog
+      :shown.sync="appOnboardingShowDialog"
+      @close="appOnboardingHideDialog"
+    />
+
     <router-view />
   </el-container>
 </template>
 
 <script>
+import AppOnboardingDialog from "@/components/AppOnboardingDialog"
+
 export default {
   name: "Nsu",
 
+  components: {
+    AppOnboardingDialog
+  },
+
   data: () => ({
-    isSidebarOpen: true
+    isSidebarOpen: true,
+    appOnboardingShowDialog: true
   }),
 
   created() {
     this.isSidebarOpen = localStorage.getItem("isSidebarOpen") === "true"
+    // this.appOnboardingShowDialog = !localStorage.getItem("appOnboardingHideDialog") === "true"
   },
 
   methods: {
@@ -191,8 +229,14 @@ export default {
       this.isSidebarOpen = !this.isSidebarOpen
       localStorage.setItem("isSidebarOpen", this.isSidebarOpen)
     },
+
     navTo(url) {
       this.$router.push(url)
+    },
+
+    appOnboardingHideDialog() {
+      this.appOnboardingShowDialog = false
+      localStorage.setItem("appOnboardingHideDialog", this.appOnboardingShowDialog)
     }
   }
 }

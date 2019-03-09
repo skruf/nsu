@@ -35,7 +35,10 @@ import {
   CollapseItem,
   Tag,
   Tree,
-  TimeSelect
+  TimeSelect,
+  Carousel,
+  CarouselItem,
+  Alert
 } from "element-ui"
 
 import lang from "element-ui/lib/locale/lang/en"
@@ -76,6 +79,9 @@ Vue.use(CollapseItem)
 Vue.use(Tag)
 Vue.use(Tree)
 Vue.use(TimeSelect)
+Vue.use(Carousel)
+Vue.use(CarouselItem)
+Vue.use(Alert)
 
 Vue.prototype.$loading = Loading.service
 Vue.prototype.$notify = Notification

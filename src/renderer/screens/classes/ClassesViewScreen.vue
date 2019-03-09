@@ -38,9 +38,7 @@
             @command="classesDispatchActions"
           >
             <el-button type="text">
-              <div class="flex items-center">
-                <i class="ml-3 text-xl el-icon-arrow-down el-icon-more el-icon--left" />
-              </div>
+              <i class="el-icon-arrow-down el-icon-more" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="">
@@ -230,7 +228,13 @@ export default {
       classesActionsSelect: "select"
     }),
 
-    classesDispatchActions() {}
+    classesDispatchActions() {
+      this.$notify({
+        type: "warning",
+        title: "Oops!",
+        message: "Denne funksjonen er enda ikke implementert"
+      })
+    }
   }
 }
 </script>

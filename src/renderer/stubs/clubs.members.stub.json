@@ -1,8 +1,8 @@
 {
-  "firstName": "Ola",
-  "lastName": "Dunk",
-  "emailAddress": "ola@dunk.no",
-  "country": "Norway",
-  "phoneNumber": "40444404",
+  "firstName": "",
+  "lastName": "",
+  "emailAddress": "",
+  "country": "",
+  "phoneNumber": "",
   "clubId": ""
 }

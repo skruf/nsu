@@ -1,10 +1,13 @@
 <style lang="stylus">
+.events-divisions-contestants-list-table
+  .el-table::before
+    display none
 </style>
 
 <template>
   <div
     v-loading="eventsDivisionsContestantsStateListIsLoading"
-    class="events-divisions"
+    class="events-divisions-contestants-list-table"
   >
     <el-table
       :data="eventsDivisionsContestantsListLocal"
@@ -105,7 +108,7 @@
       </template> -->
 
       <template slot="empty">
-        No contestants yet.
+        No participants yet.
         <el-button
           type="text"
           disabled

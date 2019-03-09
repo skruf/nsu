@@ -1,4 +1,8 @@
 <style lang="stylus">
+.events-divisions-list
+  .events-results_division:not(:first-child)
+    border-top 1px solid var(--border-color)
+    padding-top 2rem
 </style>
 
 <template>
@@ -12,7 +16,7 @@
         {{ division.name }}
       </h2>
       <small class="small mb-4">
-        Starts on: {{ division.day | moment("DD.MM") }} ends at: {{ division.endsAt }}
+        Starts on {{ division.day | moment("DD.MM") }} ends at: {{ division.endsAt }} o'clock
       </small>
 
       <events-divisions-contestants-list-table

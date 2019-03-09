@@ -36,6 +36,7 @@
   .list_item_member
     display flex
     align-items center
+    line-height 1.2
   .avatar
     margin-right 10px
 
@@ -45,6 +46,10 @@
     justify-content center
     flex 1
     text-align center
+
+  .participant_attributes
+    .small:not(:last-child):after
+      content "•"
 
   // .event_participants
   //   .list_item
@@ -66,6 +71,7 @@
         v-model="clubsSearch"
         class="small py-2"
         placeholder="Search clubs by name"
+        :disabled="true"
         @submit="clubsSearchSubmit"
       />
 
@@ -93,6 +99,7 @@
         v-model="membersSearch"
         class="small py-2"
         placeholder="Search members by name"
+        :disabled="true"
         @submit="membersSearchSubmit"
       />
 
@@ -137,6 +144,7 @@
         v-model="participantsSearch"
         class="small py-2"
         placeholder="Search participants by name"
+        :disabled="true"
         @submit="participantsSearchSubmit"
       />
 
@@ -153,14 +161,33 @@
               :last-name="participant.member.lastName"
               size="small"
             />
+
             <div>
-              <div class="-mb-3">
+              <div class="participant_name">
                 {{ participant.member.firstName }} {{ participant.member.lastName }}
+                <br>
+                <small class="small">
+                  ({{ participant.member.club.name }})
+                </small>
               </div>
-              <!-- <small class="small">{{ participant.member.clubName }}</small> -->
-              <small class="small">
-                Colt / 25m
-              </small>
+
+              <div class="participant_attributes">
+                <small
+                  v-for="(weaponClass, index) in participant.classes"
+                  :key="weaponClass.id"
+                  class="small"
+                >
+                  {{ weaponClass.name }}
+                </small>
+
+                <small
+                  v-for="(calibre, index) in participant.calibres"
+                  :key="index"
+                  class="small"
+                >
+                  {{ calibre }}
+                </small>
+              </div>
             </div>
           </div>
           <i class="el-icon-close el-icon--right" />

@@ -11,14 +11,27 @@
     @close="close"
   >
     <div
-      v-loading="eventsDivisionsContestantsStateListIsLoading"
-      class="flex min-h-full w-full"
+      v-loading="eventsDivisionsStateListIsLoading"
+      class="flex min-h-full w-full p-6"
     >
       <div
-        v-for="contestant in eventsDivisionsContestantsStateList"
-        :key="contestant.id"
+        v-for="division in eventsDivisionsStateList"
+        :key="division.id"
+        class=""
       >
-        {{ contestant.member.firstName }} {{ contestant.member.lastName }}
+        <h2 class="h2 pb-4">
+          {{ division.name }}
+        </h2>
+
+        <div
+          v-for="divisionClass in division.classes"
+          :key="divisionClass.id"
+          class="division_class"
+        >
+          <h3 class="h3 py-4">
+            {{ divisionClass.name }}
+          </h3>
+        </div>
       </div>
     </div>
 
@@ -92,6 +105,7 @@ export default {
     }),
 
     async open() {
+      console.log(this.eventsDivisionsStateList)
       // this.eventsDivisionsContestantsMutationsSetListFilter({
       //   eventId: this.event.id
       // })

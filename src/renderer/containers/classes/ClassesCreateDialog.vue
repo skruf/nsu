@@ -244,15 +244,15 @@ export default {
         number: { required: true, message: "Number is a required field" },
         name: { required: true, message: "Name is a required field" },
         category: { required: true, message: "Category is a required field" },
-        condition: { required: true, message: "Condition is a required field" },
-        target: { required: true, message: "Target is a required field" },
-        position: { required: true, message: "Position is a required field" },
-        distance: { required: true, message: "Distance is a required field" },
-        type: { required: true, message: "Type is a required field" },
-        sight: { required: true, message: "Sight is a required field" },
-        trigger: { required: true, message: "Trigger is a required field" },
-        calibre: { required: true, message: "Calibre is a required field" },
-        bulletType: { required: true, message: "Bullet Type is a required field" }
+        condition: { required: true, message: "Condition is a required field" }
+        // target: { required: true, message: "Target is a required field" },
+        // position: { required: true, message: "Position is a required field" },
+        // distance: { required: true, message: "Distance is a required field" },
+        // type: { required: true, message: "Type is a required field" },
+        // sight: { required: true, message: "Sight is a required field" },
+        // trigger: { required: true, message: "Trigger is a required field" },
+        // calibre: { required: true, message: "Calibre is a required field" },
+        // bulletType: { required: true, message: "Bullet Type is a required field" }
       }
     }
   },

@@ -153,6 +153,7 @@ export default {
       clubsStateCreateIsLoading: "createIsLoading",
       clubsStateCountries: "countries"
     }),
+
     ...mapState("ranges", {
       rangesStateListIsLoading: "listIsLoading",
       rangesStateList: "list"

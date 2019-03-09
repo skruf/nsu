@@ -80,6 +80,7 @@
       <el-button
         class="block mx-auto"
         type="primary"
+        @click="close"
       >
         Ok, let's go!
       </el-button>

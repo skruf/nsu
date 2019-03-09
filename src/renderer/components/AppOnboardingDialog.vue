@@ -7,7 +7,7 @@
     padding 2px
 
   .el-carousel__indicators
-    bottom 15px
+    bottom 5px
 
   .el-carousel__indicator
     .el-carousel__button
@@ -32,13 +32,14 @@
   justify-content center
   flex-direction column
   text-align center
-  padding-bottom 10px
+  // padding-bottom 10px
 
 .onboarding-slide-text-title
-  margin-bottom 10px
+  margin-bottom 20px
 
 .onboarding-slide-text-paragraph
-  padding 0 5px
+  padding 0 10px
+  line-height 1.75
 
 </style>
 
@@ -98,20 +99,20 @@ export default {
     return {
       visible: this.shown,
       slides: [{
-        title: "Slide 1",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        title: "Et hjem for våpenklasser og skytteregler.",
+        text: "Her finner dere oversikt over alle stevner som er gjennomført eller planlagt. Når dere har lagt inn den nødvendige informasjonen vil stevnet være opprettet.",
         imageUrl: "static/img/onboarding-slide-1.svg"
       }, {
-        title: "Slide 2",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        title: "Administrer klubber og tilhørende medlemmer.",
+        text: "Dere kan i tillegg administrere ved å trykke på de 3 dottene på høyre side for klassen kan dere velge å fjerne klassen dersom denne ikke er aktuell lenger.",
         imageUrl: "static/img/onboarding-slide-2.svg"
       }, {
-        title: "Slide 3",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        title: "Add Clubs & Members",
+        text: "Ved å trykke på et klubbnavn i listen vil dere kunne administrere denne klubben og de tilhørende medlemmene. Når dere er inne på den respektive.",
         imageUrl: "static/img/onboarding-slide-3.svg"
       }, {
-        title: "Slide 4",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        title: "Register Shooting Ranges",
+        text: "Dette området brukes for å administrere og opprette baner. Trykk på «create range» for å legge til baner. Eller bruk 3 dottene på høyre hastahag was.",
         imageUrl: "static/img/onboarding-slide-4.svg"
       }]
     }

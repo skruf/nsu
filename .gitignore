@@ -2,7 +2,7 @@
 dist/electron/*
 dist/web/*
 build/*
-!build/icons
+!build/icons/*
 coverage
 node_modules/
 npm-debug.log

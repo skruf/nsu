@@ -81,7 +81,7 @@
 <template>
   <el-container
     id="app"
-    :class="{ 'sidebar-open': isSidebarOpen}"
+    :class="{ 'sidebar-open': isSidebarOpen }"
   >
     <el-alert
       class="app-warning"

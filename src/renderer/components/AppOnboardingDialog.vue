@@ -19,7 +19,7 @@
 .onboarding-slide
   display flex
   flex-direction column
-  padding 20px 30px
+  padding 20px
   height 100%
 
 .onboarding-slide-image
@@ -36,6 +36,7 @@
 
 .onboarding-slide-text-title
   margin-bottom 20px
+  line-height 1.25
 
 .onboarding-slide-text-paragraph
   padding 0 10px
@@ -51,7 +52,7 @@
     @close="close"
   >
     <el-carousel
-      height="520px"
+      height="560px"
       trigger="click"
       :autoplay="false"
     >
@@ -100,20 +101,20 @@ export default {
     return {
       visible: this.shown,
       slides: [{
-        title: "Et hjem for våpenklasser og skytteregler.",
-        text: "Her finner dere oversikt over alle stevner som er gjennomført eller planlagt. Når dere har lagt inn den nødvendige informasjonen vil stevnet være opprettet.",
+        title: "Welcome to NSUs Event Management app!",
+        text: "This application is the result of a join effort between NSU and the creators, where the goal is to effectivize workflows for managing shooting competitions inside an organization.",
         imageUrl: "static/img/onboarding-slide-1.svg"
       }, {
-        title: "Administrer klubber og tilhørende medlemmer.",
-        text: "Dere kan i tillegg administrere ved å trykke på de 3 dottene på høyre side for klassen kan dere velge å fjerne klassen dersom denne ikke er aktuell lenger.",
+        title: "Manage clubs & their members",
+        text: "Easily keep track of and manage clubs and their member's participation in events. Later additions of this app will include statistics over the most active participants and their results.",
         imageUrl: "static/img/onboarding-slide-2.svg"
       }, {
-        title: "Add Clubs & Members",
-        text: "Ved å trykke på et klubbnavn i listen vil dere kunne administrere denne klubben og de tilhørende medlemmene. Når dere er inne på den respektive.",
+        title: "Stay up to date on weapon class rules",
+        text: "Rules are important to any competitions, but can sometimes be hard to manage. We have implemented functions for easily keeping track of rules for each weapon class.",
         imageUrl: "static/img/onboarding-slide-3.svg"
       }, {
-        title: "Register Shooting Ranges",
-        text: "Dette området brukes for å administrere og opprette baner. Trykk på «create range» for å legge til baner. Eller bruk 3 dottene på høyre hastahag was.",
+        title: "Great, now how do I get started?",
+        text: "Before you get started with event creation, we recommend that you populate the required clubs and shooting ranges tables first. These items are required in order to create new events.",
         imageUrl: "static/img/onboarding-slide-4.svg"
       }]
     }

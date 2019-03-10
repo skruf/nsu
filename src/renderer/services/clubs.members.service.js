@@ -11,8 +11,10 @@ const create = async (doc = {}, options = {}) => {
   return result.toJSON()
 }
 
-const removeOne = async (filter, options = {}) => {
-  await destroyOne("clubs_members", filter, options)
+const removeOne = async (clubMember, options = {}) => {
+  await destroyMany("events_divisions_contestants", { memberId: clubMember.id })
+  await destroyMany("events_participants", { memberId: clubMember.id })
+  await destroyOne("clubs_members", { id: clubMember.id }, options)
   return true
 }
 

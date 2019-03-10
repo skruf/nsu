@@ -1,10 +1,8 @@
 "use strict"
 
-import { app, BrowserWindow, ipcMain } from "electron"
-// import { autoUpdater } from "electron-updater"
+import { app, BrowserWindow, ipcMain, Menu } from "electron"
 import log from "electron-log"
-
-const version = app.getVersion()
+// import { autoUpdater } from "electron-updater"
 
 /**
  * Set `__static` path to static files in production
@@ -12,23 +10,6 @@ const version = app.getVersion()
  */
 if(process.env.NODE_ENV !== "development") {
   global.__static = require("path").join(__dirname, "/static").replace(/\\/g, "\\\\")
-
-  const os = require("os")
-  const Sentry = require("@sentry/electron")
-
-  Sentry.init({
-    dsn: "https://8f6797916b144212bbf53d3e927dab0e@sentry.io/1411934",
-    release: `nsu@${version}`
-  }, {
-    captureUnhandledRejections: true,
-    tags: {
-      process: process.type,
-      electron: process.versions.electron,
-      chrome: process.versions.chrome,
-      platform: os.platform(),
-      platform_release: os.release()
-    }
-  })
 }
 
 let mainWindow
@@ -37,15 +18,62 @@ const winURL = process.env.NODE_ENV === "development"
   : `file://${__dirname}/index.html`
 
 function createWindow() {
+  const version = app.getVersion()
   log.info(`App (${version}) starting in ${process.env.NODE_ENV} mode`)
 
-  mainWindow = new BrowserWindow({
+  const config = {
     width: 1300,
     height: 1000
     // titleBarStyle: "hidden"
-  })
+  }
 
+  if(
+    process.env.NODE_ENV !== "development" &&
+    process.env.NODE_ENV !== "test"
+  ) {
+    require("./sentry")
+    // config.webPreferences = {
+    //   nodeIntegration: false,
+    //   preload: path.join(__dirname, "sentry.js")
+    // }
+  }
+
+  mainWindow = new BrowserWindow(config)
+  mainWindow.webContents.openDevTools()
   mainWindow.loadURL(winURL)
+
+  const menuTemplate = [{
+    label: "NSU Stevnebehandler",
+    submenu: [
+      // {
+      //   label: "Om denne appen",
+      //   click() {
+      //     openAboutWindow({
+      //       icon_path: path.join(config.rootDir, "/static/img/icon.png"),
+      //       copyright: "Copyright (c) 2018 Bonum",
+      //       package_json_dir: config.rootDir,
+      //       open_devtools: config.dev
+      //     })
+      //   }
+      // },
+      // { type: "separator" },
+      { label: "Quit", accelerator: "Command+Q", click() { app.quit() } }
+    ]
+  }, {
+    label: "Edit",
+    submenu: [
+      { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+      { type: "separator" },
+      { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+      { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+      { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+      { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+    ]
+  }]
+
+  const menu = Menu.buildFromTemplate(menuTemplate)
+  Menu.setApplicationMenu(menu)
 
   ipcMain.on("APP_STARTED", (event) => {
     log.info("App has successfully started")

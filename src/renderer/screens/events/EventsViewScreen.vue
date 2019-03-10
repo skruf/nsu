@@ -289,7 +289,7 @@ export default {
       this.$notify({
         type: "warning",
         title: "Oops!",
-        message: "Denne funksjonen er enda ikke implementert"
+        message: "Denne funksjonen er ikke implementert enda"
       })
     },
 

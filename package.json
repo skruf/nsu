@@ -31,26 +31,17 @@
     "files": [
       "dist/electron/**/*"
     ],
-    "dmg": {
-      "contents": [
-        {
-          "x": 410,
-          "y": 150,
-          "type": "link",
-          "path": "/Applications"
-        },
-        {
-          "x": 130,
-          "y": 150,
-          "type": "file"
-        }
-      ]
-    },
     "mac": {
-      "icon": "build/icons/icon.icns"
+      "icon": "build/icons/icon.icns",
+      "target": {
+        "target": "zip"
+      }
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/icon.ico",
+      "target": {
+        "target": "nsis"
+      }
     },
     "linux": {
       "icon": "build/icons"
@@ -73,6 +64,7 @@
     "vuex-electron": "^1.0.3"
   },
   "devDependencies": {
+    "@sentry/cli": "^1.40.0",
     "@vue/test-utils": "^1.0.0-beta.28",
     "ajv": "^6.5.0",
     "babel-core": "^6.26.3",
@@ -95,6 +87,7 @@
     "electron-builder": "^20.19.2",
     "electron-debug": "^1.5.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-download": "^4.1.1",
     "element-ui": "^2.6.0",
     "eslint": "^5.12.1",
     "eslint-config-standard": "^12.0.0",

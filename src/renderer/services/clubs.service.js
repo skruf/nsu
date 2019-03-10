@@ -20,6 +20,10 @@ const select = async (filter = {}, options = {}) => {
   const result = await findOne("clubs", filter, options)
   let club = result.toJSON()
   club = await withMembersCount(club)
+  // if(result.rangeId) {
+  //   let range = result.populate("rangeId")
+  //   club.range = range.toJSON()
+  // }
   return club
 }
 

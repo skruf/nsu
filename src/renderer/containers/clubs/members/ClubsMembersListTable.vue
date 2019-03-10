@@ -226,7 +226,7 @@ export default {
         )
 
         try {
-          await this.clubsMembersActionsRemoveOne({ id: clubMember.id })
+          await this.clubsMembersActionsRemoveOne(clubMember)
           this.$notify({
             type: "success",
             title: "Success",
@@ -243,33 +243,39 @@ export default {
     },
 
     async clubsMembersRemoveMany() {
-      try {
-        const count = this.clubsMembersSelection.length
-        await this.$confirm(
-          `This will remove ${count} club members permanently. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
-            customClass: "dangerous-confirmation",
-            type: "warning"
-          }
-        )
+      this.$notify({
+        type: "warning",
+        title: "Oops!",
+        message: "Denne funksjonen er ikke implementert enda"
+      })
 
-        try {
-          await this.clubsMembersActionsRemoveMany(this.clubsMembersSelection)
-          this.$notify({
-            type: "success",
-            title: "Success",
-            message: `${count} club members were removed from the database`
-          })
-        } catch(e) {
-          this.$notify({
-            type: "error",
-            title: "Oops!",
-            message: e.message
-          })
-        }
-      } catch(e) {}
+      // try {
+      //   const count = this.clubsMembersSelection.length
+      //   await this.$confirm(
+      //     `This will remove ${count} club members permanently. Continue?`,
+      //     "Warning!", {
+      //       confirmButtonText: "Yes, I am sure",
+      //       cancelButtonText: "Cancel",
+      //       customClass: "dangerous-confirmation",
+      //       type: "warning"
+      //     }
+      //   )
+      //
+      //   try {
+      //     await this.clubsMembersActionsRemoveMany(this.clubsMembersSelection)
+      //     this.$notify({
+      //       type: "success",
+      //       title: "Success",
+      //       message: `${count} club members were removed from the database`
+      //     })
+      //   } catch(e) {
+      //     this.$notify({
+      //       type: "error",
+      //       title: "Oops!",
+      //       message: e.message
+      //     })
+      //   }
+      // } catch(e) {}
     }
   }
 }

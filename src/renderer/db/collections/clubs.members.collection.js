@@ -16,8 +16,7 @@ const schema = {
       type: "string"
     },
     emailAddress: {
-      type: "string",
-      format: "email"
+      type: "string"
     },
     country: {
       type: "string"

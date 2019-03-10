@@ -59,14 +59,15 @@
   top 0
 
 .app-warning
-  position absolute
-  top 0
-  left 0
-  right 0
-  height 25px
+  // position absolute
+  // top 0
+  // left 0
+  // right 0
   z-index 1
+  height 25px
   padding 0
   border-radius 0
+  margin-bottom -25px
   .el-alert__title
     font-size 12px
     font-weight 400
@@ -79,10 +80,7 @@
 </style>
 
 <template>
-  <el-container
-    id="app"
-    :class="{ 'sidebar-open': isSidebarOpen }"
-  >
+  <div>
     <el-alert
       class="app-warning"
       title="Dette er en forhåndsvisning av programvaren og feil kan derfor oppstå."
@@ -90,118 +88,123 @@
       center
     />
 
-    <div class="titlebar" />
-
-    <el-aside
-      width="auto"
-      class="app_aside"
+    <el-container
+      id="app"
+      :class="{ 'sidebar-open': isSidebarOpen }"
     >
-      <img
-        class="logo mx-auto block"
-        src="https://norsksvartkruttunion.no/test/wp-content/uploads/2014/03/nsu-logo-full.png"
-      >
+      <div class="titlebar" />
 
-      <el-menu
-        default-active="1-1"
-        :collapse="isSidebarOpen"
+      <el-aside
+        width="auto"
+        class="app_aside"
       >
-        <el-submenu index="1">
-          <template slot="title">
-            <i class="menu-icon ion-logo-ionic" />
-            <span>Events</span>
-          </template>
+        <img
+          class="logo mx-auto block"
+          src="https://norsksvartkruttunion.no/test/wp-content/uploads/2014/03/nsu-logo-full.png"
+        >
+
+        <el-menu
+          default-active="1-1"
+          :collapse="isSidebarOpen"
+        >
+          <el-submenu index="1">
+            <template slot="title">
+              <i class="menu-icon ion-logo-ionic" />
+              <span>Events</span>
+            </template>
+            <el-menu-item
+              index="1-1"
+              @click="navTo('/events')"
+            >
+              All
+            </el-menu-item>
+            <el-menu-item
+              index="1-2"
+              @click="navTo('/events?filter=upcoming')"
+            >
+              Upcoming
+            </el-menu-item>
+            <el-menu-item
+              index="1-3"
+              @click="navTo('/events?filter=history')"
+            >
+              History
+            </el-menu-item>
+            <el-menu-item
+              index="1-4"
+              disabled
+              @click="navTo('/events/categories')"
+            >
+              Categories
+            </el-menu-item>
+          </el-submenu>
+
           <el-menu-item
-            index="1-1"
-            @click="navTo('/events')"
+            index="2"
+            @click="navTo('/classes')"
           >
-            All
+            <i class="menu-icon ion-ios-nuclear" />
+            <span>Classes</span>
           </el-menu-item>
+
           <el-menu-item
-            index="1-2"
-            @click="navTo('/events?filter=upcoming')"
+            index="3"
+            @click="navTo('/clubs')"
           >
-            Upcoming
+            <i class="menu-icon ion-ios-people" />
+            <span>Clubs</span>
           </el-menu-item>
+
           <el-menu-item
-            index="1-3"
-            @click="navTo('/events?filter=history')"
+            index="4"
+            @click="navTo('/ranges')"
           >
-            History
+            <i class="menu-icon ion-ios-people" />
+            <span>Ranges</span>
           </el-menu-item>
+
           <el-menu-item
-            index="1-4"
+            index="5"
             disabled
-            @click="navTo('/events/categories')"
+            @click="navTo('/records')"
           >
-            Categories
+            <i class="menu-icon ion-ios-star" />
+            <span>Records</span>
           </el-menu-item>
-        </el-submenu>
 
-        <el-menu-item
-          index="2"
-          @click="navTo('/classes')"
+          <el-menu-item
+            index="6"
+            disabled
+            @click="navTo('/settings')"
+          >
+            <i class="menu-icon ion-ios-settings" />
+            <span>Settings</span>
+          </el-menu-item>
+        </el-menu>
+
+        <el-button
+          class="button--text collapse-button"
+          @click="toggleSidebarOpen"
         >
-          <i class="menu-icon ion-ios-nuclear" />
-          <span>Classes</span>
-        </el-menu-item>
+          <i
+            v-if="isSidebarOpen"
+            class="menu-icon ion-ios-expand"
+          />
+          <i
+            v-else
+            class="menu-icon ion-ios-contract"
+          />
+        </el-button>
+      </el-aside>
 
-        <el-menu-item
-          index="3"
-          @click="navTo('/clubs')"
-        >
-          <i class="menu-icon ion-ios-people" />
-          <span>Clubs</span>
-        </el-menu-item>
+      <app-onboarding-dialog
+        :shown.sync="appOnboardingShowDialog"
+        @close="appOnboardingHideDialog"
+      />
 
-        <el-menu-item
-          index="4"
-          @click="navTo('/ranges')"
-        >
-          <i class="menu-icon ion-ios-people" />
-          <span>Ranges</span>
-        </el-menu-item>
-
-        <el-menu-item
-          index="5"
-          disabled
-          @click="navTo('/records')"
-        >
-          <i class="menu-icon ion-ios-star" />
-          <span>Records</span>
-        </el-menu-item>
-
-        <el-menu-item
-          index="6"
-          disabled
-          @click="navTo('/settings')"
-        >
-          <i class="menu-icon ion-ios-settings" />
-          <span>Settings</span>
-        </el-menu-item>
-      </el-menu>
-
-      <el-button
-        class="button--text collapse-button"
-        @click="toggleSidebarOpen"
-      >
-        <i
-          v-if="isSidebarOpen"
-          class="menu-icon ion-ios-expand"
-        />
-        <i
-          v-else
-          class="menu-icon ion-ios-contract"
-        />
-      </el-button>
-    </el-aside>
-
-    <app-onboarding-dialog
-      :shown.sync="appOnboardingShowDialog"
-      @close="appOnboardingHideDialog"
-    />
-
-    <router-view />
-  </el-container>
+      <router-view />
+    </el-container>
+  </div>
 </template>
 
 <script>

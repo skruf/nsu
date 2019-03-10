@@ -147,7 +147,8 @@ export default {
       formRules: {
         name: { required: true, message: "Name is a required field" },
         area: { required: true, message: "Area is a required field" },
-        country: { required: true, message: "Country is a required field" }
+        country: { required: true, message: "Country is a required field" },
+        type: { required: true, message: "Type is a required field" }
       }
     }
   },

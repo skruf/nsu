@@ -36,7 +36,8 @@ const schema = {
   required: [
     "name",
     "area",
-    "country"
+    "country",
+    "type"
   ]
 }
 

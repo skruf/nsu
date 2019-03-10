@@ -13,6 +13,15 @@ export default new Router({
     ...clubs,
     ...ranges,
     ...classes,
-    { path: "*", redirect: "/events" }
+    {
+      path: "/error",
+      name: "ErrorScreen",
+      component: require("./ErrorScreen").default,
+      props: true
+    },
+    {
+      path: "*",
+      redirect: "/events"
+    }
   ]
 })

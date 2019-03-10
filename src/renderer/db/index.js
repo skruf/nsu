@@ -3,6 +3,7 @@ import RxDBSchemaCheckModule from "rxdb/plugins/schema-check"
 import RxDBErrorMessagesModule from "rxdb/plugins/error-messages"
 import collections from "./collections"
 import router from "@/screens"
+import log from "electron-log"
 
 RxDB.plugin(RxDBErrorMessagesModule)
 RxDB.plugin(RxDBSchemaCheckModule)
@@ -30,7 +31,9 @@ export default async () => {
       queryChangeDetection: false
     })
 
-    // db.$.subscribe((event) => { console.log(event) })
+    if(process.env.NODE_ENV !== "test" && process.env.NODE_ENV !== "development") {
+      db.$.subscribe((event) => { log.info(event) })
+    }
 
     await Promise.all(collections.map(
       (collection) => {

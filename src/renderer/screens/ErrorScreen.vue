@@ -67,11 +67,17 @@
 </template>
 
 <script>
+import log from "electron-log"
+
 export default {
   name: "ErrorScreen",
 
   props: {
     error: { type: String, default: "" }
+  },
+
+  created() {
+    log.error(this.error)
   },
 
   methods: {

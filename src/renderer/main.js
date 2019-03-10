@@ -9,6 +9,10 @@ import App from "./App"
 import router from "./screens"
 import store from "./state"
 
+const { ipcRenderer } = window.require("electron")
+
+Vue.prototype.$ipc = ipcRenderer
+
 if(!process.env.IS_WEB) {
   Vue.use(require("vue-electron"))
 }

@@ -59,10 +59,6 @@
   top 0
 
 .app-warning
-  // position absolute
-  // top 0
-  // left 0
-  // right 0
   z-index 1
   height 25px
   padding 0
@@ -225,6 +221,10 @@ export default {
   created() {
     this.isSidebarOpen = localStorage.getItem("isSidebarOpen") === "true"
     // this.appOnboardingShowDialog = !localStorage.getItem("appOnboardingHideDialog") === "true"
+    this.$ipc.send("APP_STARTED")
+    this.$ipc.on("APP_NOTIFICATION", (event, message) => {
+      this.$notify.info({ title: "Notification", message: message })
+    })
   },
 
   methods: {

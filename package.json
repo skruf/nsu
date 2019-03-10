@@ -1,5 +1,5 @@
 {
-  "name": "nsu",
+  "name": "NSU-Stevnebehandler",
   "version": "0.0.1",
   "author": "Thomas <tholav@gmail.com>",
   "description": "NSU resultat- og stevne- behandler",
@@ -21,8 +21,10 @@
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js"
   },
   "build": {
-    "productName": "nsu",
     "appId": "io.tinyapp.nsu",
+    "productName": "NSU-Stevnebehandler",
+    "artifactName": "NSU-Stevnebehandler-${version}.${ext}",
+    "copyright": "Copyright © NSU / Thomas Laaver",
     "directories": {
       "output": "build"
     },
@@ -55,6 +57,8 @@
     }
   },
   "dependencies": {
+    "@sentry/electron": "^0.16.0",
+    "electron-log": "^3.0.1",
     "lodash.merge": "^4.6.1",
     "pouchdb-adapter-idb": "^7.0.0",
     "pouchdb-adapter-memory": "^7.0.0",

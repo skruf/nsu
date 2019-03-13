@@ -52,7 +52,9 @@ const schema = {
 const methods = {}
 
 export default {
-  name: "events",
-  schema: schema,
-  methods: methods
+  collection: {
+    name: "events",
+    schema: schema,
+    methods: methods
+  }
 }

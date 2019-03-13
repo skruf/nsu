@@ -1,7 +1,7 @@
 import RxDB from "rxdb"
 import RxDBSchemaCheckModule from "rxdb/plugins/schema-check"
 import RxDBErrorMessagesModule from "rxdb/plugins/error-messages"
-import collections from "./collections"
+import configs from "./collections"
 import router from "@/screens"
 import log from "electron-log"
 
@@ -19,6 +19,20 @@ if(process.env.NODE_ENV === "test") {
   RxDB.plugin(require("pouchdb-adapter-idb"))
 }
 
+const configureCollection = async (config) => {
+  const timestamp = { type: "string", format: "date-time" }
+  config.collection.schema.properties.updatedAt = timestamp
+  config.collection.schema.properties.createdAt = { ...timestamp, index: true }
+
+  const collection = await db.collection(config.collection)
+
+  if(config.middlewares) {
+    config.middlewares.forEach((middleware) => {
+      collection[middleware.hook](middleware.handle, middleware.parallel)
+    })
+  }
+}
+
 export default async () => {
   if(db) return db
 
@@ -31,23 +45,15 @@ export default async () => {
       queryChangeDetection: false
     })
 
-    if(process.env.NODE_ENV !== "test" && process.env.NODE_ENV !== "development") {
+    if(
+      process.env.NODE_ENV !== "test" &&
+      process.env.NODE_ENV !== "development"
+    ) {
       db.$.subscribe((event) => { log.info(event) })
     }
 
-    await Promise.all(collections.map(
-      (collection) => {
-        collection.schema.properties.updatedAt = {
-          type: "string",
-          format: "date-time"
-        }
-        collection.schema.properties.createdAt = {
-          type: "string",
-          format: "date-time",
-          index: true
-        }
-        return db.collection(collection)
-      })
+    await Promise.all(configs.map(
+      (config) => configureCollection(config))
     )
   } catch(e) {
     router.push({

@@ -219,38 +219,32 @@ export default {
     },
 
     async clubsRemoveOne(club) {
-      this.$notify({
-        type: "warning",
-        title: "Oops!",
-        message: "Denne funksjonen er ikke implementert enda"
-      })
+      try {
+        await this.$confirm(
+          `This will remove ${club.name} and its ${club.membersCount} members permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
 
-      // try {
-      //   await this.$confirm(
-      //     `This will remove ${club.name} and its ${club.membersCount} members permanently. Continue?`,
-      //     "Warning!", {
-      //       confirmButtonText: "Yes, I am sure",
-      //       cancelButtonText: "Cancel",
-      //       customClass: "dangerous-confirmation",
-      //       type: "warning"
-      //     }
-      //   )
-      //
-      //   try {
-      //     await this.clubsActionsRemoveOne(club)
-      //     this.$notify({
-      //       type: "success",
-      //       title: "Success",
-      //       message: `${club.name} was removed from the database`
-      //     })
-      //   } catch(e) {
-      //     this.$notify({
-      //       type: "error",
-      //       title: "Oops!",
-      //       message: e.message
-      //     })
-      //   }
-      // } catch(e) {}
+        try {
+          await this.clubsActionsRemoveOne(club)
+          this.$notify({
+            type: "success",
+            title: "Success",
+            message: `${club.name} was removed from the database`
+          })
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      } catch(e) {}
     },
 
     async clubsDeleteMany() {

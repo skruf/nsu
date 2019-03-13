@@ -82,7 +82,9 @@ const schema = {
 const methods = {}
 
 export default {
-  name: "classes",
-  schema: schema,
-  methods: methods
+  collection: {
+    name: "classes",
+    schema: schema,
+    methods: methods
+  }
 }

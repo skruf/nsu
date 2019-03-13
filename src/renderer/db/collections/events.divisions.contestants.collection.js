@@ -39,7 +39,9 @@ const schema = {
 const methods = {}
 
 export default {
-  name: "events_divisions_contestants",
-  schema: schema,
-  methods: methods
+  collection: {
+    name: "events_divisions_contestants",
+    schema: schema,
+    methods: methods
+  }
 }

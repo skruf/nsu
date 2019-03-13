@@ -1,9 +1,50 @@
 <style lang="stylus">
+#app
+  padding-left 180px
+  &.sidebar-open
+    padding-left 64px
+    i.menu-icon
+      margin-right 0
+    .app_aside
+      width 64px !important
+    .logo
+      max-width 40px
+    .el-menu
+      padding-left 0
+      text-align center
+
 .logo
-  max-width 100px
+  max-width 84px
   padding 14px 0
-  margin-top 10px
+  margin-top 25px
   margin-bottom 10px
+
+.el-button.collapse-button
+  position fixed
+  bottom 0
+  left 0
+  right 0
+  border none
+  background-color transparent
+  box-shadow none
+  &, &:active
+    top auto
+  i.menu-icon
+    margin-right 0
+
+.el-menu.el-menu--popup
+  background-color var(--bg-color)
+
+.app_aside
+  width 180px !important
+  display flex
+  flex-direction column
+  position absolute
+  left 0
+  top 0
+  bottom 0
+  background-color var(--bg-alt-color)
+
 </style>
 
 <template>
@@ -18,7 +59,7 @@
 
     <el-menu
       default-active="1-1"
-      :collapse="isSidebarOpen"
+      :collapse="isOpen"
     >
       <el-submenu index="1">
         <template slot="title">
@@ -97,10 +138,10 @@
 
     <el-button
       class="button--text collapse-button"
-      @click="toggleSidebarOpen"
+      @click="toggle"
     >
       <i
-        v-if="isSidebarOpen"
+        v-if="isOpen"
         class="menu-icon ion-ios-expand"
       />
       <i
@@ -114,7 +155,30 @@
 <script>
 export default {
   name: "AppSidebar",
+
+  props: {
+    open: { type: Boolean, default: false }
+  },
+
+  data: function() {
+    return {
+      isOpen: this.open
+    }
+  },
+
+  watch: {
+    open(open) {
+      this.isOpen = open
+      this.$emit("update:open", open)
+    }
+  },
+
   methods: {
+    toggle() {
+      this.isOpen = !this.isOpen
+      this.$emit("update:open", this.isOpen)
+    },
+
     navTo(url) {
       this.$router.push(url)
     }

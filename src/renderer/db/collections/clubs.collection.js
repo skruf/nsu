@@ -30,6 +30,15 @@ const schema = {
     rangeId: {
       type: "string",
       ref: "ranges"
+    },
+    updatedAt: {
+      type: "string",
+      format: "date-time"
+    },
+    createdAt: {
+      type: "string",
+      format: "date-time",
+      index: true
     }
   },
   required: [
@@ -41,8 +50,25 @@ const schema = {
 
 const methods = {}
 
+const postRemove = async (plainData, rxDocument) => {
+  console.log("-------------")
+  console.log(plainData)
+  console.log("-------------")
+  console.log(rxDocument)
+  console.log("-------------")
+}
+
 export default {
-  name: "clubs",
-  schema: schema,
-  methods: methods
+  collection: {
+    name: "clubs",
+    schema: schema,
+    methods: methods
+  },
+  middlewares: [
+    {
+      hook: "postRemove",
+      handle: postRemove,
+      parallel: false
+    }
+  ]
 }

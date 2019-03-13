@@ -44,7 +44,9 @@ const schema = {
 const methods = {}
 
 export default {
-  name: "ranges",
-  schema: schema,
-  methods: methods
+  collection: {
+    name: "ranges",
+    schema: schema,
+    methods: methods
+  }
 }

@@ -1,15 +1,13 @@
 [{
-  "id": "1",
   "name": "Day 1",
-  "day": "10.03.2018",
-  "endsAt": "10:00",
-  "interval": "30min",
-  "eventId": "1"
+  "day": "2019-03-15T10:00:00.699Z",
+  "startsAt": "10:00",
+  "endsAt": "08:30",
+  "interval": "30min"
 }, {
-  "id": "2",
   "name": "Day 2",
-  "day": "11.03.2018",
+  "day": "2019-03-16T10:00:00.699Z",
+  "startsAt": "10:00",
   "endsAt": "09:00",
-  "interval": "60min",
-  "eventId": "1"
+  "interval": "60min"
 }]

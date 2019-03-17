@@ -45,29 +45,32 @@ const buildQuery = async (collection, method, filter = {}, options = {}) => {
   return operation
 }
 
-export const findMany = async (collection, filter = {}, options = {}) => {
+export const findMany = async (collection, filter = {}, options = {}, json = false) => {
   const query = await buildQuery(collection, "find", filter, options)
-  const items = await query.exec()
-  return { items, count: items.length }
+  let docs = await query.exec()
+  if(json) docs = docs.map((doc) => doc.toJSON())
+  return { items: docs, count: docs.length }
 }
 
-export const findOne = async (collection, filter, options = {}) => {
+export const findOne = async (collection, filter, options = {}, json = false) => {
   const db = await getDb()
-  const doc = await db[collection].findOne(filter).exec()
+  let doc = await db[collection].findOne(filter).exec()
+  if(json) doc = doc.toJSON()
   return doc
 }
 
-export const insert = async (collection, doc, options = {}) => {
+export const insert = async (collection, data, options = {}, json = false) => {
   const db = await getDb()
-  setId(doc)
-  setTimestamps(doc)
-  const newDoc = db[collection].insert(doc)
-  return newDoc
+  setId(data)
+  setTimestamps(data)
+  let doc = db[collection].insert(data)
+  if(json) doc = doc.toJSON()
+  return doc
 }
 
-export const insertMany = async (collection, items, options = {}) => {
+export const insertMany = async (collection, items, options = {}, json = false) => {
   const docs = await Promise.all(
-    items.map((item) => insert(collection, item, options))
+    items.map((item) => insert(collection, item, options, json))
   )
   return docs
 }

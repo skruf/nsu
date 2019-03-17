@@ -1,4 +1,6 @@
-import { insert, findMany, findOne, destroyOne, destroyMany } from "@/db/queries"
+import {
+  insert, findMany, findOne, destroyOne, destroyMany
+} from "@/db/queries"
 
 // @TODO: fix search on clubs_members model
 // let a
@@ -48,18 +50,7 @@ const create = async (data = {}, options = {}) => {
 }
 
 const removeOne = async (participant, options = {}) => {
-  const divisionsFilter = { eventId: participant.eventId }
-  const divisions = await findMany("events_divisions", divisionsFilter)
-  const divisionIds = divisions.items.map((d) => d.toJSON().id)
-
-  await destroyMany("events_divisions_contestants", {
-    memberId: participant.memberId,
-    divisionId: { $in: divisionIds }
-  })
-
-  const participantFilter = { id: participant.id }
-  await destroyOne("events_participants", participantFilter, options)
-
+  await destroyOne("events_participants", { id: participant.id }, options)
   return true
 }
 

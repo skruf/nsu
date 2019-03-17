@@ -12,8 +12,6 @@ const create = async (doc = {}, options = {}) => {
 }
 
 const removeOne = async (clubMember, options = {}) => {
-  await destroyMany("events_divisions_contestants", { memberId: clubMember.id })
-  await destroyMany("events_participants", { memberId: clubMember.id })
   await destroyOne("clubs_members", { id: clubMember.id }, options)
   return true
 }

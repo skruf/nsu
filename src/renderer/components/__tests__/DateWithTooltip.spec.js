@@ -1,10 +1,13 @@
-import { tests } from "@/utils"
+import createLocalVue from "@/utils/tests/createLocalVue"
 import { mount } from "@vue/test-utils"
 import { Tooltip } from "element-ui"
 import VueMoment from "vue-moment"
 import DateWithTooltip from "@/components/DateWithTooltip"
 
-const localVue = tests.createVue([ VueMoment, Tooltip ])
+const localVue = createLocalVue([
+  VueMoment,
+  Tooltip
+])
 
 describe("DateWithTooltip", () => {
   it("should render the component", () => {

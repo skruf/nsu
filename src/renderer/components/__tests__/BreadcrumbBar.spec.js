@@ -1,9 +1,13 @@
-import { tests } from "@/utils"
+import createLocalVue from "@/utils/tests/createLocalVue"
 import { shallowMount, mount } from "@vue/test-utils"
 import { Breadcrumb, BreadcrumbItem, Button } from "element-ui"
 import BreadcrumbBar from "@/components/BreadcrumbBar"
 
-const localVue = tests.createVue([ Breadcrumb, BreadcrumbItem, Button ])
+const localVue = createLocalVue([
+  Breadcrumb,
+  BreadcrumbItem,
+  Button
+])
 
 describe("BreadcrumbBar", () => {
   it("should render the component", () => {

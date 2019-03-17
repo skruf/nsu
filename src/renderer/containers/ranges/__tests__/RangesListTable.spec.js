@@ -1,4 +1,4 @@
-import { tests } from "@/utils"
+import createLocalVue from "@/utils/tests/createLocalVue"
 import { shallowMount } from "@vue/test-utils"
 import Vuex from "vuex"
 import {
@@ -18,7 +18,7 @@ import { rangesFixture } from "@/fixtures"
 import rangesStore from "@/state/stores/ranges.store"
 jest.mock("@/state/stores/ranges.store")
 
-const localVue = tests.createVue([
+const localVue = createLocalVue([
   Vuex,
   Table,
   TableColumn,

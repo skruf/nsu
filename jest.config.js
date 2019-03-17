@@ -11,9 +11,8 @@ module.exports = {
   "collectCoverageFrom": [
     "**/*.{js,vue}",
     "!**/(node_modules|coverage|dist|plugins)/**",
-    "!**/*.config.*",
-    "!tailwind.js",
-    "!src/main/index.dev.js"
+    "!(tailwind.js|src/main/sentry.js|sentry-symbols.js|src/main/index.dev.js)",
+    "!**/*.config.*"
   ],
   "coverageReporters": [ "text" ],
   testMatch: [

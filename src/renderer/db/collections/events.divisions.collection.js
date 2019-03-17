@@ -1,3 +1,5 @@
+import { destroyMany } from "@/db/queries"
+
 const schema = {
   title: "Events divisions schema",
   description: "Events divisions",
@@ -24,7 +26,7 @@ const schema = {
     interval: {
       type: "string"
     },
-    "eventId": {
+    eventId: {
       type: "string",
       ref: "events"
     }
@@ -41,10 +43,20 @@ const schema = {
 
 const methods = {}
 
+const preRemove = async (data, doc) => {
+  await destroyMany("events_divisions_contestants", { divisionId: data.id })
+}
+
 export default {
   collection: {
     name: "events_divisions",
     schema: schema,
     methods: methods
+  },
+  middlewares: {
+    preRemove: {
+      handle: preRemove,
+      parallel: false
+    }
   }
 }

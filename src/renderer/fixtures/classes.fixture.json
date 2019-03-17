@@ -1,5 +1,4 @@
 [{
-  "id": "1",
   "number": "1",
   "name": "Miquelet",
   "category": "Rifles & Muskets",
@@ -18,7 +17,6 @@
   "pictureUrl": "https://norsksvartkruttunion.no/wp-content/uploads/2014/03/Miquelet.png",
   "remarks": "Some remarks"
 }, {
-  "id": "2",
   "number": "2",
   "name": "Maximilian",
   "category": "Pistols & Revolvers",

@@ -1,9 +1,12 @@
-import { tests } from "@/utils"
+import createLocalVue from "@/utils/tests/createLocalVue"
 import { shallowMount } from "@vue/test-utils"
 import { Form, Input } from "element-ui"
 import SearchForm from "@/components/SearchForm"
 
-const localVue = tests.createVue([ Form, Input ])
+const localVue = createLocalVue([
+  Form,
+  Input
+])
 
 describe("SearchForm", () => {
   it("renders the component", () => {

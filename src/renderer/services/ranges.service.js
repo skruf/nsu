@@ -11,13 +11,13 @@ const select = async (filter = {}, options = {}) => {
   return result.toJSON()
 }
 
-const create = async (doc = {}, options = {}) => {
-  const result = await insert("ranges", doc, options)
+const create = async (item = {}, options = {}) => {
+  const result = await insert("ranges", item, options)
   return result.toJSON()
 }
 
-const removeOne = async (filter, options = {}) => {
-  await destroyOne("ranges", filter, options)
+const removeOne = async (item, options = {}) => {
+  await destroyOne("ranges", item, options)
   return true
 }
 

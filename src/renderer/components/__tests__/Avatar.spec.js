@@ -1,8 +1,8 @@
-import { tests } from "@/utils"
+import createLocalVue from "@/utils/tests/createLocalVue"
 import { shallowMount } from "@vue/test-utils"
 import Avatar from "@/components/Avatar"
 
-const localVue = tests.createVue()
+const localVue = createLocalVue()
 
 describe("Avatar", () => {
   it("renders the component", () => {

@@ -26,10 +26,9 @@ const configureCollection = async (config) => {
 
   const collection = await db.collection(config.collection)
 
-  if(config.middlewares) {
-    config.middlewares.forEach((middleware) => {
-      collection[middleware.hook](middleware.handle, middleware.parallel)
-    })
+  for(let middleware in config.middlewares) {
+    const { handle, parallel } = config.middlewares[middleware]
+    collection[middleware](handle, parallel)
   }
 }
 

@@ -1,12 +1,14 @@
-import { insert, findMany, findOne, destroyOne, destroyMany } from "@/db/queries"
+import {
+  insert, findMany, findOne, destroyOne, destroyMany
+} from "@/db/queries"
 
 const populate = async (doc) => {
   let club = await doc.populate("organizerId")
   let range = await doc.populate("rangeId")
 
   const event = doc.toJSON()
-  event.club = club.toJSON()
-  event.range = range.toJSON()
+  if(club) event.club = club.toJSON()
+  if(range) event.range = range.toJSON()
 
   return event
 }
@@ -21,11 +23,9 @@ const list = async (filter = {}, options = {}, fetchMode) => {
   }
 
   const result = await findMany("events", filter, options)
-
   result.items = await Promise.all(
-    result.items.map((event) => populate(event))
+    result.items.map((doc) => populate(doc))
   )
-
   return result
 }
 
@@ -41,30 +41,17 @@ const create = async (data = {}, options = {}) => {
   return event
 }
 
-// @TODO: move this garbage to middleware hooks..
 const removeOne = async (event, options = {}) => {
-  const divisionsFindManyFilter = { eventId: event.id }
-  const divisions = await findMany("events_divisions", divisionsFindManyFilter)
-  const divisionIds = divisions.items.map((d) => d.toJSON().id)
-
-  await destroyMany("events_divisions_contestants", {
-    divisionId: { $in: divisionIds }
-  })
-
-  const divisionsDestroyManyFilter = { id: { $in: divisionIds } }
-  await destroyMany("events_divisions", divisionsDestroyManyFilter)
-
-  const participantsFilter = { eventId: event.id }
-  await destroyMany("events_participants", participantsFilter)
-
-  const eventFilter = { id: event.id }
-  await destroyOne("events", eventFilter, options)
-
+  await destroyOne("events", { id: event.id }, options)
   return true
 }
 
-const removeMany = () => {
-  destroyMany()
+const removeMany = async (items, options = {}) => {
+  const filter = {
+    id: { $in: items.map(({ id }) => id) }
+  }
+  await destroyMany("events", filter, options)
+  return true
 }
 
 export default {

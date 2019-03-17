@@ -1,3 +1,5 @@
+import { destroyMany } from "@/db/queries"
+
 const schema = {
   title: "Clubs schema",
   description: "Clubs",
@@ -50,12 +52,8 @@ const schema = {
 
 const methods = {}
 
-const postRemove = async (plainData, rxDocument) => {
-  console.log("-------------")
-  console.log(plainData)
-  console.log("-------------")
-  console.log(rxDocument)
-  console.log("-------------")
+const preRemove = async (data, doc) => {
+  await destroyMany("clubs_members", { clubId: data.id })
 }
 
 export default {
@@ -64,11 +62,10 @@ export default {
     schema: schema,
     methods: methods
   },
-  middlewares: [
-    {
-      hook: "postRemove",
-      handle: postRemove,
+  middlewares: {
+    preRemove: {
+      handle: preRemove,
       parallel: false
     }
-  ]
+  }
 }

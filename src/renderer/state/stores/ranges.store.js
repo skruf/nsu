@@ -1,5 +1,5 @@
-import { rangesService } from "@/services"
 import extend from "@/state/extensions"
+import { rangesService } from "@/services"
 import { countriesFixture } from "@/fixtures"
 
 export const state = {

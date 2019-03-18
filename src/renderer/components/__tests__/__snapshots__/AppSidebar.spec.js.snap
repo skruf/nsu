@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppSidebar renders the component 1`] = `
+<el-aside-stub width="auto" class="app_aside"><img src="https://norsksvartkruttunion.no/test/wp-content/uploads/2014/03/nsu-logo-full.png" class="logo mx-auto block">
+  <el-menu-stub mode="vertical" defaultactive="1-1" menutrigger="hover" collapsetransition="true">
+    <el-submenu-stub index="1" showtimeout="300" hidetimeout="300"><template></template>
+      <el-menu-item-stub index="1-1">
+        All
+      </el-menu-item-stub>
+      <el-menu-item-stub index="1-2">
+        Upcoming
+      </el-menu-item-stub>
+      <el-menu-item-stub index="1-3">
+        History
+      </el-menu-item-stub>
+      <el-menu-item-stub index="1-4" disabled="true">
+        Categories
+      </el-menu-item-stub>
+    </el-submenu-stub>
+    <el-menu-item-stub index="2"><i class="menu-icon ion-ios-nuclear"></i> <span>Classes</span></el-menu-item-stub>
+    <el-menu-item-stub index="3"><i class="menu-icon ion-ios-people"></i> <span>Clubs</span></el-menu-item-stub>
+    <el-menu-item-stub index="4"><i class="menu-icon ion-ios-people"></i> <span>Ranges</span></el-menu-item-stub>
+    <el-menu-item-stub index="5" disabled="true"><i class="menu-icon ion-ios-star"></i> <span>Records</span></el-menu-item-stub>
+    <el-menu-item-stub index="6" disabled="true"><i class="menu-icon ion-ios-settings"></i> <span>Settings</span></el-menu-item-stub>
+  </el-menu-stub>
+  <el-button-stub type="default" icon="" nativetype="button" class="button--text collapse-button"><i class="menu-icon ion-ios-contract"></i></el-button-stub>
+</el-aside-stub>
+`;

@@ -62,4 +62,21 @@ describe("events.participants.collection", () => {
     const classes = await participant.populate("classes")
     expect(classes.length).toBeGreaterThan(0)
   })
+
+  it("removing a participant should remove its contestants", async () => {
+    const db = await getDb()
+    const participant = await db.events_participants.findOne().exec()
+    await participant.remove()
+
+    const divisions = await db.events_divisions.find({
+      eventId: participant.eventId
+    }).exec()
+    const divisionIds = divisions.map((d) => d.toJSON().id)
+    const contestants = await db.events_divisions_contestants.find({
+      memberId: participant.memberId,
+      divisionId: { $in: divisionIds }
+    }).exec()
+
+    expect(contestants).toHaveLength(0)
+  })
 })

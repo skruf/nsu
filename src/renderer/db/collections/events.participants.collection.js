@@ -38,10 +38,10 @@ const schema = {
 const methods = {}
 
 const preRemove = async (data, doc) => {
-  const divisionsFilter = { eventId: data.eventId }
-  const divisions = await findMany("events_divisions", divisionsFilter)
+  const divisions = await findMany("events_divisions", {
+    eventId: data.eventId
+  })
   const divisionIds = divisions.items.map((d) => d.toJSON().id)
-
   await destroyMany("events_divisions_contestants", {
     memberId: data.memberId,
     divisionId: { $in: divisionIds }

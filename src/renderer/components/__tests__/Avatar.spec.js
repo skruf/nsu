@@ -1,13 +1,16 @@
 import createLocalVue from "@/utils/tests/createLocalVue"
-import { shallowMount } from "@vue/test-utils"
+import mount from "@/utils/tests/mount"
 import Avatar from "@/components/Avatar"
 
 const localVue = createLocalVue()
 
 describe("Avatar", () => {
+  const build = (overrides = {}, deep = false) => {
+    return mount(Avatar, localVue, overrides, deep)
+  }
+
   it("renders the component", () => {
-    const propsData = { firstName: "Ola", lastName: "Dunk" }
-    const wrapper = shallowMount(Avatar, { localVue, propsData })
+    const wrapper = build({ propsData: { firstName: "Ola", lastName: "Dunk" } })
     expect(wrapper.text()).toBe("OD")
   })
 })

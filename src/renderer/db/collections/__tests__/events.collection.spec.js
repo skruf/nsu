@@ -43,6 +43,12 @@ describe("events.collection", () => {
     expect(events.length).toBeGreaterThan(1)
   })
 
+  it("should be able to find an event", async () => {
+    const db = await getDb()
+    const event = await db.events.findOne().exec()
+    expect(event.id).not.toBeFalsy()
+  })
+
   it("should be able to find a events range", async () => {
     const db = await getDb()
     const event = await db.events.findOne().exec()
@@ -60,14 +66,18 @@ describe("events.collection", () => {
   it("should be able to find an event and its divisions", async () => {
     const db = await getDb()
     const event = await db.events.findOne().exec()
-    const divisions = await db.events_divisions.find({ eventId: event.id }).exec()
+    const divisions = await db.events_divisions.find({
+      eventId: event.id
+    }).exec()
     expect(divisions.length).toBeGreaterThan(1)
   })
 
   it("should be able to find an event and its participants", async () => {
     const db = await getDb()
     const event = await db.events.findOne().exec()
-    const participants = await db.events_participants.find({ eventId: event.id }).exec()
+    const participants = await db.events_participants.find({
+      eventId: event.id
+    }).exec()
     expect(participants.length).toBeGreaterThan(1)
   })
 
@@ -75,7 +85,9 @@ describe("events.collection", () => {
     const db = await getDb()
     const event = await db.events.findOne().exec()
     await event.remove()
-    const divisions = await db.events_divisions.find({ eventId: event.id }).exec()
+    const divisions = await db.events_divisions.find({
+      eventId: event.id
+    }).exec()
     expect(divisions).toHaveLength(0)
   })
 
@@ -83,7 +95,9 @@ describe("events.collection", () => {
     const db = await getDb()
     const event = await db.events.findOne().exec()
     await event.remove()
-    const participants = await db.events_participants.find({ eventId: event.id }).exec()
+    const participants = await db.events_participants.find({
+      eventId: event.id
+    }).exec()
     expect(participants).toHaveLength(0)
   })
 })

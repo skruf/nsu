@@ -46,9 +46,18 @@ describe("events.divisions.collection", () => {
     expect(divisions.length).toBeGreaterThan(1)
   })
 
-  it("should be able to find a divisions contestants", async () => {
+  it("should be able to find a division", async () => {
     const db = await getDb()
-    const contestants = await db.events_divisions_contestants.find().exec()
+    const division = await db.events_divisions.findOne().exec()
+    expect(division.id).not.toBeFalsy()
+  })
+
+  it("should be able to find a division contestants", async () => {
+    const db = await getDb()
+    const division = await db.events_divisions.findOne().exec()
+    const contestants = await db.events_divisions_contestants.find({
+      divisionId: division.id
+    }).exec()
     expect(contestants.length).toBeGreaterThan(1)
   })
 

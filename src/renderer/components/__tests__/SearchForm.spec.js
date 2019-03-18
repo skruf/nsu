@@ -1,29 +1,29 @@
 import createLocalVue from "@/utils/tests/createLocalVue"
-import { shallowMount } from "@vue/test-utils"
+import mount from "@/utils/tests/mount"
 import { Form, Input } from "element-ui"
 import SearchForm from "@/components/SearchForm"
 
-const localVue = createLocalVue([
-  Form,
-  Input
-])
+const localVue = createLocalVue([ Form, Input ])
 
 describe("SearchForm", () => {
+  const build = (overrides = {}, deep = false) => {
+    return mount(SearchForm, localVue, overrides, deep)
+  }
+
   it("renders the component", () => {
-    const wrapper = shallowMount(SearchForm, { localVue })
+    const wrapper = build()
     expect(wrapper.html()).toMatchSnapshot()
   })
 
   it("should have a form and an input", () => {
-    const wrapper = shallowMount(SearchForm, { localVue })
+    const wrapper = build()
     expect(wrapper.find(Form).exists()).toBe(true)
     expect(wrapper.find(Input).exists()).toBe(true)
   })
 
   it("has correct placeholder", () => {
     const expectedValue = "This is a test placeholder"
-    const propsData = { placeholder: expectedValue }
-    const wrapper = shallowMount(SearchForm, { localVue, propsData })
+    const wrapper = build({ propsData: { placeholder: expectedValue } })
     const input = wrapper.find(Input)
     const currentValue = input.attributes("placeholder")
     expect(currentValue).toBe(expectedValue)
@@ -31,7 +31,7 @@ describe("SearchForm", () => {
 
   it("sets value when typing", () => {
     const expectedValue = "this is a test"
-    const wrapper = shallowMount(SearchForm, { localVue })
+    const wrapper = build()
     const input = wrapper.find(Input)
     input.vm.$emit("input", expectedValue)
     expect(wrapper.emitted("input")[0][0]).toBe(expectedValue)
@@ -40,7 +40,7 @@ describe("SearchForm", () => {
 
   it("submits form with value", () => {
     const expectedValue = "this is a test"
-    const wrapper = shallowMount(SearchForm, { localVue })
+    const wrapper = build()
     wrapper.vm.v = expectedValue
     wrapper.vm.submit()
     const emittedValue = wrapper.emitted("submit")[0][0]
@@ -49,7 +49,7 @@ describe("SearchForm", () => {
 
   it("submits form when value is empty", () => {
     const expectedValue = ""
-    const wrapper = shallowMount(SearchForm, { localVue })
+    const wrapper = build()
     const input = wrapper.find(Input)
     input.vm.$emit("input", expectedValue)
     const emittedValue = wrapper.emitted("submit")[0][0]

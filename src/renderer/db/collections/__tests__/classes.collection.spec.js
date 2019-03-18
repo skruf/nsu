@@ -20,4 +20,10 @@ describe("classes.collection", () => {
     const classes = await db.classes.find().exec()
     expect(classes.length).toBeGreaterThan(1)
   })
+
+  it("should be able to find a class", async () => {
+    const db = await getDb()
+    const weaponClass = await db.classes.findOne().exec()
+    expect(weaponClass.id).not.toBeFalsy()
+  })
 })

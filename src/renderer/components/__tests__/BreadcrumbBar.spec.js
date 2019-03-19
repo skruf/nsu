@@ -6,17 +6,17 @@ import mount from "@/utils/tests/mount"
 const localVue = createLocalVue([ Breadcrumb, BreadcrumbItem, Button ])
 
 describe("BreadcrumbBar", () => {
-  const build = (overrides = {}, deep = false) => {
+  const build = (deep = false, overrides = {}) => {
     return mount(BreadcrumbBar, localVue, overrides, deep)
   }
 
   it("should render the component", () => {
-    const wrapper = build({ propsData: { paths: [] } })
+    const wrapper = build(false, { propsData: { paths: [] } })
     expect(wrapper.html()).toMatchSnapshot()
   })
 
   it("should have a breadcrumb with breadcrumb items", () => {
-    const wrapper = build({
+    const wrapper = build(false, {
       propsData: {
         paths: [
           { to: "/ranges", label: "Ranges" },
@@ -29,7 +29,7 @@ describe("BreadcrumbBar", () => {
   })
 
   it("should have functioning prev / next buttons", () => {
-    const wrapper = build({
+    const wrapper = build(true, {
       propsData: {
         paths: [
           { to: "/ranges", label: "Ranges" },
@@ -39,7 +39,7 @@ describe("BreadcrumbBar", () => {
       mocks: {
         $router: { go: jest.fn() }
       }
-    }, true)
+    })
 
     const buttons = wrapper.findAll(Button)
 

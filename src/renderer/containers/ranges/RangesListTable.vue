@@ -175,13 +175,16 @@ export default {
       rangesStateCount: "count",
       rangesStateList: "list"
     }),
+
     rangesHasSelection() {
       return this.rangesSelection.length > 0
     },
+
     rangesSearchFilter: {
       get() { return this.$store.state.ranges.searchFilterValue },
       set(search) { this.rangesMutationsSetSearchFilter(search) }
     },
+
     rangesIsLoading() {
       return (
         this.rangesStateListIsLoading ||
@@ -230,72 +233,60 @@ export default {
     },
 
     async rangesRemoveOne(range) {
-      this.$notify({
-        type: "warning",
-        title: "Oops!",
-        message: "Denne funksjonen er ikke implementert enda"
-      })
+      await this.$confirm(
+        `This will remove ${range.name} permanently. Continue?`,
+        "Warning!", {
+          confirmButtonText: "Yes, I am sure",
+          cancelButtonText: "Cancel",
+          customClass: "dangerous-confirmation",
+          type: "warning"
+        }
+      )
 
-      // await this.$confirm(
-      //   `This will remove ${range.name} permanently. Continue?`,
-      //   "Warning!", {
-      //     confirmButtonText: "Yes, I am sure",
-      //     cancelButtonText: "Cancel",
-      //     customClass: "dangerous-confirmation",
-      //     type: "warning"
-      //   }
-      // )
-      //
-      // try {
-      //   await this.rangesActionsRemoveOne(range)
-      //   this.$notify({
-      //     type: "success",
-      //     title: "Success",
-      //     message: `${range.name} was removed from the database`
-      //   })
-      // } catch(e) {
-      //   this.$notify({
-      //     type: "error",
-      //     title: "Oops!",
-      //     message: e.message
-      //   })
-      // }
+      try {
+        await this.rangesActionsRemoveOne(range)
+        this.$notify({
+          type: "success",
+          title: "Success",
+          message: `${range.name} was removed from the database`
+        })
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     },
 
     async rangesRemoveMany() {
-      this.$notify({
-        type: "warning",
-        title: "Oops!",
-        message: "Denne funksjonen er ikke implementert enda"
-      })
+      try {
+        const count = this.rangesSelection.length
+        await this.$confirm(
+          `This will remove ${count} ranges permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
 
-      // try {
-      //   const count = this.rangesSelection.length
-      //   await this.$confirm(
-      //     `This will remove ${count} ranges permanently. Continue?`,
-      //     "Warning!", {
-      //       confirmButtonText: "Yes, I am sure",
-      //       cancelButtonText: "Cancel",
-      //       customClass: "dangerous-confirmation",
-      //       type: "warning"
-      //     }
-      //   )
-      //
-      //   try {
-      //     await this.rangesActionsRemoveMany(this.rangesSelection)
-      //     this.$notify({
-      //       type: "success",
-      //       title: "Success",
-      //       message: `${count} ranges were removed from the database`
-      //     })
-      //   } catch(e) {
-      //     this.$notify({
-      //       type: "error",
-      //       title: "Oops!",
-      //       message: e.message
-      //     })
-      //   }
-      // } catch(e) {}
+        try {
+          await this.rangesActionsRemoveMany(this.rangesSelection)
+          this.$notify({
+            type: "success",
+            title: "Success",
+            message: `${count} ranges were removed from the database`
+          })
+        } catch(e) {
+          this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: e.message
+          })
+        }
+      } catch(e) {}
     }
   }
 }

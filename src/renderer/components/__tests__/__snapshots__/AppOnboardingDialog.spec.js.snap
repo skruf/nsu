@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppOnboardingDialog renders the component 1`] = `
+<el-dialog-stub title="" modal="true" modalappendtobody="true" appendtobody="true" lockscroll="true" closeonclickmodal="true" closeonpressescape="true" showclose="true" customclass="app-onboarding-dialog" top="15vh">
+  <el-carousel-stub initialindex="0" height="560px" trigger="click" interval="3000" indicator="true" arrow="hover" loop="true">
+    <el-carousel-item-stub label="">
+      <div class="onboarding-slide"><img src="static/img/onboarding-slide-1.svg" class="onboarding-slide-image">
+        <div class="onboarding-slide-text">
+          <h2 class="h2 onboarding-slide-text-title">
+            Welcome to NSUs Event Management app!
+          </h2>
+          <p class="paragraph onboarding-slide-text-paragraph">
+            This application is the result of a join effort between NSU and the creators, where the goal is to effectivize workflows for managing shooting competitions inside an organization.
+          </p>
+        </div>
+      </div>
+    </el-carousel-item-stub>
+    <el-carousel-item-stub label="">
+      <div class="onboarding-slide"><img src="static/img/onboarding-slide-2.svg" class="onboarding-slide-image">
+        <div class="onboarding-slide-text">
+          <h2 class="h2 onboarding-slide-text-title">
+            Manage clubs &amp; their members
+          </h2>
+          <p class="paragraph onboarding-slide-text-paragraph">
+            Easily keep track of and manage clubs and their member's participation in events. Later additions of this app will include statistics over the most active participants and their results.
+          </p>
+        </div>
+      </div>
+    </el-carousel-item-stub>
+    <el-carousel-item-stub label="">
+      <div class="onboarding-slide"><img src="static/img/onboarding-slide-3.svg" class="onboarding-slide-image">
+        <div class="onboarding-slide-text">
+          <h2 class="h2 onboarding-slide-text-title">
+            Stay up to date on weapon class rules
+          </h2>
+          <p class="paragraph onboarding-slide-text-paragraph">
+            Rules are important to any competitions, but can sometimes be hard to manage. We have implemented functions for easily keeping track of rules for each weapon class.
+          </p>
+        </div>
+      </div>
+    </el-carousel-item-stub>
+    <el-carousel-item-stub label="">
+      <div class="onboarding-slide"><img src="static/img/onboarding-slide-4.svg" class="onboarding-slide-image">
+        <div class="onboarding-slide-text">
+          <h2 class="h2 onboarding-slide-text-title">
+            Great, now how do I get started?
+          </h2>
+          <p class="paragraph onboarding-slide-text-paragraph">
+            Before you get started with event creation, we recommend that you populate the required clubs and shooting ranges tables first. These items are required in order to create new events.
+          </p>
+        </div>
+      </div>
+    </el-carousel-item-stub>
+  </el-carousel-stub> <template></template>
+</el-dialog-stub>
+`;

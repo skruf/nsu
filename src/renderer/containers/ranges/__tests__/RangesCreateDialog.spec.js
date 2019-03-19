@@ -1,5 +1,5 @@
 import createLocalVue from "@/utils/tests/createLocalVue"
-import { shallowMount } from "@vue/test-utils"
+import mount from "@/utils/tests/mount"
 import Vuex from "vuex"
 import {
   Dialog,
@@ -12,7 +12,6 @@ import {
   Loading
 } from "element-ui"
 import RangesCreateDialog from "@/containers/ranges/RangesCreateDialog"
-
 import { rangesStub } from "@/stubs"
 import { rangesFixture } from "@/fixtures"
 import rangesStore from "@/state/stores/ranges.store"
@@ -31,15 +30,15 @@ const localVue = createLocalVue([
 ])
 
 describe("RangesCreateDialog", () => {
-  const build = (overrides = {}) => {
-    return shallowMount(RangesCreateDialog, {
-      localVue,
+  const build = (deep = false, overrides = {}) => {
+    const cfg = {
       store: new Vuex.Store({
         strict: true,
         modules: { ranges: rangesStore }
       }),
       ...overrides
-    })
+    }
+    return mount(RangesCreateDialog, localVue, cfg, deep)
   }
 
   beforeEach(() => {
@@ -80,7 +79,9 @@ describe("RangesCreateDialog", () => {
   })
 
   it("should be able to open the dialog", async () => {
-    const wrapper = build({ propsData: { shown: true } })
+    const wrapper = build(false, {
+      propsData: { shown: true }
+    })
     expect(wrapper.vm.visible).toEqual(true)
   })
 

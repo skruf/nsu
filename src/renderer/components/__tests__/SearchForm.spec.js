@@ -6,7 +6,7 @@ import SearchForm from "@/components/SearchForm"
 const localVue = createLocalVue([ Form, Input ])
 
 describe("SearchForm", () => {
-  const build = (overrides = {}, deep = false) => {
+  const build = (deep = false, overrides = {}) => {
     return mount(SearchForm, localVue, overrides, deep)
   }
 
@@ -23,7 +23,9 @@ describe("SearchForm", () => {
 
   it("has correct placeholder", () => {
     const expectedValue = "This is a test placeholder"
-    const wrapper = build({ propsData: { placeholder: expectedValue } })
+    const wrapper = build(false, {
+      propsData: { placeholder: expectedValue }
+    })
     const input = wrapper.find(Input)
     const currentValue = input.attributes("placeholder")
     expect(currentValue).toBe(expectedValue)

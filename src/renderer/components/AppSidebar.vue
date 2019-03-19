@@ -157,7 +157,7 @@ export default {
   name: "AppSidebar",
 
   props: {
-    open: { type: Boolean, default: false }
+    open: { type: Boolean, default: true }
   },
 
   data: function() {

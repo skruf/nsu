@@ -1,5 +1,5 @@
 import createLocalVue from "@/utils/tests/createLocalVue"
-import { shallowMount } from "@vue/test-utils"
+import mount from "@/utils/tests/mount"
 import Vuex from "vuex"
 import {
   Table,
@@ -31,14 +31,15 @@ const localVue = createLocalVue([
 ])
 
 describe("RangesListTable", () => {
-  const build = () => {
-    return shallowMount(RangesListTable, {
-      localVue,
+  const build = (deep = false, overrides = {}) => {
+    const cfg = {
       store: new Vuex.Store({
         strict: true,
         modules: { ranges: rangesStore }
-      })
-    })
+      }),
+      ...overrides
+    }
+    return mount(RangesListTable, localVue, cfg, deep)
   }
 
   beforeEach(() => {

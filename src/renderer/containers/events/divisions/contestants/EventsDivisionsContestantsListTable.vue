@@ -145,6 +145,11 @@ export default {
   }),
 
   async created() {
+    // const store = this.$store
+    // if(!(store && store.state && store.state["currentUser"])) {
+    //   this.$store.registerModule("currentUser", userModule)
+    // }
+
     this.eventsDivisionsContestantsMutationsSetListFilter({
       divisionId: this.division.id
     })

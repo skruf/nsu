@@ -59,12 +59,14 @@
     "uuid": "^3.3.2",
     "vue": "^2.5.22",
     "vue-electron": "^1.0.6",
+    "vue-i18n": "^8.9.0",
     "vue-moment": "^4.0.0",
     "vue-router": "^3.0.2",
     "vuex": "^3.1.0",
     "vuex-electron": "^1.0.3"
   },
   "devDependencies": {
+    "@kazupon/vue-i18n-loader": "^0.3.0",
     "@sentry/cli": "^1.40.0",
     "@vue/test-utils": "^1.0.0-beta.28",
     "ajv": "^6.5.0",

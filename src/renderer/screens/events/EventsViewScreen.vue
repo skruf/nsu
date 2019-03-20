@@ -151,14 +151,6 @@
           name="divisions"
         >
           <div class="content">
-            <el-alert
-              title="Work in progress"
-              description="Vi har kun implementert mulighet for å opprette divisions. Redigere og slette divisions er ikke ferdig og kommer i neste versjon."
-              type="warning"
-              show-icon
-              class="mb-5"
-            />
-
             <events-divisions-list
               v-if="!eventsStateSelectedIsLoading"
               :event="eventsStateSelected"

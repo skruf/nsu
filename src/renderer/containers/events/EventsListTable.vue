@@ -90,7 +90,10 @@
           width="50"
           align="right"
         >
-          <template slot="header">
+          <template
+            slot="header"
+            slot-scope="scope"
+          >
             <div
               class="table-actions"
               :class="{ 'disabled': !eventsHasSelection }"

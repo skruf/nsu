@@ -14,6 +14,11 @@ export default new Router({
     ...ranges,
     ...classes,
     {
+      path: "/settings",
+      name: "SettingsScreen",
+      component: require("./SettingsScreen").default
+    },
+    {
       path: "/error",
       name: "ErrorScreen",
       component: require("./ErrorScreen").default,

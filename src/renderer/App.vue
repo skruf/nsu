@@ -36,8 +36,8 @@
   <div>
     <el-alert
       class="app-warning"
-      title="Dette er en forhåndsvisning av programvaren og feil kan derfor oppstå."
       type="warning"
+      :title="$t('appWarning')"
       center
     />
 

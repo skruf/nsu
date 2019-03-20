@@ -1,17 +1,15 @@
 import Vue from "vue"
 import "ionicons/dist/css/ionicons.min.css"
 
+import "./plugins/ipc"
 import "./plugins/moment"
 import "./plugins/element"
 import "./design/index.styl"
 
+import i18n from "./i18n"
 import App from "./App"
 import router from "./screens"
 import store from "./state"
-
-const { ipcRenderer } = window.require("electron")
-
-Vue.prototype.$ipc = ipcRenderer
 
 if(!process.env.IS_WEB) {
   Vue.use(require("vue-electron"))
@@ -22,6 +20,7 @@ Vue.config.productionTip = false
 
 new Vue({
   components: { App },
+  i18n,
   router,
   store,
   template: "<App/>"

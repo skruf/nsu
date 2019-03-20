@@ -128,7 +128,6 @@
 
       <el-menu-item
         index="6"
-        disabled
         @click="navTo('/settings')"
       >
         <i class="menu-icon ion-ios-settings" />

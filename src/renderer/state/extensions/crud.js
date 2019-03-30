@@ -17,7 +17,8 @@ export default (options) => {
     config.create ||
     config.createMany ||
     config.removeOne ||
-    config.removeMany
+    config.removeMany ||
+    config.editOne
   ) {
     state.count = 0
   }
@@ -120,7 +121,9 @@ export default (options) => {
     }
 
     mutations.REMOVE_ONE = (state, item) => {
-      state.list.splice(state.list.findIndex(({ id }) => item.id === id), 1)
+      state.list.splice(
+        state.list.findIndex(({ id }) => item.id === id), 1
+      )
       state.count -= 1
       if(state.selected && state.selected.id === item.id) {
         state.selected = {}
@@ -163,6 +166,32 @@ export default (options) => {
       commit("REMOVE_MANY", items)
       commit("SET_REMOVE_MANY_LOADING", false)
       return true
+    }
+  }
+
+  if(config.editOne) {
+    state.editOneIsLoading = false
+
+    mutations.SET_EDIT_ONE_LOADING = (state, loading) => {
+      state.editOneIsLoading = loading
+    }
+
+    mutations.EDIT_ONE = (state, item) => {
+      const index = state.list.findIndex(({ id }) => item.id === id)
+      const list = state.list
+      list[index] = item
+      state.list = [ ...list ]
+      if(state.selected && state.selected.id === item.id) {
+        state.selected = item
+      }
+    }
+
+    actions.editOne = async ({ commit }, item) => {
+      commit("SET_EDIT_ONE_LOADING", true)
+      const edited = await config.editOne(item)
+      commit("EDIT_ONE", edited)
+      commit("SET_EDIT_ONE_LOADING", false)
+      return edited
     }
   }
 

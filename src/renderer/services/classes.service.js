@@ -1,19 +1,20 @@
-import { insert, findMany, findOne, destroyOne, destroyMany } from "@/db/queries"
+import {
+  insert, findMany, findOne, destroyOne, destroyMany, updateOne
+} from "@/db/queries"
 
-const list = async (filter = {}, options = {}, fetchMode) => {
-  const result = await findMany("classes", filter, options)
-  result.items = result.items.map((doc) => doc.toJSON())
+const list = async (filter = {}, options = {}) => {
+  const result = await findMany("classes", filter, options, true)
   return result
 }
 
 const select = async (filter = {}, options = {}) => {
-  const result = await findOne("classes", filter, options)
-  return result.toJSON()
+  const result = await findOne("classes", filter, options, true)
+  return result
 }
 
 const create = async (doc = {}, options = {}) => {
-  const result = await insert("classes", doc, options)
-  return result.toJSON()
+  const result = await insert("classes", doc, options, true)
+  return result
 }
 
 const removeOne = async (filter, options = {}) => {
@@ -29,6 +30,12 @@ const removeMany = async (items, options = {}) => {
   return true
 }
 
+const editOne = async (item, options = {}) => {
+  const filter = { id: item.id }
+  const result = await updateOne("classes", filter, item, options, true)
+  return result
+}
+
 export default {
-  list, select, create, removeOne, removeMany
+  list, select, create, removeOne, removeMany, editOne
 }

@@ -45,14 +45,18 @@ const buildQuery = async (collection, method, filter = {}, options = {}) => {
   return operation
 }
 
-export const findMany = async (collection, filter = {}, options = {}, json = false) => {
+export const findMany = async (
+  collection, filter = {}, options = {}, json = false
+) => {
   const query = await buildQuery(collection, "find", filter, options)
   let docs = await query.exec()
   if(json) docs = docs.map((doc) => doc.toJSON())
   return { items: docs, count: docs.length }
 }
 
-export const findOne = async (collection, filter, options = {}, json = false) => {
+export const findOne = async (
+  collection, filter, options = {}, json = false
+) => {
   const db = await getDb()
   let doc = await db[collection].findOne(filter).exec()
   if(json) doc = doc.toJSON()
@@ -68,7 +72,9 @@ export const insert = async (collection, data, options = {}, json = false) => {
   return doc
 }
 
-export const insertMany = async (collection, items, options = {}, json = false) => {
+export const insertMany = async (
+  collection, items, options = {}, json = false
+) => {
   const docs = await Promise.all(
     items.map((item) => insert(collection, item, options, json))
   )
@@ -85,4 +91,15 @@ export const destroyMany = async (collection, filter = {}, options = {}) => {
   await Promise.all(
     docs.items.map((doc) => doc.remove())
   )
+}
+
+export const updateOne = async (
+  collection, filter, item, options = {}, json = false
+) => {
+  let doc = await findOne(collection, filter, options)
+  const date = new Date()
+  item.updatedAt = date.toISOString()
+  await doc.update({ $set: item })
+  if(json) doc = doc.toJSON()
+  return doc
 }

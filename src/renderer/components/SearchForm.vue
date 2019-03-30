@@ -1,9 +1,10 @@
 <style lang="stylus">
 .search-form
   display flex
-  margin 0
   width 100%
   max-width 400px
+  margin 0
+  margin-bottom 20px
   .el-input__inner
     height 42px
     line-height 42px

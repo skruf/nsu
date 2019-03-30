@@ -16,16 +16,14 @@ th
       padding-bottom 12.5px
       box-shadow none
       border var(--border-width) solid var(--border-color)
-.search-form
-  width 100%
 
 .table-actions.disabled
   pointer-events none
   cursor no-drop
   opacity 0.5
-  // .el-button
-  // opacity 0.5
+
 .el-table
+  background-color transparent
   &, thead
     font inherit
     color inherit
@@ -34,6 +32,12 @@ th
     cursor pointer
 .el-pagination
   margin-top 20px
+.el-pagination button:disabled
+  background-color transparent
+.el-pager li
+  background none
+  &.active
+    color var(--primary-color)
 
 .el-table td,
 .el-table th.is-leaf,
@@ -42,17 +46,52 @@ th
 .el-table::before
   border-color var(--border-color)
   height var(--border-width)
+  border none
+  height 0
+
+.el-table th.is-leaf
+  border-bottom-width 2px
+  // padding-bottom 6px
+  padding 0
+
+.el-table th>.cell
+  line-height 34px
+
+.el-table tr,
+.el-table th
+  background-color transparent
+
+.el-table tr
+  box-shadow var(--box-shadow)
 
 .el-table td
   border-bottom-width var(--border-width)
-.el-table th.is-leaf
-  border-bottom-width 2px
-  padding-bottom 6px
+  background-color var(--bg-alt-color)
+  padding 14px 0
+  &:first-child
+    border-top-left-radius var(--border-radius)
+    border-bottom-left-radius var(--border-radius)
+    // padding-left 15px
+  &:last-child
+    border-bottom-right-radius var(--border-radius)
+    border-top-right-radius var(--border-radius)
+    // padding-right 15px
+
+.el-table__body
+  border-spacing 0 10px
+
+.el-table .cell
+  line-height 18px
+
+.el-table--enable-row-hover .el-table__body tr:hover>td
+  background-color #fff
+  opacity 0.5
 
 .el-table thead,
-.el-form-item__label
+.el-form .el-form-item__label
   color var(--muted-color)
   font-weight var(--controller-font-weight)
+  padding-bottom 0
 
 .el-table__empty-block,
 .data-placeholder
@@ -77,16 +116,22 @@ th
   border none
   border var(--border-width) solid var(--border-color)
   border-color transparent
+  box-shadow var(--box-shadow)
   &:hover, &:active
     border-color var(--border-color)
 
+.el-form-item
+  margin-bottom 18px
+
+.el-input__inner,
+.el-form-item__content
+  line-height 42px
 .el-input__inner
-  height 48px
-  line-height 48px
+  height 42px
 
 .el-form-item__error
-  left 20px
-  padding-top 5px
+  left 15px
+  padding-top 3px
   font-weight var(--controller-font-weight)
 
 .el-input__suffix
@@ -106,7 +151,8 @@ th
   margin-left 10px
 
 .el-date-editor .el-range-input,
-.el-input__inner
+.el-input__inner,
+.el-textarea__inner
   &::placeholder
     color var(--muted-color)
     font-weight var(--controller-font-weight)

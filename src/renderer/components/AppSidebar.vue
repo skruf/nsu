@@ -54,7 +54,7 @@
   >
     <img
       class="logo mx-auto block"
-      src="https://norsksvartkruttunion.no/test/wp-content/uploads/2014/03/nsu-logo-full.png"
+      src="static/img/nsu-logo.png"
     >
 
     <el-menu
@@ -95,18 +95,18 @@
 
       <el-menu-item
         index="2"
-        @click="navTo('/classes')"
-      >
-        <i class="menu-icon ion-ios-nuclear" />
-        <span>Classes</span>
-      </el-menu-item>
-
-      <el-menu-item
-        index="3"
         @click="navTo('/clubs')"
       >
         <i class="menu-icon ion-ios-people" />
         <span>Clubs</span>
+      </el-menu-item>
+
+      <el-menu-item
+        index="3"
+        @click="navTo('/classes')"
+      >
+        <i class="menu-icon ion-ios-nuclear" />
+        <span>Classes</span>
       </el-menu-item>
 
       <el-menu-item

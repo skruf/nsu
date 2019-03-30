@@ -74,7 +74,7 @@ export default {
 
   data: () => ({
     isSidebarOpen: true,
-    appOnboardingShowDialog: true
+    appOnboardingShowDialog: false // true
   }),
 
   watch: {

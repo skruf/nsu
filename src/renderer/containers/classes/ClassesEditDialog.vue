@@ -3,13 +3,14 @@
 
 <template>
   <el-dialog
-    title="Create a new class"
-    custom-class="create-dialog"
+    title="Edit class"
+    custom-class="edit-dialog"
     :visible.sync="visible"
+    @open="open"
     @close="close"
   >
     <div
-      v-loading="classesStateCreateIsLoading"
+      v-loading="classesStateEditOneIsLoading"
       class="dialog_content"
     >
       <el-form
@@ -71,138 +72,6 @@
             />
           </el-select>
         </el-form-item>
-
-        <!-- <el-form-item
-          label="Target"
-          prop="target"
-        >
-          <el-input
-            v-model="form.target"
-            placeholder="Enter target rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Position"
-          prop="position"
-        >
-          <el-input
-            v-model="form.position"
-            placeholder="Enter position rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Distance"
-          prop="distance"
-        >
-          <el-input
-            v-model="form.distance"
-            placeholder="Enter distance rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Type"
-          prop="type"
-        >
-          <el-input
-            v-model="form.type"
-            placeholder="Enter a type"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Sight"
-          prop="sight"
-        >
-          <el-input
-            v-model="form.sight"
-            placeholder="Enter sight rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Trigger"
-          prop="trigger"
-        >
-          <el-input
-            v-model="form.trigger"
-            placeholder="Enter trigger rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Calibre"
-          prop="calibre"
-        >
-          <el-input
-            v-model="form.calibre"
-            placeholder="Enter calibre rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Bullet Type"
-          prop="bulletType"
-        >
-          <el-input
-            v-model="form.bulletType"
-            placeholder="Enter bullet type rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Loading Rod"
-          prop="loadingRod"
-        >
-          <el-input
-            v-model="form.loadingRod"
-            placeholder="Enter loading rod rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Cleaning"
-          prop="cleaning"
-        >
-          <el-input
-            v-model="form.cleaning"
-            placeholder="Enter cleaning rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Team"
-          prop="team"
-        >
-          <el-input
-            v-model="form.team"
-            placeholder="Enter a team"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Picture URL"
-          prop="pictureUrl"
-        >
-          <el-input
-            v-model="form.pictureUrl"
-            placeholder="Enter a URL to a picture"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Remarks"
-          prop="remarks"
-        >
-          <el-input
-            v-model="form.remarks"
-            :autosize="{ minRows: 3 }"
-            type="textarea"
-            placeholder="Enter remarks"
-          />
-        </el-form-item> -->
       </el-form>
     </div>
 
@@ -230,10 +99,11 @@ import { mapActions, mapState } from "vuex"
 import { classesStub } from "@/stubs"
 
 export default {
-  name: "ClassesCreateDialog",
+  name: "ClassesEditDialog",
 
   props: {
-    shown: { type: Boolean, default: false }
+    shown: { type: Boolean, default: false },
+    item: { type: Object, default: () => classesStub }
   },
 
   data: function() {
@@ -250,7 +120,7 @@ export default {
   },
 
   computed: mapState("classes", {
-    classesStateCreateIsLoading: "createIsLoading",
+    classesStateEditOneIsLoading: "editOneIsLoading",
     classesStateCategories: "categories",
     classesStateConditions: "conditions"
   }),
@@ -264,8 +134,12 @@ export default {
 
   methods: {
     ...mapActions("classes", {
-      classesActionsCreate: "create"
+      classesActionsEditOne: "editOne"
     }),
+
+    open() {
+      this.form = { ...this.item }
+    },
 
     submit() {
       this.$refs.form.validate(async (isValid) => {
@@ -278,11 +152,11 @@ export default {
         }
 
         try {
-          await this.classesActionsCreate(this.form)
+          await this.classesActionsEditOne(this.form)
           this.$notify({
             type: "success",
             title: "Great success",
-            message: `${this.form.name} was successfully added to the database`
+            message: `${this.form.name} was successfully updated in the database`
           })
           this.clear()
           this.close()
@@ -297,7 +171,7 @@ export default {
     },
 
     clear() {
-      this.form = { ...classesStub }
+      // this.form = { ...classesStub }
     },
 
     close() {

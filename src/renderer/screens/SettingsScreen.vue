@@ -6,7 +6,6 @@
     "breadcrumbLabel2": "Current",
     "formItem1Label": "Language",
     "formItem1Placeholder": "Choose language"
-
   },
   "no": {
     "title": "Dine innstillinger",

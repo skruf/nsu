@@ -79,17 +79,19 @@
 
 .v-modal
   opacity 0.85
-  background-color #ececec
+  background-color rgb(223, 228, 234)
 .el-dialog
   box-shadow none
   border-radius 3px
+  background-color var(--bg-color)
   &:not(.is-fullscreen)
     margin-top 5vh !important
 .el-dialog__headerbtn
   font-size 27px
-// .el-dialog__header,
+.el-dialog__header,
 .el-dialog__footer
   background-color var(--bg-alt-color)
+  box-shadow var(--box-shadow)
 .el-dialog__header,
 .dialog_content,
 .el-dialog__footer
@@ -107,6 +109,11 @@
   justify-content flex-end
   border-bottom-left-radius inherit
   border-bottom-right-radius inherit
+
+.el-notification
+  box-shadow var(--box-shadow)
+  border-radius var(--border-radius)
+  border none
 
 .el-alert
   line-height 1.2

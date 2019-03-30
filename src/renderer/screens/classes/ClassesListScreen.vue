@@ -24,6 +24,7 @@
     <el-main class="content">
       <classes-list-table
         @classesOpenCreateDialog="classesOpenCreateDialog"
+        @classesOpenEditDialog="classesOpenEditDialog"
       />
     </el-main>
 
@@ -39,6 +40,11 @@
     <classes-create-dialog
       :shown.sync="classesShowCreateDialog"
     />
+
+    <classes-edit-dialog
+      :shown.sync="classesEditShowDialog"
+      :item="classesEditItem"
+    />
   </el-container>
 </template>
 
@@ -46,6 +52,7 @@
 import BreadcrumbBar from "@/components/BreadcrumbBar"
 import ClassesListTable from "@/containers/classes/ClassesListTable"
 import ClassesCreateDialog from "@/containers/classes/ClassesCreateDialog"
+import ClassesEditDialog from "@/containers/classes/ClassesEditDialog"
 
 export default {
   name: "ClassesListScreen",
@@ -53,16 +60,23 @@ export default {
   components: {
     BreadcrumbBar,
     ClassesListTable,
-    ClassesCreateDialog
+    ClassesCreateDialog,
+    ClassesEditDialog
   },
 
   data: () => ({
-    classesShowCreateDialog: false
+    classesShowCreateDialog: false,
+    classesEditShowDialog: false,
+    classesEditItem: {}
   }),
 
   methods: {
     classesOpenCreateDialog() {
       this.classesShowCreateDialog = true
+    },
+    classesOpenEditDialog(item) {
+      this.classesEditShowDialog = true
+      this.classesEditItem = item
     }
   }
 }

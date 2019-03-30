@@ -57,7 +57,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column
+        <!-- <el-table-column
           prop="distance"
           label="Distance/Position"
           sortable="custom"
@@ -71,7 +71,7 @@
               {{ scope.row.position }}
             </small>
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
         <el-table-column
           width="50"
@@ -218,10 +218,9 @@ export default {
     },
 
     classesRowClick(weaponClass, column, e) {
-      if(e.target.className.includes("table-button")) {
-        return
+      if(!e.target.className.includes("table-button")) {
+        this.$emit("classesOpenEditDialog", weaponClass)
       }
-      this.$router.push(`/classes/${weaponClass.id}`)
     },
 
     classesSelectionChange(classes) {

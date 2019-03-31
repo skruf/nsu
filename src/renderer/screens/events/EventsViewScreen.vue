@@ -39,24 +39,36 @@
         <div class="page-controls">
           <el-dropdown
             trigger="click"
-            @command="eventsDispatchActions"
+            @command="dispatchActions"
           >
             <el-button type="text">
               <i class="el-icon-arrow-down el-icon-more" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="">
-                <i class="el-icon-printer el-icon--left" /> Print
-              </el-dropdown-item>
-              <el-dropdown-item command="">
-                <i class="el-icon-edit el-icon--left" /> Edit
-              </el-dropdown-item>
               <el-dropdown-item
-                class="dropdown-menu-delete"
-                command=""
-                divided
+                :command="{
+                  handler: 'eventsOpenPrintDialog'
+                }"
               >
-                <i class="el-icon-delete el-icon--left" /> Delete
+                <i class="el-icon-printer el-icon--left" /> Print event
+              </el-dropdown-item>
+
+              <el-dropdown-item
+                :command="{
+                  handler: 'eventsOpenEditDialog'
+                }"
+              >
+                <i class="el-icon-edit el-icon--left" /> Edit event
+              </el-dropdown-item>
+
+              <el-dropdown-item
+                divided
+                class="dropdown-menu-delete"
+                :command="{
+                  handler: 'eventsRemoveOne'
+                }"
+              >
+                <i class="el-icon-delete el-icon--left" /> Remove event
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -127,6 +139,7 @@
               v-if="!eventsStateSelectedIsLoading"
               :event="eventsStateSelected"
               @eventsParticipantsOpenManageDialog="eventsParticipantsOpenManageDialog"
+              @eventsParticipantsOpenEditDialog="eventsParticipantsOpenEditDialog"
             />
           </div>
 
@@ -181,8 +194,8 @@
 
           <el-footer height="auto">
             <el-button
-              type="primary"
               disabled
+              type="primary"
               @click="eventsDivisionsContestantsResultsOpenCreateDialog"
             >
               <i class="el-icon-plus el-icon--left" /> Input results
@@ -198,20 +211,30 @@
 
     <events-divisions-create-dialog
       v-if="!eventsStateSelectedIsLoading"
-      :event="eventsStateSelected"
       :shown.sync="eventsDivisionsShowCreateDialog"
+      :event="eventsStateSelected"
     />
 
     <events-participants-manager-dialog
       v-if="!eventsStateSelectedIsLoading"
-      :event="eventsStateSelected"
       :shown.sync="eventsParticipantsShowManageDialog"
+      :event="eventsStateSelected"
     />
 
-    <!-- v-if="!eventsStateSelectedIsLoading" -->
     <events-divisions-contestants-results-create-dialog
-      :event="eventsStateSelected"
       :shown.sync="eventsDivisionsContestantsResultsShowCreateDialog"
+      :event="eventsStateSelected"
+    />
+
+    <events-edit-dialog
+      :shown.sync="eventsShowEditDialog"
+      :event="eventsStateSelected"
+    />
+
+    <events-participants-edit-dialog
+      :shown.sync="eventsParticipantsShowEditDialog"
+      :participant="eventsParticipantsEditItem"
+      :event="eventsStateSelected"
     />
   </el-container>
 </template>
@@ -229,6 +252,8 @@ import EventsDivisionsList from "@/containers/events/divisions/EventsDivisionsLi
 import EventsDivisionsCreateDialog from "@/containers/events/divisions/EventsDivisionsCreateDialog"
 import EventsDivisionsContestantsResultsList from "@/containers/events/divisions/contestants/results/EventsDivisionsContestantsResultsList"
 import EventsDivisionsContestantsResultsCreateDialog from "@/containers/events/divisions/contestants/results/EventsDivisionsContestantsResultsCreateDialog"
+import EventsEditDialog from "@/containers/events/EventsEditDialog"
+import EventsParticipantsEditDialog from "@/containers/events/participants/EventsParticipantsEditDialog"
 
 export default {
   name: "EventsViewScreen",
@@ -242,7 +267,9 @@ export default {
     EventsDivisionsList,
     EventsDivisionsCreateDialog,
     EventsDivisionsContestantsResultsList,
-    EventsDivisionsContestantsResultsCreateDialog
+    EventsDivisionsContestantsResultsCreateDialog,
+    EventsEditDialog,
+    EventsParticipantsEditDialog
   },
 
   data: () => ({
@@ -250,7 +277,10 @@ export default {
     eventsParticipantsShowManageDialog: false,
     eventsDivisionsShowCreateDialog: false,
     clubsMembersShowCreateDialog: false,
-    eventsDivisionsContestantsResultsShowCreateDialog: false
+    eventsDivisionsContestantsResultsShowCreateDialog: false,
+    eventsShowEditDialog: false,
+    eventsParticipantsShowEditDialog: false,
+    eventsParticipantsEditItem: {}
   }),
 
   computed: {
@@ -277,12 +307,8 @@ export default {
       eventsActionsSelect: "select"
     }),
 
-    eventsDispatchActions() {
-      this.$notify({
-        type: "warning",
-        title: "Oops!",
-        message: "Denne funksjonen er ikke implementert enda"
-      })
+    dispatchActions({ handler, payload }) {
+      this[handler](payload)
     },
 
     clubsMembersOpenCreateDialog() {
@@ -299,6 +325,56 @@ export default {
 
     eventsDivisionsContestantsResultsOpenCreateDialog() {
       this.eventsDivisionsContestantsResultsShowCreateDialog = true
+    },
+
+    eventsOpenPrintDialog() {
+      this.$notify({
+        type: "warning",
+        title: "Oops!",
+        message: "Denne funksjonen er ikke implementert enda"
+      })
+    },
+
+    eventsOpenEditDialog() {
+      this.eventsShowEditDialog = true
+    },
+
+    eventsParticipantsOpenEditDialog(participant) {
+      this.eventsParticipantsShowEditDialog = true
+      this.eventsParticipantsEditItem = participant
+    },
+
+    async eventsRemoveOne() {
+      const event = this.eventsStateSelected
+      try {
+        await this.$confirm(
+          `This will remove ${event.title} permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+      } catch(e) {
+        return
+      }
+
+      try {
+        await this.classesActionsRemoveOne(event)
+        this.$notify({
+          type: "success",
+          title: "Success",
+          message: `${event.title} was removed from the database`
+        })
+        this.$router.push("/clubs")
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     }
   }
 }

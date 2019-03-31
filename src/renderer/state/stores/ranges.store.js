@@ -25,7 +25,8 @@ const modules = [
       select: rangesService.select,
       create: rangesService.create,
       removeOne: rangesService.removeOne,
-      removeMany: rangesService.removeMany
+      removeMany: rangesService.removeMany,
+      editOne: rangesService.editOne
     }
   },
   {

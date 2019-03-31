@@ -24,16 +24,11 @@
     <el-main class="content">
       <events-list-table
         @eventsOpenCreateDialog="eventsOpenCreateDialog"
+        @eventsOpenEditDialog="eventsOpenEditDialog"
       />
     </el-main>
 
     <el-footer height="auto">
-      <!-- <el-button
-        type="primary"
-        @click="navToCreate"
-      >
-        <i class="el-icon-plus el-icon--left" /> Create event
-      </el-button> -->
       <el-button
         type="primary"
         @click="eventsOpenCreateDialog"
@@ -45,6 +40,11 @@
     <events-create-dialog
       :shown.sync="eventsShowCreateDialog"
     />
+
+    <events-edit-dialog
+      :shown.sync="eventsShowEditDialog"
+      :item="eventsEditItem"
+    />
   </el-container>
 </template>
 
@@ -53,6 +53,7 @@ import { mapActions, mapMutations, mapState } from "vuex"
 import BreadcrumbBar from "@/components/BreadcrumbBar"
 import EventsListTable from "@/containers/events/EventsListTable"
 import EventsCreateDialog from "@/containers/events/EventsCreateDialog"
+import EventsEditDialog from "@/containers/events/EventsEditDialog"
 
 export default {
   name: "EventsListScreen",
@@ -60,11 +61,14 @@ export default {
   components: {
     BreadcrumbBar,
     EventsListTable,
-    EventsCreateDialog
+    EventsCreateDialog,
+    EventsEditDialog
   },
 
   data: () => ({
-    eventsShowCreateDialog: false
+    eventsShowCreateDialog: false,
+    eventsShowEditDialog: false,
+    eventsEditItem: {}
   }),
 
   computed: {
@@ -103,8 +107,9 @@ export default {
       this.eventsShowCreateDialog = true
     },
 
-    navToCreate() {
-      this.$router.push(`/events/create`)
+    eventsOpenEditDialog(item) {
+      this.eventsShowEditDialog = true
+      this.eventsEditItem = item
     }
   }
 }

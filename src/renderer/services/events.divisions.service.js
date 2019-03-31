@@ -1,14 +1,25 @@
 import { insert, findMany, destroyOne, destroyMany } from "@/db/queries"
+import { eventsDivisionsStub } from "@/stubs"
+
+const filterInput = (item) => {
+  const data = {}
+  for(let key in item) {
+    if(eventsDivisionsStub.hasOwnProperty(key)) {
+      data[key] = item[key]
+    }
+  }
+  return data
+}
 
 const list = async (filter = {}, options = {}, fetchMode) => {
-  const result = await findMany("events_divisions", filter, options)
-  result.items = result.items.map((doc) => doc.toJSON())
+  const result = await findMany("events_divisions", filter, options, true)
   return result
 }
 
-const create = async (doc = {}, options = {}) => {
-  const result = await insert("events_divisions", doc, options)
-  return result.toJSON()
+const create = async (item = {}, options = {}) => {
+  const data = filterInput(item)
+  const result = await insert("events_divisions", data, options, true)
+  return result
 }
 
 const removeOne = async (filter, options = {}) => {

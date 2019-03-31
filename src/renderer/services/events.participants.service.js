@@ -1,5 +1,5 @@
 import {
-  insert, findMany, findOne, destroyOne, destroyMany
+  insert, findMany, findOne, destroyOne, destroyMany, updateOne
 } from "@/db/queries"
 
 // @TODO: fix search on clubs_members model
@@ -27,13 +27,18 @@ const populate = async (doc) => {
   return participant
 }
 
+const filterInput = (item) => ({
+  memberId: item.memberId,
+  eventId: item.eventId,
+  classes: item.classes.map(({ id }) => id),
+  calibres: item.calibres
+})
+
 const list = async (filter = {}, options = {}) => {
   const result = await findMany("events_participants", filter, options)
-
   result.items = await Promise.all(
     result.items.map((doc) => populate(doc))
   )
-
   return result
 }
 
@@ -43,7 +48,8 @@ const select = async (filter = {}, options = {}) => {
   return participant
 }
 
-const create = async (data = {}, options = {}) => {
+const create = async (item = {}, options = {}) => {
+  const data = filterInput(item)
   const doc = await insert("events_participants", data, options)
   const participant = await populate(doc)
   return participant
@@ -62,6 +68,14 @@ const removeMany = async (items, options = {}) => {
   return true
 }
 
+const editOne = async (item, options = {}) => {
+  const filter = { id: item.id }
+  const data = filterInput(item)
+  const doc = await updateOne("events_participants", filter, data, options)
+  const result = await populate(doc)
+  return result
+}
+
 export default {
-  list, select, create, removeOne, removeMany
+  list, select, create, removeOne, removeMany, editOne
 }

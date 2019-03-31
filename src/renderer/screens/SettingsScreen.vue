@@ -17,9 +17,6 @@
 }
 </i18n>
 
-<style lang="stylus">
-</style>
-
 <template>
   <el-container
     id="settings-screen"

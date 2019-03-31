@@ -4,7 +4,7 @@
 <template>
   <el-container
     id="clubs-view-screen"
-    v-loading="clubsStateSelectedIsLoading"
+    v-loading="clubsIsLoading"
     class="screen"
   >
     <el-header height="auto">
@@ -36,21 +36,28 @@
         <div class="page-controls">
           <el-dropdown
             trigger="click"
-            @command="clubsDispatchActions"
+            @command="dispatchActions"
           >
             <el-button type="text">
               <i class="el-icon-arrow-down el-icon-more" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="clubsSelectedUpdate">
-                <i class="el-icon-edit el-icon--left" /> Edit
-              </el-dropdown-item>
               <el-dropdown-item
-                class="dropdown-menu-delete"
-                command="clubsSelectedRemove"
-                divided
+                :command="{
+                  handler: 'clubsEditOpenDialog'
+                }"
               >
-                <i class="el-icon-delete el-icon--left" /> Delete
+                <i class="el-icon-edit el-icon--left" /> Edit club
+              </el-dropdown-item>
+
+              <el-dropdown-item
+                divided
+                class="dropdown-menu-delete"
+                :command="{
+                  handler: 'clubsRemoveOne'
+                }"
+              >
+                <i class="el-icon-delete el-icon--left" /> Remove club
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -100,6 +107,7 @@
           v-if="!clubsStateSelectedIsLoading"
           :club-id="clubsStateSelected.id"
           @clubsMembersOpenCreateDialog="clubsMembersOpenCreateDialog"
+          @clubsMembersOpenEditDialog="clubsMembersOpenEditDialog"
         />
       </div>
     </el-main>
@@ -113,11 +121,20 @@
       </el-button>
     </el-footer>
 
+    <clubs-edit-dialog
+      :shown.sync="clubsEditShowDialog"
+      :club="clubsStateSelected"
+    />
+
     <clubs-members-create-dialog
-      v-if="!clubsStateSelectedIsLoading"
-      :club-id="clubsStateSelected.id"
-      :club-name="clubsStateSelected.name"
       :shown.sync="clubsMembersShowCreateDialog"
+      :club="clubsStateSelected"
+    />
+
+    <clubs-members-edit-dialog
+      :shown.sync="clubsMembersShowEditDialog"
+      :club="clubsStateSelected"
+      :club-member="clubsMembersEditItem"
     />
   </el-container>
 </template>
@@ -125,26 +142,42 @@
 <script>
 import { mapActions, mapState } from "vuex"
 import BreadcrumbBar from "@/components/BreadcrumbBar"
+import ClubsEditDialog from "@/containers/clubs/ClubsEditDialog"
 import ClubsMembersListTable from "@/containers/clubs/members/ClubsMembersListTable"
 import ClubsMembersCreateDialog from "@/containers/clubs/members/ClubsMembersCreateDialog"
+import ClubsMembersEditDialog from "@/containers/clubs/members/ClubsMembersEditDialog"
 
 export default {
   name: "ClubsViewScreen",
 
   components: {
     BreadcrumbBar,
+    ClubsEditDialog,
     ClubsMembersListTable,
-    ClubsMembersCreateDialog
+    ClubsMembersCreateDialog,
+    ClubsMembersEditDialog
   },
 
   data: () => ({
-    clubsMembersShowCreateDialog: false
+    clubsMembersShowCreateDialog: false,
+    clubsEditShowDialog: false,
+    clubsMembersShowEditDialog: false,
+    clubsMembersEditItem: {}
   }),
 
-  computed: mapState("clubs", {
-    clubsStateSelectedIsLoading: "selectedIsLoading",
-    clubsStateSelected: "selected"
-  }),
+  computed: {
+    ...mapState("clubs", {
+      clubsStateSelectedIsLoading: "selectedIsLoading",
+      clubsStateRemoveOneIsLoading: "removeOneIsLoading",
+      clubsStateSelected: "selected"
+    }),
+    clubsIsLoading() {
+      return (
+        this.clubsStateSelectedIsLoading ||
+        this.clubsStateRemoveOneIsLoading
+      )
+    }
+  },
 
   async created() {
     await this.clubsActionsSelect({ id: this.$route.params.clubId })
@@ -152,19 +185,58 @@ export default {
 
   methods: {
     ...mapActions("clubs", {
-      clubsActionsSelect: "select"
+      clubsActionsSelect: "select",
+      classesActionsRemoveOne: "removeOne"
     }),
 
-    clubsDispatchActions() {
-      this.$notify({
-        type: "warning",
-        title: "Oops!",
-        message: "Denne funksjonen er ikke implementert enda"
-      })
+    dispatchActions({ handler, payload }) {
+      this[handler](payload)
+    },
+
+    clubsEditOpenDialog() {
+      this.clubsEditShowDialog = true
     },
 
     clubsMembersOpenCreateDialog() {
       this.clubsMembersShowCreateDialog = true
+    },
+
+    clubsMembersOpenEditDialog(member) {
+      this.clubsMembersShowEditDialog = true
+      this.clubsMembersEditItem = member
+    },
+
+    async clubsRemoveOne() {
+      const club = this.clubsStateSelected
+      try {
+        await this.$confirm(
+          `This will remove ${club.name} and its ${club.membersCount} members permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+      } catch(e) {
+        return
+      }
+
+      try {
+        await this.classesActionsRemoveOne(club)
+        this.$notify({
+          type: "success",
+          title: "Success",
+          message: `${club.name} was removed from the database`
+        })
+        this.$router.push("/clubs")
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     }
   }
 }

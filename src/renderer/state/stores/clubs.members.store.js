@@ -24,7 +24,8 @@ const modules = [
       list: clubsMembersService.list,
       create: clubsMembersService.create,
       removeOne: clubsMembersService.removeOne,
-      removeMany: clubsMembersService.removeMany
+      removeMany: clubsMembersService.removeMany,
+      editOne: clubsMembersService.editOne
     }
   },
   {

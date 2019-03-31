@@ -102,6 +102,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    class="dropdown-menu-delete"
                     :command="{
                       handler: 'eventsParticipantsRemoveMany'
                     }"
@@ -123,6 +124,17 @@
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
+                  :command="{
+                    handler: 'eventsParticipantsOpenEditDialog',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-delete el-icon--left" /> Edit participant
+                </el-dropdown-item>
+
+                <el-dropdown-item
+                  divided
+                  class="dropdown-menu-delete"
                   :command="{
                     handler: 'eventsParticipantsRemoveOne',
                     payload: scope.row
@@ -250,20 +262,24 @@ export default {
     },
 
     eventsParticipantsRowClick(participant, column, e) {
-      if(e.target.className.includes("table-button")) {
-        return
+      if(!e.target.className.includes("table-button")) {
+        this.eventsParticipantsViewId = participant.id
+        this.eventsParticipantsShowViewDialog = true
       }
-      this.eventsParticipantsViewId = participant.id
-      this.eventsParticipantsShowViewDialog = true
     },
 
     eventsParticipantsDispatchActions({ handler, payload }) {
       this[handler](payload)
     },
 
+    eventsParticipantsOpenEditDialog(participant) {
+      this.$emit("eventsParticipantsOpenEditDialog", participant)
+    },
+
     async eventsParticipantsRemoveOne(participant) {
+      const fullName = `${participant.member.firstName} ${participant.member.lastName}`
+
       try {
-        const fullName = `${participant.member.firstName} ${participant.member.lastName}`
         await this.$confirm(
           `This will remove ${fullName} permanently from the event. Continue?`,
           "Warning!", {
@@ -273,27 +289,30 @@ export default {
             type: "warning"
           }
         )
+      } catch(e) {
+        return
+      }
 
-        try {
-          await this.eventsParticipantsActionsRemoveOne(participant)
-          this.$notify({
-            title: "Success",
-            message: `${fullName} was removed from the event`,
-            type: "success"
-          })
-        } catch(e) {
-          this.$notify({
-            title: "Oops!",
-            message: e.message,
-            type: "error"
-          })
-        }
-      } catch(e) {}
+      try {
+        await this.eventsParticipantsActionsRemoveOne(participant)
+        this.$notify({
+          title: "Success",
+          message: `${fullName} was removed from the event`,
+          type: "success"
+        })
+      } catch(e) {
+        this.$notify({
+          title: "Oops!",
+          message: e.message,
+          type: "error"
+        })
+      }
     },
 
     async eventsParticipantsRemoveMany() {
+      const count = this.eventsParticipantsSelection.length
+
       try {
-        const count = this.eventsParticipantsSelection.length
         await this.$confirm(
           `This will remove ${count} participants from the event permanently. Continue?`,
           "Warning!", {
@@ -303,22 +322,24 @@ export default {
             type: "warning"
           }
         )
+      } catch(e) {
+        return
+      }
 
-        try {
-          await this.eventsParticipantsActionsRemoveMany(this.eventsParticipantsSelection)
-          this.$notify({
-            type: "success",
-            title: "Success",
-            message: `${count} participants were removed from the event`
-          })
-        } catch(e) {
-          this.$notify({
-            type: "error",
-            title: "Oops!",
-            message: e.message
-          })
-        }
-      } catch(e) {}
+      try {
+        await this.eventsParticipantsActionsRemoveMany(this.eventsParticipantsSelection)
+        this.$notify({
+          type: "success",
+          title: "Success",
+          message: `${count} participants were removed from the event`
+        })
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     }
   }
 }

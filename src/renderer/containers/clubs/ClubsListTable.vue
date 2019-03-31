@@ -1,11 +1,39 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "searchFormPlaceholder": "Search for a club by name",
+    "formItem1": "Name/Area",
+    "formItem2": "Members",
+    "formItem3": "Added One",
+    "removeSelected": "Remove selected",
+    "editClub": "Edit club",
+    "removeClub": "Remove club",
+    "createClub": "Create new?",
+    "noClubsYet": "No clubs yet.",
+    "clubsRemoveOneConfirmation": "This will remove %{club} and its %{members} members. Continue?",
+    "clubsRemoveOneSuccess": "%{club} and its %{members} members were removed from the database"
+  },
+  "no": {
+    "searchFormPlaceholder": "Søk etter en klubb med navn",
+    "formItem1": "Navn/Område",
+    "formItem2": "Medlemmer",
+    "formItem3": "Opprettet den",
+    "removeSelected": "Slett valgte",
+    "editClub": "Rediger klubb",
+    "removeClub": "Slett klubb",
+    "createClub": "Opprett ny?",
+    "noClubsYet": "Ingen klubber enda.",
+    "clubsRemoveOneConfirmation": "Dette vil slette %{club} og deres %{members} medlemmer. Fortsett?",
+    "clubsRemoveOneSuccess": "%{club} og deres %{members} medlemmer ble fjernet fra databasen"
+  }
+}
+</i18n>
 
 <template>
   <div class="clubs-list-table">
     <search-form
       v-model="clubsSearchFilter"
-      placeholder="Search for a club by name"
+      :placeholder="$t('searchFormPlaceholder')"
       @submit="clubsActionsSetSearchFilter"
     />
 
@@ -27,8 +55,8 @@
 
         <el-table-column
           prop="name"
-          label="Name/Area"
           sortable="custom"
+          :label="$t('formItem1')"
           :sort-orders="clubsSortOrders"
         >
           <template slot-scope="scope">
@@ -43,16 +71,16 @@
 
         <el-table-column
           prop="membersCount"
-          label="Members"
           width="150px"
+          :label="$t('formItem2')"
           :sort-orders="clubsSortOrders"
         />
 
         <el-table-column
           prop="createdAt"
-          label="Added On"
           sortable="custom"
           width="150px"
+          :label="$t('formItem3')"
           :sort-orders="clubsSortOrders"
         >
           <template slot-scope="scope">
@@ -80,8 +108,13 @@
                   <i class="table-button el-icon-more" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item :command="{ handler: 'clubsDeleteMany' }">
-                    <i class="el-icon-delete el-icon--left" /> Remove selected
+                  <el-dropdown-item
+                    class="dropdown-menu-delete"
+                    :command="{
+                      handler: 'clubsRemoveMany'
+                    }"
+                  >
+                    <i class="el-icon-delete el-icon--left" /> {{ $t('removeSelected') }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -97,16 +130,23 @@
                 <i class="table-button el-icon-more" />
               </span>
               <el-dropdown-menu slot="dropdown">
-                <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
-                  <i class="el-icon-edit el-icon--left"></i> Rediger
-                </el-dropdown-item> -->
                 <el-dropdown-item
+                  :command="{
+                    handler: 'clubsEditOne',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-edit el-icon--left" /> {{ $t('editClub') }}
+                </el-dropdown-item>
+                <el-dropdown-item
+                  divided
+                  class="dropdown-menu-delete"
                   :command="{
                     handler: 'clubsRemoveOne',
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-delete el-icon--left" /> Remove club
+                  <i class="el-icon-delete el-icon--left" /> {{ $t('removeClub') }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -114,12 +154,12 @@
         </el-table-column>
 
         <template slot="empty">
-          No clubs yet.
+          {{ $t("noClubsYet") }}
           <el-button
             type="text"
             @click="clubsOpenCreateDialog"
           >
-            Create new?
+            {{ $t("createClub") }}
           </el-button>
         </template>
       </el-table>
@@ -204,10 +244,9 @@ export default {
     },
 
     clubsRowClick(club, column, e) {
-      if(e.target.className.includes("table-button")) {
-        return
+      if(!e.target.className.includes("table-button")) {
+        this.$router.push(`/clubs/${club.id}`)
       }
-      this.$router.push(`/clubs/${club.id}`)
     },
 
     clubsSelectionChange(clubs) {
@@ -218,13 +257,20 @@ export default {
       this[handler](payload)
     },
 
+    clubsEditOne(club) {
+      this.$emit("clubsOpenEditDialog", club)
+    },
+
     async clubsRemoveOne(club) {
       try {
         await this.$confirm(
-          `This will remove ${club.name} and its ${club.membersCount} members permanently. Continue?`,
+          this.$t("clubsRemoveOneConfirmation", {
+            club: club.name,
+            members: club.membersCount
+          }),
           "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
@@ -234,8 +280,11 @@ export default {
           await this.clubsActionsRemoveOne(club)
           this.$notify({
             type: "success",
-            title: "Success",
-            message: `${club.name} was removed from the database`
+            title: this.$t("success"),
+            message: this.$t("clubsRemoveOneSuccess", {
+              club: club.name,
+              members: club.membersCount
+            })
           })
         } catch(e) {
           this.$notify({
@@ -247,7 +296,7 @@ export default {
       } catch(e) {}
     },
 
-    async clubsDeleteMany() {
+    async clubsRemoveMany() {
       this.$notify({
         type: "warning",
         title: "Oops!",

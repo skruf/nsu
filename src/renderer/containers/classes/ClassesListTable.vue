@@ -14,10 +14,9 @@
         :data="classesStateList"
         :sort-by="classesStateSortBy"
         row-key="id"
-        class="table-clickable"
+        class="no-hover"
         empty-text
         @selection-change="classesSelectionChange"
-        @row-click="classesRowClick"
         @sort-change="classesActionsSetSorting"
       >
         <el-table-column
@@ -77,7 +76,10 @@
           width="50"
           align="right"
         >
-          <template slot="header">
+          <template
+            slot="header"
+            slot-scope="scope"
+          >
             <div
               class="table-actions"
               :class="{ 'disabled': !classesHasSelection }"
@@ -91,6 +93,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    class="dropdown-menu-delete"
                     :command="{
                       handler: 'classesRemoveMany'
                     }"
@@ -111,10 +114,17 @@
                 <i class="table-button el-icon-more" />
               </span>
               <el-dropdown-menu slot="dropdown">
-                <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
-                  <i class="el-icon-edit el-icon--left"></i> Rediger
-                </el-dropdown-item> -->
                 <el-dropdown-item
+                  :command="{
+                    handler: 'classesOpenEditDialog',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-edit el-icon--left" /> Edit class
+                </el-dropdown-item>
+                <el-dropdown-item
+                  divided
+                  class="dropdown-menu-delete"
                   :command="{
                     handler: 'classesRemoveOne',
                     payload: scope.row
@@ -217,10 +227,8 @@ export default {
       this.$emit("classesOpenCreateDialog")
     },
 
-    classesRowClick(weaponClass, column, e) {
-      if(!e.target.className.includes("table-button")) {
-        this.$emit("classesOpenEditDialog", weaponClass)
-      }
+    classesOpenEditDialog(weaponClass) {
+      this.$emit("classesOpenEditDialog", weaponClass)
     },
 
     classesSelectionChange(classes) {
@@ -242,22 +250,24 @@ export default {
             type: "warning"
           }
         )
+      } catch(e) {
+        return
+      }
 
-        try {
-          await this.classesActionsRemoveOne(weaponClass)
-          this.$notify({
-            type: "success",
-            title: "Success",
-            message: `${weaponClass.name} was removed from the database`
-          })
-        } catch(e) {
-          this.$notify({
-            type: "error",
-            title: "Oops!",
-            message: e.message
-          })
-        }
-      } catch(e) {}
+      try {
+        await this.classesActionsRemoveOne(weaponClass)
+        this.$notify({
+          type: "success",
+          title: "Success",
+          message: `${weaponClass.name} was removed from the database`
+        })
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     },
 
     async classesRemoveMany() {

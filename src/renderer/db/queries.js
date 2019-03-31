@@ -1,4 +1,4 @@
-import { setId, setTimestamps } from "@/utils"
+import { getId, getTimestamp } from "@/utils"
 import getDb from "@/db"
 
 const buildQuery = async (collection, method, filter = {}, options = {}) => {
@@ -65,8 +65,10 @@ export const findOne = async (
 
 export const insert = async (collection, data, options = {}, json = false) => {
   const db = await getDb()
-  setId(data)
-  setTimestamps(data)
+  const timestamp = getTimestamp()
+  data.id = getId()
+  data.createdAt = timestamp
+  data.updatedAt = timestamp
   let doc = db[collection].insert(data)
   if(json) doc = doc.toJSON()
   return doc
@@ -97,8 +99,8 @@ export const updateOne = async (
   collection, filter, item, options = {}, json = false
 ) => {
   let doc = await findOne(collection, filter, options)
-  const date = new Date()
-  item.updatedAt = date.toISOString()
+  const timestamp = getTimestamp()
+  item.updatedAt = timestamp
   await doc.update({ $set: item })
   if(json) doc = doc.toJSON()
   return doc

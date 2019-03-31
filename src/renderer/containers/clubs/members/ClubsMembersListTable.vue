@@ -14,6 +14,7 @@
         :data="clubsMembersList"
         :sort-by="clubsMembersSortBy"
         row-key="id"
+        class="no-hover"
         empty-text
         @selection-change="clubsMembersSelectionChange"
         @sort-change="clubsMembersActionsSetSorting"
@@ -67,36 +68,55 @@
           width="50"
           align="right"
         >
-          <template slot="header">
+          <template
+            slot="header"
+            slot-scope="scope"
+          >
             <div
               class="table-actions"
               :class="{ 'disabled': !clubsMembersHasSelection }"
             >
               <el-dropdown
                 trigger="click"
-                @command="clubsMembersDispatchActions"
+                @command="dispatchActions"
               >
                 <span class="el-dropdown-link">
                   <i class="table-button el-icon-more" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="removeSelection">
+                  <el-dropdown-item
+                    :command="{
+                      handler: 'clubsMembersRemoveMany'
+                    }"
+                  >
                     <i class="el-icon-delete el-icon--left" /> Remove selected
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
           </template>
+
           <template slot-scope="scope">
             <el-dropdown
               trigger="click"
-              @command="clubsMembersDispatchActions"
+              @command="dispatchActions"
             >
               <span class="el-dropdown-link">
                 <i class="table-button el-icon-more" />
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
+                  :command="{
+                    handler: 'clubsMembersOpenEditDialog',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-delete el-icon--left" /> Edit member
+                </el-dropdown-item>
+
+                <el-dropdown-item
+                  divided
+                  class="dropdown-menu-delete"
                   :command="{
                     handler: 'clubsMembersRemoveOne',
                     payload: scope.row
@@ -208,13 +228,18 @@ export default {
       this.clubsMembersSelection = members
     },
 
-    clubsMembersDispatchActions({ handler, payload }) {
+    clubsMembersOpenEditDialog(member) {
+      this.$emit("clubsMembersOpenEditDialog", member)
+    },
+
+    dispatchActions({ handler, payload }) {
       this[handler](payload)
     },
 
     async clubsMembersRemoveOne(clubMember) {
+      const fullName = `${clubMember.firstName} ${clubMember.lastName}`
+
       try {
-        const fullName = `${clubMember.firstName} ${clubMember.lastName}`
         await this.$confirm(
           `This will remove ${fullName} from the club. Continue?`,
           "Warning!", {
@@ -224,22 +249,24 @@ export default {
             type: "warning"
           }
         )
+      } catch(e) {
+        return
+      }
 
-        try {
-          await this.clubsMembersActionsRemoveOne(clubMember)
-          this.$notify({
-            type: "success",
-            title: "Success",
-            message: `${fullName} was removed from the clubs database`
-          })
-        } catch(e) {
-          this.$notify({
-            type: "error",
-            title: "Oops!",
-            message: e.message
-          })
-        }
-      } catch(e) {}
+      try {
+        await this.clubsMembersActionsRemoveOne(clubMember)
+        this.$notify({
+          type: "success",
+          title: "Success",
+          message: `${fullName} was removed from the clubs database`
+        })
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     },
 
     async clubsMembersRemoveMany() {

@@ -2,5 +2,7 @@
   "appWarning": "Dette er en forhåndsvisning av programvaren og feil kan derfor oppstå.",
   "save": "Lagre",
   "cancel": "Avbryt",
-  "validationError": "Vennligst fyll inn alle påkrevde felt før du fortsetter"
+  "validationError": "Vennligst fyll inn alle påkrevde felt før du fortsetter",
+  "confirmButtonText": "Ja, jeg er sikker",
+  "success": "Suksess!"
 }

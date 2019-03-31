@@ -24,6 +24,7 @@
     <el-main class="content">
       <ranges-list-table
         @rangesOpenCreateDialog="rangesOpenCreateDialog"
+        @rangesOpenEditDialog="rangesOpenEditDialog"
       />
     </el-main>
 
@@ -39,6 +40,11 @@
     <ranges-create-dialog
       :shown.sync="rangesShowCreateDialog"
     />
+
+    <ranges-edit-dialog
+      :shown.sync="rangesEditShowDialog"
+      :item="rangesEditItem"
+    />
   </el-container>
 </template>
 
@@ -46,6 +52,7 @@
 import BreadcrumbBar from "@/components/BreadcrumbBar"
 import RangesListTable from "@/containers/ranges/RangesListTable"
 import RangesCreateDialog from "@/containers/ranges/RangesCreateDialog"
+import RangesEditDialog from "@/containers/ranges/RangesEditDialog"
 
 export default {
   name: "RangesListScreen",
@@ -53,16 +60,23 @@ export default {
   components: {
     BreadcrumbBar,
     RangesListTable,
-    RangesCreateDialog
+    RangesCreateDialog,
+    RangesEditDialog
   },
 
   data: () => ({
-    rangesShowCreateDialog: false
+    rangesShowCreateDialog: false,
+    rangesEditShowDialog: false,
+    rangesEditItem: {}
   }),
 
   methods: {
     rangesOpenCreateDialog() {
       this.rangesShowCreateDialog = true
+    },
+    rangesOpenEditDialog(item) {
+      this.rangesEditShowDialog = true
+      this.rangesEditItem = item
     }
   }
 }

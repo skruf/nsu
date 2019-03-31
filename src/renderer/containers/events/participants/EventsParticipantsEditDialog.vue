@@ -3,15 +3,15 @@
 
 <template>
   <el-dialog
-    custom-class="create-dialog"
-    :title="`Add ${memberFullName} to the event`"
+    custom-class="edit-dialog"
+    :title="`Edit participant ${memberFullName}`"
     :append-to-body="true"
     :visible.sync="visible"
     @open="open"
     @close="close"
   >
     <div
-      v-loading="eventsParticipantsStateCreateIsLoading"
+      v-loading="eventsParticipantsStateEditIsLoading"
       class="dialog_content"
     >
       <el-form
@@ -81,16 +81,17 @@
 </template>
 
 <script>
+import _get from "lodash.get"
 import { mapActions, mapState } from "vuex"
 import { eventsParticipantsStub } from "@/stubs"
 
 export default {
-  name: "EventsParticipantsCreateDialog",
+  name: "EventsParticipantsEditDialog",
 
   props: {
     shown: { type: Boolean, default: false },
     event: { type: Object, required: true },
-    member: { type: Object, required: true }
+    participant: { type: Object, default: () => eventsParticipantsStub }
   },
 
   data: function() {
@@ -108,7 +109,7 @@ export default {
 
   computed: {
     ...mapState("events/participants", {
-      eventsParticipantsStateCreateIsLoading: "createIsLoading"
+      eventsParticipantsStateEditIsLoading: "editIsLoading"
     }),
 
     ...mapState("classes", {
@@ -117,8 +118,9 @@ export default {
     }),
 
     memberFullName() {
-      if(!this.member && !this.member.firstName) return ""
-      return `${this.member.firstName} ${this.member.lastName}`
+      const firstName = _get(this.participant, "participant.member.firstName", "")
+      const lastName = _get(this.participant, "participant.member.lastName", "")
+      return `${firstName} ${lastName}`
     }
   },
 
@@ -131,7 +133,7 @@ export default {
 
   methods: {
     ...mapActions("events/participants", {
-      eventsParticipantsActionsCreate: "create"
+      eventsParticipantsActionsEditOne: "editOne"
     }),
 
     ...mapActions("classes", {
@@ -139,9 +141,8 @@ export default {
     }),
 
     async open() {
+      this.form = { ...this.participant }
       await this.classesActionsList()
-      this.form.memberId = this.member.id
-      this.form.eventId = this.event.id
     },
 
     async submit() {
@@ -155,11 +156,12 @@ export default {
         }
 
         try {
-          await this.eventsParticipantsActionsCreate(this.form)
+          await this.eventsParticipantsActionsEditOne(this.form)
           this.$notify({
             type: "success",
             title: "Success",
-            message: `${this.memberFullName} was added to the event`
+            message: `Was updated`
+            // message: `${this.memberFullName} was updated`
           })
           this.close()
         } catch(e) {

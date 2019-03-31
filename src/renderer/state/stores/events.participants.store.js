@@ -22,7 +22,8 @@ const modules = [
       select: eventsParticipantsService.select,
       create: eventsParticipantsService.create,
       removeOne: eventsParticipantsService.removeOne,
-      removeMany: eventsParticipantsService.removeMany
+      removeMany: eventsParticipantsService.removeMany,
+      editOne: eventsParticipantsService.editOne
     }
   },
   {

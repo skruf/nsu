@@ -1,5 +1,19 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "title": "Clubs",
+    "breadcrumbLabel1": "Clubs",
+    "breadcrumbLabel2": "All",
+    "createClubButton": "Create club"
+  },
+  "no": {
+    "title": "Klubber",
+    "breadcrumbLabel1": "Klubber",
+    "breadcrumbLabel2": "Alle",
+    "createClubButton": "Opprett klubb"
+  }
+}
+</i18n>
 
 <template>
   <el-container
@@ -9,14 +23,14 @@
     <el-header height="auto">
       <breadcrumb-bar
         :paths="[
-          { to: '/clubs', label: 'Clubs' },
-          { to: '', label: 'All' }
+          { to: '/clubs', label: $t('breadcrumbLabel1') },
+          { to: '', label: $t('breadcrumbLabel2') }
         ]"
       />
 
       <div class="page-titles">
         <h1 class="h1">
-          Clubs
+          {{ $t("title") }}
         </h1>
       </div>
     </el-header>
@@ -24,6 +38,7 @@
     <el-main class="content">
       <clubs-list-table
         @clubsOpenCreateDialog="clubsOpenCreateDialog"
+        @clubsOpenEditDialog="clubsOpenEditDialog"
       />
     </el-main>
 
@@ -32,12 +47,17 @@
         type="primary"
         @click="clubsOpenCreateDialog"
       >
-        <i class="el-icon-plus el-icon--left" /> Create club
+        <i class="el-icon-plus el-icon--left" /> {{ $t("createClubButton") }}
       </el-button>
     </el-footer>
 
     <clubs-create-dialog
       :shown.sync="clubsShowCreateDialog"
+    />
+
+    <clubs-edit-dialog
+      :shown.sync="clubsEditShowDialog"
+      :club="clubsEditItem"
     />
   </el-container>
 </template>
@@ -46,6 +66,7 @@
 import BreadcrumbBar from "@/components/BreadcrumbBar"
 import ClubsListTable from "@/containers/clubs/ClubsListTable"
 import ClubsCreateDialog from "@/containers/clubs/ClubsCreateDialog"
+import ClubsEditDialog from "@/containers/clubs/ClubsEditDialog"
 
 export default {
   name: "ClubsListScreen",
@@ -53,16 +74,23 @@ export default {
   components: {
     BreadcrumbBar,
     ClubsListTable,
-    ClubsCreateDialog
+    ClubsCreateDialog,
+    ClubsEditDialog
   },
 
   data: () => ({
-    clubsShowCreateDialog: false
+    clubsShowCreateDialog: false,
+    clubsEditShowDialog: false,
+    clubsEditItem: {}
   }),
 
   methods: {
     clubsOpenCreateDialog() {
       this.clubsShowCreateDialog = true
+    },
+    clubsOpenEditDialog(club) {
+      this.clubsEditShowDialog = true
+      this.clubsEditItem = club
     }
   }
 }

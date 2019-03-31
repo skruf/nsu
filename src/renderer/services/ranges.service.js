@@ -1,19 +1,32 @@
-import { insert, findMany, findOne, destroyOne, destroyMany } from "@/db/queries"
+import {
+  insert, findMany, findOne, destroyOne, destroyMany, updateOne
+} from "@/db/queries"
+import { rangesStub } from "@/stubs"
+
+const filterInput = (item) => {
+  const data = {}
+  for(let key in item) {
+    if(rangesStub.hasOwnProperty(key)) {
+      data[key] = item[key]
+    }
+  }
+  return data
+}
 
 const list = async (filter = {}, options = {}) => {
-  const result = await findMany("ranges", filter, options)
-  result.items = result.items.map((doc) => doc.toJSON())
+  const result = await findMany("ranges", filter, options, true)
   return result
 }
 
 const select = async (filter = {}, options = {}) => {
-  const result = await findOne("ranges", filter, options)
-  return result.toJSON()
+  const result = await findOne("ranges", filter, options, true)
+  return result
 }
 
 const create = async (item = {}, options = {}) => {
-  const result = await insert("ranges", item, options)
-  return result.toJSON()
+  const data = filterInput(item)
+  const result = await insert("ranges", data, options, true)
+  return result
 }
 
 const removeOne = async (item, options = {}) => {
@@ -29,6 +42,13 @@ const removeMany = async (items, options = {}) => {
   return true
 }
 
+const editOne = async (item, options = {}) => {
+  const filter = { id: item.id }
+  const data = filterInput(item)
+  const result = await updateOne("ranges", filter, data, options, true)
+  return result
+}
+
 export default {
-  list, select, create, removeOne, removeMany
+  list, select, create, removeOne, removeMany, editOne
 }

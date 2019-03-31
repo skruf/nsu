@@ -1,44 +1,27 @@
 import {
-  insert, findMany, findOne, destroyOne, destroyMany
+  insert, findMany, findOne, destroyOne, destroyMany, updateOne
 } from "@/db/queries"
-
-// if(result.rangeId) {
-// let range = doc.populate("rangeId")
-// club.range = range.toJSON()
-// }
-
-// let club = result.toJSON()
-// club = await populate(club)
-
-// if(result.rangeId) {
-//   let range = result.populate("rangeId")
-//   club.range = range.toJSON()
-// }
-
-// result.items = await Promise.all(result.items.map(async (club) => {
-//   club = club.toJSON()
-//   club = await populate(club)
-//   return club
-// }))
-
-// await destroyMany("clubs_members", { clubId: club.id })
+import { clubsStub } from "@/stubs"
 
 const populate = async (doc) => {
+  let range = await doc.populate("rangeId")
   const members = await findMany("clubs_members", { clubId: doc.id })
 
   const club = doc.toJSON()
   club.membersCount = members.count
-
-  // console.log(club)
-
-  // if(club.rangeId) {
-  let range = await doc.populate("rangeId")
-  club.range = range.toJSON() || null
-  // }
-
-  // console.log(club.range)
+  if(range) club.range = range.toJSON()
 
   return club
+}
+
+const filterInput = (item) => {
+  const data = {}
+  for(let key in item) {
+    if(clubsStub.hasOwnProperty(key)) {
+      data[key] = item[key]
+    }
+  }
+  return data
 }
 
 const list = async (filter = {}, options = {}) => {
@@ -55,10 +38,11 @@ const select = async (filter = {}, options = {}) => {
   return club
 }
 
-const create = async (data = {}, options = {}) => {
-  const result = await insert("clubs", data, options)
-  const club = result.toJSON()
-  club.membersCount = 0
+const create = async (item = {}, options = {}) => {
+  const data = filterInput(item)
+  const doc = await insert("clubs", data, options)
+  const club = await populate(doc)
+  // club.membersCount = 0
   return club
 }
 
@@ -75,6 +59,14 @@ const removeMany = async (items, options = {}) => {
   return true
 }
 
+const editOne = async (item, options = {}) => {
+  const filter = { id: item.id }
+  const data = filterInput(item)
+  const doc = await updateOne("clubs", filter, data, options)
+  const club = await populate(doc)
+  return club
+}
+
 export default {
-  list, select, create, removeOne, removeMany
+  list, select, create, removeOne, removeMany, editOne
 }

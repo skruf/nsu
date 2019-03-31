@@ -3,15 +3,15 @@
 
 <template>
   <el-dialog
-    title="Create a club member"
-    custom-class="create-dialog"
+    title="Edit a club member"
+    custom-class="edit-dialog"
     :visible.sync="visible"
     :append-to-body="true"
     @open="open"
     @close="close"
   >
     <div
-      v-loading="clubsMembersStateCreateIsLoading"
+      v-loading="clubsMembersStateEditIsLoading"
       class="dialog_content"
     >
       <el-form
@@ -126,11 +126,12 @@ import { mapActions, mapState } from "vuex"
 import { clubsMembersStub } from "@/stubs"
 
 export default {
-  name: "ClubsMembersCreateDialog",
+  name: "ClubsMembersEditDialog",
 
   props: {
     shown: { type: Boolean, default: false },
-    club: { type: Object, required: false, default: () => {} }
+    club: { type: Object, required: false, default: () => {} },
+    clubMember: { type: Object, default: () => clubsMembersStub }
   },
 
   data: function() {
@@ -152,12 +153,12 @@ export default {
     }),
 
     ...mapState("clubs/members", {
-      clubsMembersStateCreateIsLoading: "createIsLoading",
+      clubsMembersStateEditIsLoading: "editIsLoading",
       clubsMembersStateCountries: "countries"
     }),
 
     clubNotProvided() {
-      return !(this.club && this.club.id)
+      return !this.club.id
     }
   },
 
@@ -170,13 +171,14 @@ export default {
 
   methods: {
     async open() {
+      this.form = { ...this.clubMember }
       if(this.clubNotProvided) {
         await this.clubsActionsList()
       }
     },
 
     ...mapActions("clubs/members", {
-      clubsMembersActionsCreate: "create"
+      clubsMembersActionsEditOne: "editOne"
     }),
 
     ...mapActions("clubs", {
@@ -198,14 +200,13 @@ export default {
         }
 
         try {
-          await this.clubsMembersActionsCreate(this.form)
+          await this.clubsMembersActionsEditOne(this.form)
           const fullName = `${this.form.firstName} ${this.form.lastName}`
           this.$notify({
             type: "success",
             title: "Great success",
-            message: `${fullName} was successfully added to the database`
+            message: `${fullName} was successfully updated in the database`
           })
-          this.clear()
           this.close()
         } catch(e) {
           this.$notify({
@@ -222,6 +223,7 @@ export default {
     },
 
     close() {
+      this.clear()
       this.visible = false
       this.$emit("update:shown", false)
     }

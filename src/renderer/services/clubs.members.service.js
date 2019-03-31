@@ -1,14 +1,27 @@
-import { insert, findMany, destroyOne, destroyMany } from "@/db/queries"
+import {
+  insert, findMany, destroyOne, destroyMany, updateOne
+} from "@/db/queries"
+import { clubsMembersStub } from "@/stubs"
+
+const filterInput = (item) => {
+  const data = {}
+  for(let key in item) {
+    if(clubsMembersStub.hasOwnProperty(key)) {
+      data[key] = item[key]
+    }
+  }
+  return data
+}
 
 const list = async (filter = {}, options = {}, fetchMode) => {
-  const result = await findMany("clubs_members", filter, options)
-  result.items = result.items.map((doc) => doc.toJSON())
+  const result = await findMany("clubs_members", filter, options, true)
   return result
 }
 
-const create = async (doc = {}, options = {}) => {
-  const result = await insert("clubs_members", doc, options)
-  return result.toJSON()
+const create = async (item = {}, options = {}) => {
+  const data = filterInput(item)
+  const result = await insert("clubs_members", data, options, true)
+  return result
 }
 
 const removeOne = async (clubMember, options = {}) => {
@@ -24,6 +37,13 @@ const removeMany = async (items, options = {}) => {
   return true
 }
 
+const editOne = async (item, options = {}) => {
+  const filter = { id: item.id }
+  const data = filterInput(item)
+  const result = await updateOne("clubs_members", filter, data, options, true)
+  return result
+}
+
 export default {
-  list, create, removeOne, removeMany
+  list, create, removeOne, removeMany, editOne
 }

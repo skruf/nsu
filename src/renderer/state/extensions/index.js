@@ -1,4 +1,4 @@
-import merge from "lodash.merge"
+import _merge from "lodash.merge"
 import pagination from "./pagination"
 import crud from "./crud"
 import sorting from "./sorting"
@@ -15,7 +15,7 @@ export default (store, extensions = []) => {
   extensions.forEach((extension) => {
     const extender = extenders[extension.module]
     const extended = extender(extension.options)
-    store = merge(extended, store)
+    store = _merge(extended, store)
   })
 
   return store

@@ -14,10 +14,9 @@
         :data="rangesStateList"
         :sort-by="rangesStateSortBy"
         row-key="id"
-        class="table-clickable"
+        class="no-hover"
         empty-text
         @selection-change="rangesSelectionChange"
-        @row-click="rangesRowClick"
         @sort-change="rangesActionsSetSorting"
       >
         <el-table-column
@@ -88,6 +87,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    class="dropdown-menu-delete"
                     :command="{
                       handler: 'rangesRemoveMany'
                     }"
@@ -108,16 +108,23 @@
                 <i class="table-button el-icon-more" />
               </span>
               <el-dropdown-menu slot="dropdown">
-                <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
-                  <i class="el-icon-edit el-icon--left"></i> Rediger
-                </el-dropdown-item> -->
                 <el-dropdown-item
+                  :command="{
+                    handler: 'rangesOpenEditDialog',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-delete el-icon--left" /> Edit range
+                </el-dropdown-item>
+                <el-dropdown-item
+                  divided
+                  class="dropdown-menu-delete"
                   :command="{
                     handler: 'rangesRemoveOne',
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-delete el-icon--left" /> Slett
+                  <i class="el-icon-delete el-icon--left" /> Remove range
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -217,11 +224,8 @@ export default {
       this.$emit("rangesOpenCreateDialog")
     },
 
-    rangesRowClick(range, column, e) {
-      if(e.target.className.includes("table-button")) {
-        return
-      }
-      this.$router.push(`/ranges/${range.id}`)
+    rangesOpenEditDialog(range) {
+      this.$emit("rangesOpenEditDialog", range)
     },
 
     rangesSelectionChange(ranges) {
@@ -233,15 +237,19 @@ export default {
     },
 
     async rangesRemoveOne(range) {
-      await this.$confirm(
-        `This will remove ${range.name} permanently. Continue?`,
-        "Warning!", {
-          confirmButtonText: "Yes, I am sure",
-          cancelButtonText: "Cancel",
-          customClass: "dangerous-confirmation",
-          type: "warning"
-        }
-      )
+      try {
+        await this.$confirm(
+          `This will remove ${range.name} permanently. Continue?`,
+          "Warning!", {
+            confirmButtonText: "Yes, I am sure",
+            cancelButtonText: "Cancel",
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+      } catch(e) {
+        return
+      }
 
       try {
         await this.rangesActionsRemoveOne(range)

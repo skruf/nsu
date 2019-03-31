@@ -153,7 +153,7 @@
           v-for="participant in eventsParticipantsStateList"
           :key="participant.id"
           class="list_item"
-          @click="eventsParticipantsDeleteOne(participant)"
+          @click="eventsParticipantsRemoveOne(participant)"
         >
           <div class="list_item_member">
             <avatar
@@ -334,7 +334,7 @@ export default {
       this.eventsParticipantsShowCreateDialog = true
     },
 
-    async eventsParticipantsDeleteOne(participant) {
+    async eventsParticipantsRemoveOne(participant) {
       try {
         const fullName = `${participant.member.firstName} ${participant.member.lastName}`
         await this.eventsParticipantsActionsRemoveOne(participant)

@@ -1,6 +1,7 @@
 import {
-  insert, findMany, findOne, destroyOne, destroyMany
+  insert, findMany, findOne, destroyOne, destroyMany, updateOne
 } from "@/db/queries"
+import { eventsStub } from "@/stubs"
 
 const populate = async (doc) => {
   let club = await doc.populate("organizerId")
@@ -11,6 +12,16 @@ const populate = async (doc) => {
   if(range) event.range = range.toJSON()
 
   return event
+}
+
+const filterInput = (item) => {
+  const data = {}
+  for(let key in item) {
+    if(eventsStub.hasOwnProperty(key)) {
+      data[key] = item[key]
+    }
+  }
+  return data
 }
 
 const list = async (filter = {}, options = {}, fetchMode) => {
@@ -35,7 +46,8 @@ const select = async (filter = {}, options = {}) => {
   return event
 }
 
-const create = async (data = {}, options = {}) => {
+const create = async (item = {}, options = {}) => {
+  const data = filterInput(item)
   const doc = await insert("events", data, options)
   const event = await populate(doc)
   return event
@@ -54,6 +66,14 @@ const removeMany = async (items, options = {}) => {
   return true
 }
 
+const editOne = async (item, options = {}) => {
+  const filter = { id: item.id }
+  const data = filterInput(item)
+  const doc = await updateOne("events", filter, data, options)
+  const result = await populate(doc)
+  return result
+}
+
 export default {
-  list, select, create, removeOne, removeMany
+  list, select, create, removeOne, removeMany, editOne
 }

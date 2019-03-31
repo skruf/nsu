@@ -100,13 +100,14 @@
             >
               <el-dropdown
                 trigger="click"
-                @command="eventsDispatchActions"
+                @command="dispatchActions"
               >
                 <span class="el-dropdown-link">
                   <i class="table-button el-icon-more" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    class="dropdown-menu-delete"
                     :command="{
                       handler: 'eventsRemoveMany'
                     }"
@@ -121,16 +122,23 @@
           <template slot-scope="scope">
             <el-dropdown
               trigger="click"
-              @command="eventsDispatchActions"
+              @command="dispatchActions"
             >
               <span class="el-dropdown-link">
                 <i class="table-button el-icon-more" />
               </span>
               <el-dropdown-menu slot="dropdown">
-                <!-- <el-dropdown-item :command="{ handler: 'edit', payload: scope.row }">
-                  <i class="el-icon-edit el-icon--left"></i> Rediger
-                </el-dropdown-item> -->
                 <el-dropdown-item
+                  :command="{
+                    handler: 'eventsOpenEditDialog',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-edit el-icon--left" /> Edit event
+                </el-dropdown-item>
+                <el-dropdown-item
+                  divided
+                  class="dropdown-menu-delete"
                   :command="{
                     handler: 'eventsRemoveOne',
                     payload: scope.row
@@ -231,18 +239,21 @@ export default {
       this.$emit("eventsOpenCreateDialog")
     },
 
+    eventsOpenEditDialog(event) {
+      this.$emit("eventsOpenEditDialog", event)
+    },
+
     eventsRowClick(event, column, e) {
-      if(e.target.className.includes("table-button")) {
-        return
+      if(!e.target.className.includes("table-button")) {
+        this.$router.push(`/events/${event.id}`)
       }
-      this.$router.push(`/events/${event.id}`)
     },
 
     eventsSelectionChange(events) {
       this.eventsSelection = events
     },
 
-    eventsDispatchActions({ handler, payload }) {
+    dispatchActions({ handler, payload }) {
       this[handler](payload)
     },
 
@@ -257,27 +268,29 @@ export default {
             type: "warning"
           }
         )
+      } catch(e) {
+        return
+      }
 
-        try {
-          await this.eventsActionsRemoveOne(event)
-          this.$notify({
-            title: "Success",
-            message: `${event.title} was removed from the database`,
-            type: "success"
-          })
-        } catch(e) {
-          this.$notify({
-            title: "Oops!",
-            message: e.message,
-            type: "error"
-          })
-        }
-      } catch(e) {}
+      try {
+        await this.eventsActionsRemoveOne(event)
+        this.$notify({
+          title: "Success",
+          message: `${event.title} was removed from the database`,
+          type: "success"
+        })
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     },
 
     async eventsRemoveMany() {
+      const count = this.eventsSelection.length
       try {
-        const count = this.eventsSelection.length
         await this.$confirm(
           `This will remove ${count} events permanently. Continue?`,
           "Warning!", {
@@ -287,22 +300,24 @@ export default {
             type: "warning"
           }
         )
+      } catch(e) {
+        return
+      }
 
-        try {
-          await this.eventsActionsRemoveMany(this.eventsSelection)
-          this.$notify({
-            type: "success",
-            title: "Success",
-            message: `${count} events were removed from the database`
-          })
-        } catch(e) {
-          this.$notify({
-            type: "error",
-            title: "Oops!",
-            message: e.message
-          })
-        }
-      } catch(e) {}
+      try {
+        await this.eventsActionsRemoveMany(this.eventsSelection)
+        this.$notify({
+          type: "success",
+          title: "Success",
+          message: `${count} events were removed from the database`
+        })
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     }
   }
 }

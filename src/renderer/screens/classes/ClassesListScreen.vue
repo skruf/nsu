@@ -43,7 +43,7 @@
 
     <classes-edit-dialog
       :shown.sync="classesEditShowDialog"
-      :item="classesEditItem"
+      :weapon-class="classesEditItem"
     />
   </el-container>
 </template>
@@ -74,9 +74,9 @@ export default {
     classesOpenCreateDialog() {
       this.classesShowCreateDialog = true
     },
-    classesOpenEditDialog(item) {
+    classesOpenEditDialog(weaponClass) {
       this.classesEditShowDialog = true
-      this.classesEditItem = item
+      this.classesEditItem = weaponClass
     }
   }
 }

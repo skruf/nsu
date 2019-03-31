@@ -1,6 +1,17 @@
 import {
   insert, findMany, findOne, destroyOne, destroyMany, updateOne
 } from "@/db/queries"
+import { classesStub } from "@/stubs"
+
+const filterInput = (item) => {
+  const data = {}
+  for(let key in item) {
+    if(classesStub.hasOwnProperty(key)) {
+      data[key] = item[key]
+    }
+  }
+  return data
+}
 
 const list = async (filter = {}, options = {}) => {
   const result = await findMany("classes", filter, options, true)
@@ -12,8 +23,9 @@ const select = async (filter = {}, options = {}) => {
   return result
 }
 
-const create = async (doc = {}, options = {}) => {
-  const result = await insert("classes", doc, options, true)
+const create = async (item = {}, options = {}) => {
+  const data = filterInput(item)
+  const result = await insert("classes", data, options, true)
   return result
 }
 
@@ -32,7 +44,8 @@ const removeMany = async (items, options = {}) => {
 
 const editOne = async (item, options = {}) => {
   const filter = { id: item.id }
-  const result = await updateOne("classes", filter, item, options, true)
+  const data = filterInput(item)
+  const result = await updateOne("classes", filter, data, options, true)
   return result
 }
 

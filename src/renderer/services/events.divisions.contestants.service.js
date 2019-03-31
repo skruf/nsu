@@ -1,6 +1,7 @@
 import {
   insert, insertMany, findMany, findOne, destroyOne, destroyMany
 } from "@/db/queries"
+import { eventsDivisionsContestantsStub } from "@/stubs"
 
 const populate = async (doc) => {
   const member = await doc.populate("memberId")
@@ -16,13 +17,21 @@ const populate = async (doc) => {
   return contestant
 }
 
+const filterInput = (item) => {
+  const data = {}
+  for(let key in item) {
+    if(eventsDivisionsContestantsStub.hasOwnProperty(key)) {
+      data[key] = item[key]
+    }
+  }
+  return data
+}
+
 const list = async (filter = {}, options = {}, fetchMode) => {
   const result = await findMany("events_divisions_contestants", filter, options)
-
   result.items = await Promise.all(
     result.items.map(async (doc) => populate(doc))
   )
-
   return result
 }
 
@@ -32,13 +41,15 @@ const select = async (filter = {}, options = {}) => {
   return contestant
 }
 
-const create = async (data = {}, options = {}) => {
+const create = async (item = {}, options = {}) => {
+  const data = filterInput(item)
   const doc = await insert("events_divisions_contestants", data, options)
   const contestant = await populate(doc)
   return contestant
 }
 
-const createMany = async (data, options = {}) => {
+const createMany = async (items, options = {}) => {
+  const data = items.map((i) => filterInput(i))
   const docs = await insertMany("events_divisions_contestants", data, options)
 
   const contestants = await Promise.all(

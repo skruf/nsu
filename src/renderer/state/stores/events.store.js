@@ -41,7 +41,8 @@ const modules = [
       select: eventsService.select,
       create: eventsService.create,
       removeOne: eventsService.removeOne,
-      removeMany: eventsService.removeMany
+      removeMany: eventsService.removeMany,
+      editOne: eventsService.editOne
     }
   },
   {

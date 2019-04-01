@@ -11,11 +11,11 @@
 
     <div v-loading="classesIsLoading">
       <el-table
-        :data="classesStateList"
-        :sort-by="classesStateSortBy"
+        empty-text
         row-key="id"
         class="no-hover"
-        empty-text
+        :data="classesStateList"
+        :sort-by="classesStateSortBy"
         @selection-change="classesSelectionChange"
         @sort-change="classesActionsSetSorting"
       >
@@ -55,22 +55,6 @@
             </small>
           </template>
         </el-table-column>
-
-        <!-- <el-table-column
-          prop="distance"
-          label="Distance/Position"
-          sortable="custom"
-          :sort-orders="classesSortOrders"
-        >
-          <template slot-scope="scope">
-            <h6 class="h6">
-              {{ scope.row.distance }}
-            </h6>
-            <small class="small">
-              {{ scope.row.position }}
-            </small>
-          </template>
-        </el-table-column> -->
 
         <el-table-column
           width="50"

@@ -16,92 +16,81 @@
       />
 
       <div class="page-meta">
-        <div class="page-titles">
-          <h1 class="h1">
-            {{ clubsStateSelected.name }}
-          </h1>
-          <small class="small">
-            <span v-if="clubsStateSelected.address">
-              {{ clubsStateSelected.address }}
-            </span>
-            <span v-if="clubsStateSelected.area">
-              , {{ clubsStateSelected.area }}
-            </span>
-            <span v-if="clubsStateSelected.country">
-              , {{ clubsStateSelected.country }}
-            </span>
-          </small>
+        <div class="page-titles flex">
+          <div>
+            <h1 class="h1">
+              {{ clubsStateSelected.name }}
+            </h1>
+
+            <page-subtitles>
+              <template slot="address">
+                {{ clubsStateSelected.address }}
+              </template>
+              <template slot="area">
+                {{ clubsStateSelected.area }}
+              </template>
+              <template slot="country">
+                {{ clubsStateSelected.country }}
+              </template>
+            </page-subtitles>
+          </div>
+
+          <div class="page-controls ml-2">
+            <el-dropdown
+              class="mt-1"
+              trigger="click"
+              @command="dispatchActions"
+            >
+              <el-button type="text">
+                <i class="el-icon-arrow-down el-icon-more" />
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  :command="{
+                    handler: 'clubsEditOpenDialog'
+                  }"
+                >
+                  <i class="el-icon-edit el-icon--left" /> Edit club
+                </el-dropdown-item>
+                <el-dropdown-item
+                  divided
+                  class="dropdown-menu-delete"
+                  :command="{
+                    handler: 'clubsRemoveOne'
+                  }"
+                >
+                  <i class="el-icon-delete el-icon--left" /> Remove club
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
         </div>
 
-        <div class="page-controls">
-          <el-dropdown
-            trigger="click"
-            @command="dispatchActions"
+        <page-info>
+          <template
+            v-if="clubsStateSelected.emailAddress"
+            slot="Email"
           >
-            <el-button type="text">
-              <i class="el-icon-arrow-down el-icon-more" />
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item
-                :command="{
-                  handler: 'clubsEditOpenDialog'
-                }"
-              >
-                <i class="el-icon-edit el-icon--left" /> Edit club
-              </el-dropdown-item>
-
-              <el-dropdown-item
-                divided
-                class="dropdown-menu-delete"
-                :command="{
-                  handler: 'clubsRemoveOne'
-                }"
-              >
-                <i class="el-icon-delete el-icon--left" /> Remove club
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
+            {{ clubsStateSelected.emailAddress }}
+          </template>
+          <template
+            v-if="clubsStateSelected.leader"
+            slot="Leader"
+          >
+            {{ clubsStateSelected.leader }}
+          </template>
+          <template
+            v-if="clubsStateSelected.range"
+            slot="Shooting Range"
+          >
+            {{ clubsStateSelected.range.name }}
+            ({{ clubsStateSelected.range.area }})
+          </template>
+        </page-info>
       </div>
     </el-header>
 
     <el-main>
-      <div class="info-grid">
-        <div
-          v-if="clubsStateSelected.email"
-          class="info-grid_item"
-        >
-          <h6 class="h6 info-grid_item_key">
-            Email:
-          </h6>
-          <p class="info-grid_item_value">
-            {{ clubsStateSelected.email }}
-          </p>
-        </div>
-        <div
-          v-if="clubsStateSelected.leader"
-          class="info-grid_item"
-        >
-          <h6 class="h6 info-grid_item_key">
-            Leader:
-          </h6>
-          <p class="info-grid_item_value">
-            {{ clubsStateSelected.leader }}
-          </p>
-        </div>
-        <div
-          v-if="clubsStateSelected.range"
-          class="info-grid_item"
-        >
-          <h6 class="h6 info-grid_item_key">
-            Range:
-          </h6>
-          <p class="info-grid_item_value">
-            {{ clubsStateSelected.range.name }} ({{ clubsStateSelected.range.area }})
-          </p>
-        </div>
-      </div>
-
       <div class="content">
         <clubs-members-list-table
           v-if="!clubsStateSelectedIsLoading"
@@ -142,6 +131,8 @@
 <script>
 import { mapActions, mapState } from "vuex"
 import BreadcrumbBar from "@/components/BreadcrumbBar"
+import PageInfo from "@/components/PageInfo"
+import PageSubtitles from "@/components/PageSubtitles"
 import ClubsEditDialog from "@/containers/clubs/ClubsEditDialog"
 import ClubsMembersListTable from "@/containers/clubs/members/ClubsMembersListTable"
 import ClubsMembersCreateDialog from "@/containers/clubs/members/ClubsMembersCreateDialog"
@@ -152,6 +143,8 @@ export default {
 
   components: {
     BreadcrumbBar,
+    PageInfo,
+    PageSubtitles,
     ClubsEditDialog,
     ClubsMembersListTable,
     ClubsMembersCreateDialog,

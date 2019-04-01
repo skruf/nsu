@@ -1,6 +1,6 @@
 <style lang="stylus">
 .breadcrumb-bar
-  margin-bottom 15px
+  margin-bottom 10px
   width 100%
   display flex
   align-items center
@@ -15,11 +15,20 @@
   padding-right 1px
 .el-breadcrumb__inner
   text-transform capitalize
-  &:hover
+  &:hover a
     color var(--primary-color)
     cursor pointer
-.el-breadcrumb__separator
-  color var(--text-color)
+.el-breadcrumb__inner a,
+.el-breadcrumb__inner.is-link
+  color #fff
+  font-weight 400
+.el-breadcrumb__item:last-child .el-breadcrumb__inner, .el-breadcrumb__item:last-child .el-breadcrumb__inner a, .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover, .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover
+  color rgba(255, 255, 255, 0.85)
+.el-breadcrumb__separator[class*=icon]
+  color #fff
+  margin 0 5px 0 0
+.nav-buttons .el-button
+  color #fff
 </style>
 
 <template>
@@ -34,7 +43,7 @@
       </el-breadcrumb-item>
     </el-breadcrumb>
 
-    <div>
+    <div class="nav-buttons">
       <el-button
         type="text"
         icon="el-icon-arrow-left"

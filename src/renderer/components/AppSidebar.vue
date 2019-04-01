@@ -44,6 +44,7 @@
   top 0
   bottom 0
   background-color var(--bg-alt-color)
+  box-shadow var(--box-shadow)
 
 </style>
 

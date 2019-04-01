@@ -2,9 +2,10 @@
 {
   "en": {
     "searchFormPlaceholder": "Search for a club by name",
-    "formItem1": "Name/Area",
-    "formItem2": "Members",
-    "formItem3": "Added One",
+    "formItem1": "Name",
+    "formItem2": "Area/Address",
+    "formItem3": "Leader/Email",
+    "formItem4": "Members",
     "removeSelected": "Remove selected",
     "editClub": "Edit club",
     "removeClub": "Remove club",
@@ -15,9 +16,10 @@
   },
   "no": {
     "searchFormPlaceholder": "Søk etter en klubb med navn",
-    "formItem1": "Navn/Område",
-    "formItem2": "Medlemmer",
-    "formItem3": "Opprettet den",
+    "formItem1": "Navn",
+    "formItem2": "Område/Adresse",
+    "formItem3": "Leder/Epost",
+    "formItem4": "Medlemmer",
     "removeSelected": "Slett valgte",
     "editClub": "Rediger klubb",
     "removeClub": "Slett klubb",
@@ -63,30 +65,47 @@
             <h6 class="h6">
               {{ scope.row.name }}
             </h6>
-            <small class="small">
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="area"
+          sortable="custom"
+          :label="$t('formItem2')"
+          :sort-orders="clubsSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
               {{ scope.row.area }}
+            </h6>
+            <small class="small">
+              {{ scope.row.address }}
+            </small>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="leader"
+          sortable="custom"
+          :label="$t('formItem3')"
+          :sort-orders="clubsSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.leader }}
+            </h6>
+            <small class="small">
+              {{ scope.row.emailAddress || "N/A" }}
             </small>
           </template>
         </el-table-column>
 
         <el-table-column
           prop="membersCount"
-          width="150px"
-          :label="$t('formItem2')"
+          width="115px"
+          :label="$t('formItem4')"
           :sort-orders="clubsSortOrders"
         />
-
-        <el-table-column
-          prop="createdAt"
-          sortable="custom"
-          width="150px"
-          :label="$t('formItem3')"
-          :sort-orders="clubsSortOrders"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.createdAt | moment("MM.DD.YY") }}
-          </template>
-        </el-table-column>
 
         <el-table-column
           width="50"

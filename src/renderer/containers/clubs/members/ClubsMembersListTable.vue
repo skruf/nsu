@@ -53,6 +53,32 @@
         </el-table-column>
 
         <el-table-column
+          prop="phoneNumber"
+          label="Phone number"
+          sortable="custom"
+          :sort-orders="clubsMembersSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.phoneNumber || "N/A" }}
+            </h6>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="country"
+          label="Country"
+          sortable="custom"
+          :sort-orders="clubsMembersSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.country || "N/A" }}
+            </h6>
+          </template>
+        </el-table-column>
+
+        <!-- <el-table-column
           prop="createdAt"
           label="Added On"
           sortable="custom"
@@ -62,7 +88,7 @@
           <template slot-scope="scope">
             {{ scope.row.createdAt | moment("MM.DD.YY") }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
         <el-table-column
           width="50"
@@ -111,7 +137,7 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-delete el-icon--left" /> Edit member
+                  <i class="el-icon-edit el-icon--left" /> Edit member
                 </el-dropdown-item>
 
                 <el-dropdown-item

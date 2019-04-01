@@ -18,15 +18,15 @@
       <div class="page-meta">
         <div class="page-titles">
           <h1 class="h1">
+            <template v-if="eventsStateSelected.approbated">
+              <i class="el-icon-star-on" />
+            </template>
+            <template v-else>
+              <i class="el-icon-star-off" />
+            </template>
             {{ eventsStateSelected.title }}
           </h1>
           <small class="small">
-            <template v-if="eventsStateSelected.approbated">
-              <i class="el-icon-star-on" /> Officially approbated,
-            </template>
-            <template v-else>
-              <i class="el-icon-star-off" /> Isn't approbated,
-            </template>
             <template v-if="eventsStateSelected.range">
               {{ eventsStateSelected.range.name }},
             </template>

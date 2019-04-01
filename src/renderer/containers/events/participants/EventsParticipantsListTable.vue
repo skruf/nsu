@@ -129,7 +129,7 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-delete el-icon--left" /> Edit participant
+                  <i class="el-icon-edit el-icon--left" /> Edit participant
                 </el-dropdown-item>
 
                 <el-dropdown-item

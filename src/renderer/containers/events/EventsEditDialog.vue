@@ -141,7 +141,7 @@ export default {
 
   props: {
     shown: { type: Boolean, default: false },
-    item: { type: Object, default: () => ({ ...eventsStub, dates: [] }) }
+    event: { type: Object, default: () => ({ ...eventsStub, dates: [] }) }
   },
 
   data: function() {
@@ -185,10 +185,10 @@ export default {
   methods: {
     async open() {
       this.form = {
-        ...this.item,
+        ...this.event,
         dates: [
-          this.item.startsAt,
-          this.item.endsAt
+          this.event.startsAt,
+          this.event.endsAt
         ]
       }
       await this.clubsActionsList()

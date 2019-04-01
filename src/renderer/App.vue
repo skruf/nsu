@@ -3,6 +3,18 @@
   flex 1
   min-height 100vh
   display flex
+  &:before
+    content ""
+    height 3px
+    width 100%
+    background-image var(--accent-border)
+    position absolute
+    top 0
+    left 0
+    right 0
+    z-index 1
+    // border-top-left-radius 3px
+    // border-top-right-radius 3px
 
 .titlebar
   -webkit-user-select none
@@ -27,19 +39,20 @@
     top 6px
     font-size 14px
 
-#app
-  padding-top 25px
+// #app
+//   padding-top 25px
 
 </style>
 
 <template>
   <div>
-    <el-alert
+    <!-- <el-alert
       class="app-warning"
       type="warning"
       :title="$t('appWarning')"
+      :closable="false"
       center
-    />
+    /> -->
 
     <el-container
       id="app"

@@ -26,7 +26,7 @@
 
         <el-table-column
           prop="name"
-          label="Name/Area"
+          label="Name/Type"
           sortable="custom"
           :sort-orders="rangesSortOrders"
         >
@@ -35,17 +35,26 @@
               {{ scope.row.name }}
             </h6>
             <small class="small">
-              {{ scope.row.area }}
+              {{ scope.row.type }}
             </small>
           </template>
         </el-table-column>
 
         <el-table-column
-          prop="type"
-          label="Type"
+          prop="area"
+          label="Area/Address"
           sortable="custom"
           :sort-orders="rangesSortOrders"
-        />
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.area }}
+            </h6>
+            <small class="small">
+              {{ scope.row.address || "N/A" }}
+            </small>
+          </template>
+        </el-table-column>
 
         <el-table-column
           prop="country"
@@ -54,7 +63,7 @@
           :sort-orders="rangesSortOrders"
         />
 
-        <el-table-column
+        <!-- <el-table-column
           prop="createdAt"
           label="Added On"
           sortable="custom"
@@ -64,7 +73,7 @@
           <template slot-scope="scope">
             {{ scope.row.createdAt | moment("MM.DD.YY") }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
         <el-table-column
           width="50"
@@ -109,12 +118,21 @@
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
+                  :disabled="!(scope.row.lat && scope.row.lng)"
+                  :command="{
+                    handler: 'rangesOpenMap',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-location el-icon--left" /> Show on map
+                </el-dropdown-item>
+                <el-dropdown-item
                   :command="{
                     handler: 'rangesOpenEditDialog',
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-delete el-icon--left" /> Edit range
+                  <i class="el-icon-edit el-icon--left" /> Edit range
                 </el-dropdown-item>
                 <el-dropdown-item
                   divided
@@ -230,6 +248,10 @@ export default {
 
     rangesSelectionChange(ranges) {
       this.rangesSelection = ranges
+    },
+
+    rangesOpenMap(range) {
+      window.open(`https://www.google.com/maps/@${range.lat},${range.lng},15z`)
     },
 
     rangesTableDispatchActions({ handler, payload }) {

@@ -10,15 +10,28 @@
   justify-content space-between
   flex-direction column
   align-items flex-start
-  padding 20px 25px
-  padding-top 15px
-  padding-bottom 5px
+  padding 20px 25px 55px
+  // background-image var(--header-bg)
+  // background-image url("../../../static/img/header-bg.svg")
+  background-image url("../../../static/img/header-bg.png")
+  background-size cover
+  background-position bottom
+  color #fff
+  font-weight 300
   & + .el-main
     margin-top 0
+  .h1, .h2, .h3, .h4, .h5, .h6, .small
+    color inherit
+    font-weight inherit
 
 .page-titles
   text-transform capitalize
-  small
+  .h1
+    line-height 30px
+    white-space nowrap
+  .small
+    margin-top -2px
+    margin-bottom 2px
     margin-left 1px
   span:not(:first-child)
     margin-left -4px
@@ -53,15 +66,11 @@
     border-top-left-radius 3px
     border-top-right-radius 3px
 
-.page-titles
-  .small
-    margin-top -2px
-    margin-bottom 2px
-
 .content
-  margin 20px 0
-  padding 20px 25px
   flex 1
+  padding 20px 25px
+  margin-bottom 20px
+  // margin 20px 0
 
 .el-footer
   padding 20px 0

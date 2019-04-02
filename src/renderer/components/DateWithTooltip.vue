@@ -7,7 +7,7 @@
     placement="top"
     :content="date | moment('calendar')"
   >
-    <span>{{ date | moment("DD.MM.YY") }}</span>
+    <span>{{ date | moment("DD. MMM, YYYY") }}</span>
   </el-tooltip>
 </template>
 

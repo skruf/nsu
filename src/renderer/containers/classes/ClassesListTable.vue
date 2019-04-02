@@ -1,11 +1,41 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "searchFormPlaceholder": "Search for a class by name",
+    "column1Label": "Name/Number",
+    "column2Label": "Category/Condition",
+    "removeSelected": "Remove selected",
+    "editClass": "Edit class",
+    "removeClass": "Remove class",
+    "tablePlaceholderText": "No classes yet.",
+    "tablePlaceholderButton": "Create new?",
+    "classesRemoveOneConfirmation": "This will remove %{weaponClass} permanently. Continue?",
+    "classesActionsRemoveOneSuccess": "%{weaponClass} was removed from the database",
+    "classesRemoveManyConfirmation": "This will remove %{classes} classes permanently. Continue?",
+    "classesActionsRemoveManySuccess": "%{classes} classes were removed from the database"
+  },
+  "no": {
+    "searchFormPlaceholder": "Søk etter klasser med navn",
+    "column1Label": "Navn/Nummer",
+    "column2Label": "Kategori/Tilstand",
+    "removeSelected": "Slett valgte",
+    "editClass": "Rediger klasse",
+    "removeClass": "Slett klasse",
+    "tablePlaceholderText": "Ingen klasser enda.",
+    "tablePlaceholderButton": "Opprett ny?",
+    "classesRemoveOneConfirmation": "Dette vil fjerne %{weaponClass} permanent. Fortsett?",
+    "classesActionsRemoveOneSuccess": "%{weaponClass} ble fjernet fra databasen",
+    "classesRemoveManyConfirmation": "Dette vil fjerne %{classes} klasser permanent. Fortsett?",
+    "classesActionsRemoveManySuccess": "%{classes} klasser ble fjernet fra databasen"
+  }
+}
+</i18n>
 
 <template>
   <div class="classes-list-table">
     <search-form
       v-model="classesSearchFilter"
-      placeholder="Search for a class by name"
+      :placeholder="$t('searchFormPlaceholder')"
       @submit="classesActionsSetSearchFilter"
     />
 
@@ -26,8 +56,8 @@
 
         <el-table-column
           prop="name"
-          label="Name/Number"
           sortable="custom"
+          :label="$t('column1Label')"
           :sort-orders="classesSortOrders"
         >
           <template slot-scope="scope">
@@ -42,8 +72,8 @@
 
         <el-table-column
           prop="category"
-          label="Category/Condition"
           sortable="custom"
+          :label="$t('column2Label')"
           :sort-orders="classesSortOrders"
         >
           <template slot-scope="scope">
@@ -82,7 +112,7 @@
                       handler: 'classesRemoveMany'
                     }"
                   >
-                    <i class="el-icon-delete el-icon--left" /> Remove selected
+                    <i class="el-icon-delete el-icon--left" /> {{ $t("removeSelected") }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -104,7 +134,7 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-edit el-icon--left" /> Edit class
+                  <i class="el-icon-edit el-icon--left" /> {{ $t("editClass") }}
                 </el-dropdown-item>
                 <el-dropdown-item
                   divided
@@ -114,7 +144,7 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-delete el-icon--left" /> Remove class
+                  <i class="el-icon-delete el-icon--left" /> {{ $t("removeClass") }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -122,12 +152,12 @@
         </el-table-column>
 
         <template slot="empty">
-          No classes yet.
+          {{ $t("tablePlaceholderText") }}
           <el-button
             type="text"
             @click="classesOpenCreateDialog"
           >
-            Create new?
+            {{ $t("tablePlaceholderButton") }}
           </el-button>
         </template>
       </el-table>
@@ -226,10 +256,12 @@ export default {
     async classesRemoveOne(weaponClass) {
       try {
         await this.$confirm(
-          `This will remove ${weaponClass.name} permanently. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+          this.$t("classesRemoveOneConfirmation", {
+            weaponClass: weaponClass.name
+          }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
@@ -242,8 +274,10 @@ export default {
         await this.classesActionsRemoveOne(weaponClass)
         this.$notify({
           type: "success",
-          title: "Success",
-          message: `${weaponClass.name} was removed from the database`
+          title: this.$t("success"),
+          message: this.$t("classesActionsRemoveOneSuccess", {
+            weaponClass: weaponClass.name
+          })
         })
       } catch(e) {
         this.$notify({
@@ -255,33 +289,40 @@ export default {
     },
 
     async classesRemoveMany() {
+      const count = this.classesSelection.length
+
       try {
-        const count = this.classesSelection.length
         await this.$confirm(
-          `This will remove ${count} classes permanently. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+          this.$t("classesRemoveManyConfirmation", {
+            classes: count
+          }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
         )
+      } catch(e) {
+        return
+      }
 
-        try {
-          await this.classesActionsRemoveMany(this.classesSelection)
-          this.$notify({
-            type: "success",
-            title: "Success",
-            message: `${count} classes were removed from the database`
+      try {
+        await this.classesActionsRemoveMany(this.classesSelection)
+        this.$notify({
+          type: "success",
+          title: this.$t("success"),
+          message: this.$t("classesActionsRemoveManySuccess", {
+            classes: count
           })
-        } catch(e) {
-          this.$notify({
-            type: "error",
-            title: "Oops!",
-            message: e.message
-          })
-        }
-      } catch(e) {}
+        })
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     }
   }
 }

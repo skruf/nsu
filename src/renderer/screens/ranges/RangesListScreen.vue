@@ -1,5 +1,19 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "breadcrumb1Label": "Ranges",
+    "breadcrumb2Label": "All",
+    "title": "Ranges",
+    "rangesOpenCreateDialogButton": "Create range"
+  },
+  "no": {
+    "breadcrumb1Label": "Skyttebaner",
+    "breadcrumb2Label": "Alle",
+    "title": "Skyttebaner",
+    "rangesOpenCreateDialogButton": "Opprett skyttebane"
+  }
+}
+</i18n>
 
 <template>
   <el-container
@@ -9,14 +23,14 @@
     <el-header height="auto">
       <breadcrumb-bar
         :paths="[
-          { to: '/ranges', label: 'Ranges' },
-          { to: '', label: 'All' }
+          { to: '/ranges', label: $t('breadcrumb1Label') },
+          { to: '', label: $t('breadcrumb2Label') }
         ]"
       />
 
       <div class="page-titles">
         <h1 class="h1">
-          Ranges
+          {{ $t('title') }}
         </h1>
       </div>
     </el-header>
@@ -33,7 +47,7 @@
         type="primary"
         @click="rangesOpenCreateDialog"
       >
-        <i class="el-icon-plus el-icon--left" /> Create range
+        <i class="el-icon-plus el-icon--left" /> {{ $t("rangesOpenCreateDialogButton") }}
       </el-button>
     </el-footer>
 

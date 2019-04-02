@@ -1,5 +1,6 @@
 <style lang="stylus">
-.page-subtitles_part:not(:last-child)
+.page-subtitles_part:not(:last-child):after
+  content "•"
   margin-right .25rem
 </style>
 

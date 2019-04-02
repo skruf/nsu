@@ -1,5 +1,19 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "breadcrumb1Label": "Classes",
+    "breadcrumb2Label": "All",
+    "title": "Classes",
+    "classesOpenCreateDialogButton": "Create class"
+  },
+  "no": {
+    "breadcrumb1Label": "Klasser",
+    "breadcrumb2Label": "Alle",
+    "title": "Klasser",
+    "classesOpenCreateDialogButton": "Opprett klasse"
+  }
+}
+</i18n>
 
 <template>
   <el-container
@@ -8,15 +22,16 @@
   >
     <el-header height="auto">
       <breadcrumb-bar
-        :paths="[
-          { to: '/classes', label: 'Classes' },
-          { to: '', label: 'All' }
-        ]"
+        :paths="[{
+          to: '/classes', label: $t('breadcrumb1Label'),
+        }, {
+          to: '', label: $t('breadcrumb2Label')
+        }]"
       />
 
       <div class="page-titles">
         <h1 class="h1">
-          Classes
+          {{ $t('title') }}
         </h1>
       </div>
     </el-header>
@@ -33,7 +48,7 @@
         type="primary"
         @click="classesOpenCreateDialog"
       >
-        <i class="el-icon-plus el-icon--left" /> Create class
+        <i class="el-icon-plus el-icon--left" /> {{ $t("classesOpenCreateDialogButton") }}
       </el-button>
     </el-footer>
 

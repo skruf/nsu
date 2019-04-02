@@ -1,10 +1,44 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "title": "Create class",
+    "formItem1Label": "Number",
+    "formItem1Placeholder": "Enter a class number",
+    "formItem1Error": "Number is a required field",
+    "formItem2Label": "Name",
+    "formItem2Placeholder": "Enter a name",
+    "formItem2Error": "Name is a required field",
+    "formItem3Label": "Category",
+    "formItem3Placeholder": "Select a category",
+    "formItem3Error": "Category is a required field",
+    "formItem4Label": "Condition",
+    "formItem4Placeholder": "Select a condition",
+    "formItem4Error": "Condition is a required field",
+    "classesActionsCreateSuccess": "%{weaponClass} was successfully added to the database"
+  },
+  "no": {
+    "title": "Opprett klasse",
+    "formItem1Label": "Nummer",
+    "formItem1Placeholder": "Skriv et nummer",
+    "formItem1Error": "Nummer er et påkrevd felt",
+    "formItem2Label": "Navn",
+    "formItem2Placeholder": "Skriv et navn",
+    "formItem2Error": "Navn er et påkrevd felt",
+    "formItem3Label": "Kategori",
+    "formItem3Placeholder": "Velg en kategori",
+    "formItem3Error": "Kategori er et påkrevd felt",
+    "formItem4Label": "Tilstand",
+    "formItem4Placeholder": "Velg en tilstand",
+    "formItem4Error": "Tilstand er et påkrevd felt",
+    "classesActionsCreateSuccess": "%{weaponClass} ble lagt til i databasen"
+  }
+}
+</i18n>
 
 <template>
   <el-dialog
-    title="Create a new class"
     custom-class="create-dialog"
+    :title="$t('title')"
     :visible.sync="visible"
     @close="close"
   >
@@ -19,32 +53,32 @@
         :rules="formRules"
       >
         <el-form-item
-          label="Number"
           prop="number"
+          :label="$t('formItem1Label')"
         >
           <el-input
             v-model="form.number"
-            placeholder="Enter a class number"
+            :placeholder="$t('formItem1Placeholder')"
           />
         </el-form-item>
 
         <el-form-item
-          label="Name"
           prop="name"
+          :label="$t('formItem2Label')"
         >
           <el-input
             v-model="form.name"
-            placeholder="Enter a name"
+            :placeholder="$t('formItem2Placeholder')"
           />
         </el-form-item>
 
         <el-form-item
-          label="Category"
           prop="category"
+          :label="$t('formItem3Label')"
         >
           <el-select
             v-model="form.category"
-            placeholder="Select a category"
+            :placeholder="$t('formItem3Placeholder')"
           >
             <el-option
               v-for="(category, index) in classesStateCategories"
@@ -56,12 +90,12 @@
         </el-form-item>
 
         <el-form-item
-          label="Condition"
           prop="condition"
+          :label="$t('formItem4Label')"
         >
           <el-select
             v-model="form.condition"
-            placeholder="Select a condition"
+            :placeholder="$t('formItem4Placeholder')"
           >
             <el-option
               v-for="(condition, index) in classesStateConditions"
@@ -71,138 +105,6 @@
             />
           </el-select>
         </el-form-item>
-
-        <!-- <el-form-item
-          label="Target"
-          prop="target"
-        >
-          <el-input
-            v-model="form.target"
-            placeholder="Enter target rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Position"
-          prop="position"
-        >
-          <el-input
-            v-model="form.position"
-            placeholder="Enter position rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Distance"
-          prop="distance"
-        >
-          <el-input
-            v-model="form.distance"
-            placeholder="Enter distance rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Type"
-          prop="type"
-        >
-          <el-input
-            v-model="form.type"
-            placeholder="Enter a type"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Sight"
-          prop="sight"
-        >
-          <el-input
-            v-model="form.sight"
-            placeholder="Enter sight rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Trigger"
-          prop="trigger"
-        >
-          <el-input
-            v-model="form.trigger"
-            placeholder="Enter trigger rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Calibre"
-          prop="calibre"
-        >
-          <el-input
-            v-model="form.calibre"
-            placeholder="Enter calibre rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Bullet Type"
-          prop="bulletType"
-        >
-          <el-input
-            v-model="form.bulletType"
-            placeholder="Enter bullet type rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Loading Rod"
-          prop="loadingRod"
-        >
-          <el-input
-            v-model="form.loadingRod"
-            placeholder="Enter loading rod rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Cleaning"
-          prop="cleaning"
-        >
-          <el-input
-            v-model="form.cleaning"
-            placeholder="Enter cleaning rules"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Team"
-          prop="team"
-        >
-          <el-input
-            v-model="form.team"
-            placeholder="Enter a team"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Picture URL"
-          prop="pictureUrl"
-        >
-          <el-input
-            v-model="form.pictureUrl"
-            placeholder="Enter a URL to a picture"
-          />
-        </el-form-item>
-
-        <el-form-item
-          label="Remarks"
-          prop="remarks"
-        >
-          <el-input
-            v-model="form.remarks"
-            :autosize="{ minRows: 3 }"
-            type="textarea"
-            placeholder="Enter remarks"
-          />
-        </el-form-item> -->
       </el-form>
     </div>
 
@@ -212,14 +114,14 @@
         type="text"
         @click="close"
       >
-        Cancel
+        {{ $t("cancel") }}
       </el-button>
       <el-button
         class="block"
         type="primary"
         @click="submit"
       >
-        Save
+        {{ $t("save") }}
       </el-button>
     </template>
   </el-dialog>
@@ -241,10 +143,10 @@ export default {
       visible: this.shown,
       form: classesStub,
       formRules: {
-        number: { required: true, message: "Number is a required field" },
-        name: { required: true, message: "Name is a required field" },
-        category: { required: true, message: "Category is a required field" },
-        condition: { required: true, message: "Condition is a required field" }
+        number: { required: true, message: this.$t("formItem1Error") },
+        name: { required: true, message: this.$t("formItem2Error") },
+        category: { required: true, message: this.$t("formItem3Error") },
+        condition: { required: true, message: this.$t("formItem4Error") }
       }
     }
   },
@@ -273,7 +175,7 @@ export default {
           return this.$notify({
             type: "error",
             title: "Oops!",
-            message: "Please fill in all required fields before saving"
+            message: this.$t("validationError")
           })
         }
 
@@ -281,8 +183,10 @@ export default {
           await this.classesActionsCreate(this.form)
           this.$notify({
             type: "success",
-            title: "Great success",
-            message: `${this.form.name} was successfully added to the database`
+            title: this.$t("success"),
+            message: this.$t("classesActionsCreateSuccess", {
+              weaponClass: this.form.name
+            })
           })
           this.clear()
           this.close()

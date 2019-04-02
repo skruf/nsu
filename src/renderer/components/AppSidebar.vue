@@ -1,3 +1,32 @@
+<i18n>
+{
+  "en": {
+    "events": "Events",
+    "all": "All",
+    "upcoming": "Upcoming",
+    "history": "History",
+    "categories": "Categories",
+    "clubs": "Clubs",
+    "classes": "Classes",
+    "ranges": "Ranges",
+    "records": "Records",
+    "settings": "Settings"
+  },
+  "no": {
+    "events": "Stevner",
+    "all": "Alle",
+    "upcoming": "Kommende",
+    "history": "Holdte",
+    "categories": "Kategorier",
+    "clubs": "Klubber",
+    "classes": "Klasser",
+    "ranges": "Skyttebaner",
+    "records": "Rekorder",
+    "settings": "Innstillinger"
+  }
+}
+</i18n>
+
 <style lang="stylus">
 #app
   padding-left 180px
@@ -12,6 +41,21 @@
     .el-menu
       padding-left 0
       text-align center
+    .el-menu-item,
+    .el-submenu__title
+      margin-bottom 10px
+    .menu-img
+      width 100%
+      margin-right 0
+
+.el-submenu .el-menu-item
+  padding-left 56px !important
+  font-size 13px
+
+.menu-img
+  width 25px
+  margin-right 8px
+  filter invert(.5) sepia(1) saturate(200) hue-rotate(380deg)
 
 .logo
   max-width 84px
@@ -64,33 +108,36 @@
     >
       <el-submenu index="1">
         <template slot="title">
-          <i class="menu-icon ion-logo-ionic" />
-          <span>Events</span>
+          <img
+            src="static/img/event-icon.svg"
+            class="menu-img"
+          >
+          <span>{{ $t("events") }}</span>
         </template>
         <el-menu-item
           index="1-1"
           @click="navTo('/events')"
         >
-          All
+          {{ $t("all") }}
         </el-menu-item>
         <el-menu-item
           index="1-2"
           @click="navTo('/events?filter=upcoming')"
         >
-          Upcoming
+          {{ $t("upcoming") }}
         </el-menu-item>
         <el-menu-item
           index="1-3"
           @click="navTo('/events?filter=history')"
         >
-          History
+          {{ $t("history") }}
         </el-menu-item>
         <el-menu-item
           index="1-4"
           disabled
           @click="navTo('/events/categories')"
         >
-          Categories
+          {{ $t("categories") }}
         </el-menu-item>
       </el-submenu>
 
@@ -98,24 +145,33 @@
         index="2"
         @click="navTo('/clubs')"
       >
-        <i class="menu-icon ion-ios-people" />
-        <span>Clubs</span>
+        <img
+          src="static/img/club-icon.svg"
+          class="menu-img"
+        >
+        <span>{{ $t("clubs") }}</span>
       </el-menu-item>
 
       <el-menu-item
         index="3"
         @click="navTo('/classes')"
       >
-        <i class="menu-icon ion-ios-nuclear" />
-        <span>Classes</span>
+        <img
+          src="static/img/class-icon.svg"
+          class="menu-img"
+        >
+        <span>{{ $t("classes") }}</span>
       </el-menu-item>
 
       <el-menu-item
         index="4"
         @click="navTo('/ranges')"
       >
-        <i class="menu-icon ion-ios-people" />
-        <span>Ranges</span>
+        <img
+          src="static/img/range-icon.svg"
+          class="menu-img"
+        >
+        <span>{{ $t("ranges") }}</span>
       </el-menu-item>
 
       <el-menu-item
@@ -123,16 +179,22 @@
         disabled
         @click="navTo('/records')"
       >
-        <i class="menu-icon ion-ios-star" />
-        <span>Records</span>
+        <img
+          src="static/img/record-icon.svg"
+          class="menu-img"
+        >
+        <span>{{ $t("records") }}</span>
       </el-menu-item>
 
       <el-menu-item
         index="6"
         @click="navTo('/settings')"
       >
-        <i class="menu-icon ion-ios-settings" />
-        <span>Settings</span>
+        <img
+          src="static/img/settings-icon.svg"
+          class="menu-img"
+        >
+        <span>{{ $t("settings") }}</span>
       </el-menu-item>
     </el-menu>
 

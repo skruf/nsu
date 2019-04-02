@@ -65,16 +65,16 @@
 
     <el-footer height="auto">
       <el-button
-        type="primary"
-        @click="save"
-      >
-        {{ $t("save") }}
-      </el-button>
-      <el-button
         type="text"
         @click="cancel"
       >
         {{ $t("cancel") }}
+      </el-button>
+      <el-button
+        type="primary"
+        @click="save"
+      >
+        {{ $t("save") }}
       </el-button>
     </el-footer>
   </el-container>

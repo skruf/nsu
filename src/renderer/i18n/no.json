@@ -1,8 +1,8 @@
 {
-  "appWarning": "Dette er en forhåndsvisning av programvaren og feil kan derfor oppstå.",
   "save": "Lagre",
   "cancel": "Avbryt",
-  "validationError": "Vennligst fyll inn alle påkrevde felt før du fortsetter",
+  "success": "Suksess!",
+  "warning": "Advarsel!",
   "confirmButtonText": "Ja, jeg er sikker",
-  "success": "Suksess!"
+  "validationError": "Vennligst fyll inn alle påkrevde felt før du fortsetter"
 }

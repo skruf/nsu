@@ -1,9 +1,55 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "title": "Create range",
+    "formItem1Label": "Name",
+    "formItem1Placeholder": "Enter a name",
+    "formItem1Error": "Name is a required field",
+    "formItem2Label": "Address",
+    "formItem2Placeholder": "Enter a address",
+    "formItem3Label": "Area",
+    "formItem3Placeholder": "Enter an area",
+    "formItem3Error": "Area is a required field",
+    "formItem4Label": "Country",
+    "formItem4Placeholder": "Select a country",
+    "formItem4Error": "Country is a required field",
+    "formItem5Label": "Latitude",
+    "formItem5Placeholder": "Enter coordinates",
+    "formItem6Label": "Longitude",
+    "formItem6Placeholder": "Enter coordinates",
+    "formItem7Label": "Type",
+    "formItem7Placeholder": "Select a type",
+    "formItem7Error": "Type is a required field",
+    "rangesActionsCreateSuccess": "%{range} was successfully added to the database"
+  },
+  "no": {
+    "title": "Opprett skyttebane",
+    "formItem1Label": "Navn",
+    "formItem1Placeholder": "Skriv et navn",
+    "formItem1Error": "Navn er et påkrevd felt",
+    "formItem2Label": "Adresse",
+    "formItem2Placeholder": "Skriv en adresse",
+    "formItem3Label": "Område",
+    "formItem3Placeholder": "Skriv et område",
+    "formItem3Error": "Område er et påkrevd felt",
+    "formItem4Label": "Land",
+    "formItem4Placeholder": "Velg et land",
+    "formItem4Error": "Land er et påkrevd felt",
+    "formItem5Label": "Breddegrad",
+    "formItem5Placeholder": "Skriv inn koordinater",
+    "formItem6Label": "Lengdegrad",
+    "formItem6Placeholder": "Skriv inn koordinater",
+    "formItem7Label": "Type",
+    "formItem7Placeholder": "Velg en type",
+    "formItem7Error": "Type er et påkrevd felt",
+    "rangesActionsCreateSuccess": "%{range} ble lagt til i databasen"
+  }
+}
+</i18n>
 
 <template>
   <el-dialog
-    title="Create a new range"
+    :title="$t('title')"
     custom-class="create-dialog"
     :visible.sync="visible"
     @close="close"
@@ -19,42 +65,42 @@
         :rules="formRules"
       >
         <el-form-item
-          label="Name"
           prop="name"
+          :label="$t('formItem1Label')"
         >
           <el-input
             v-model="form.name"
-            placeholder="Enter a name"
+            :placeholder="$t('formItem1Placeholder')"
           />
         </el-form-item>
 
         <el-form-item
-          label="Address"
           prop="address"
+          :label="$t('formItem2Label')"
         >
           <el-input
             v-model="form.address"
-            placeholder="Enter a address"
+            :placeholder="$t('formItem2Placeholder')"
           />
         </el-form-item>
 
         <el-form-item
-          label="Area"
           prop="area"
+          :label="$t('formItem3Label')"
         >
           <el-input
             v-model="form.area"
-            placeholder="Enter an area"
+            :placeholder="$t('formItem3Placeholder')"
           />
         </el-form-item>
 
         <el-form-item
-          label="Country"
           prop="country"
+          :label="$t('formItem4Label')"
         >
           <el-select
             v-model="form.country"
-            placeholder="Select a country"
+            :placeholder="$t('formItem4Placeholder')"
           >
             <el-option
               v-for="(country, index) in rangesStateCountries"
@@ -68,36 +114,36 @@
         <div class="flex">
           <div class="flex-1 mr-2">
             <el-form-item
-              label="Latitude"
               prop="lat"
+              :label="$t('formItem5Label')"
             >
               <el-input
                 v-model="form.lat"
-                placeholder="Enter coordinates"
+                :placeholder="$t('formItem5Placeholder')"
               />
             </el-form-item>
           </div>
 
           <div class="flex-1 ml-2">
             <el-form-item
-              label="Longitude"
               prop="lng"
+              :label="$t('formItem6Label')"
             >
               <el-input
                 v-model="form.lng"
-                placeholder="Enter coordinates"
+                :placeholder="$t('formItem6Placeholder')"
               />
             </el-form-item>
           </div>
         </div>
 
         <el-form-item
-          label="Type"
           prop="type"
+          :label="$t('formItem7Label')"
         >
           <el-select
             v-model="form.type"
-            placeholder="Select a type"
+            :placeholder="$t('formItem7Placeholder')"
           >
             <el-option
               v-for="(type, index) in [ 'Indoor', 'Outdoor' ]"
@@ -116,14 +162,14 @@
         type="text"
         @click="close"
       >
-        Cancel
+        {{ $t("cancel") }}
       </el-button>
       <el-button
         class="block"
         type="primary"
         @click="submit"
       >
-        Save
+        {{ $t("save") }}
       </el-button>
     </template>
   </el-dialog>
@@ -145,10 +191,10 @@ export default {
       visible: this.shown,
       form: rangesStub,
       formRules: {
-        name: { required: true, message: "Name is a required field" },
-        area: { required: true, message: "Area is a required field" },
-        country: { required: true, message: "Country is a required field" },
-        type: { required: true, message: "Type is a required field" }
+        name: { required: true, message: this.$t("formItem1Error") },
+        area: { required: true, message: this.$t("formItem3Error") },
+        country: { required: true, message: this.$t("formItem4Error") },
+        type: { required: true, message: this.$t("formItem7Error") }
       }
     }
   },
@@ -176,7 +222,7 @@ export default {
           return this.$notify({
             type: "error",
             title: "Oops!",
-            message: "Please fill in all required fields before saving"
+            message: this.$t("validationError")
           })
         }
 
@@ -184,8 +230,10 @@ export default {
           await this.rangesActionsCreate(this.form)
           this.$notify({
             type: "success",
-            title: "Great success",
-            message: `${this.form.name} was successfully added to the database`
+            title: this.$t("success"),
+            message: this.$t("rangesActionsCreateSuccess", {
+              range: this.form.name
+            })
           })
           this.clear()
           this.close()

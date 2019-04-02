@@ -2,29 +2,29 @@
 {
   "en": {
     "searchFormPlaceholder": "Search for a club by name",
-    "formItem1": "Name",
-    "formItem2": "Area/Address",
-    "formItem3": "Leader/Email",
-    "formItem4": "Members",
+    "column1Label": "Name",
+    "column2Label": "Area/Address",
+    "column3Label": "Leader/Email",
+    "column4Label": "Members",
     "removeSelected": "Remove selected",
     "editClub": "Edit club",
     "removeClub": "Remove club",
-    "createClub": "Create new?",
-    "noClubsYet": "No clubs yet.",
+    "tablePlaceholderButton": "Create new?",
+    "tablePlaceholderText": "No clubs yet.",
     "clubsRemoveOneConfirmation": "This will remove %{club} and its %{members} members. Continue?",
     "clubsRemoveOneSuccess": "%{club} and its %{members} members were removed from the database"
   },
   "no": {
     "searchFormPlaceholder": "Søk etter en klubb med navn",
-    "formItem1": "Navn",
-    "formItem2": "Område/Adresse",
-    "formItem3": "Leder/Epost",
-    "formItem4": "Medlemmer",
+    "column1Label": "Navn",
+    "column2Label": "Område/Adresse",
+    "column3Label": "Leder/Epost",
+    "column4Label": "Medlemmer",
     "removeSelected": "Slett valgte",
     "editClub": "Rediger klubb",
     "removeClub": "Slett klubb",
-    "createClub": "Opprett ny?",
-    "noClubsYet": "Ingen klubber enda.",
+    "tablePlaceholderButton": "Opprett ny?",
+    "tablePlaceholderText": "Ingen klubber enda.",
     "clubsRemoveOneConfirmation": "Dette vil slette %{club} og deres %{members} medlemmer. Fortsett?",
     "clubsRemoveOneSuccess": "%{club} og deres %{members} medlemmer ble fjernet fra databasen"
   }
@@ -58,7 +58,7 @@
         <el-table-column
           prop="name"
           sortable="custom"
-          :label="$t('formItem1')"
+          :label="$t('column1Label')"
           :sort-orders="clubsSortOrders"
         >
           <template slot-scope="scope">
@@ -71,7 +71,7 @@
         <el-table-column
           prop="area"
           sortable="custom"
-          :label="$t('formItem2')"
+          :label="$t('column2Label')"
           :sort-orders="clubsSortOrders"
         >
           <template slot-scope="scope">
@@ -87,7 +87,7 @@
         <el-table-column
           prop="leader"
           sortable="custom"
-          :label="$t('formItem3')"
+          :label="$t('column3Label')"
           :sort-orders="clubsSortOrders"
         >
           <template slot-scope="scope">
@@ -103,7 +103,7 @@
         <el-table-column
           prop="membersCount"
           width="115px"
-          :label="$t('formItem4')"
+          :label="$t('column4Label')"
           :sort-orders="clubsSortOrders"
         />
 
@@ -173,12 +173,12 @@
         </el-table-column>
 
         <template slot="empty">
-          {{ $t("noClubsYet") }}
+          {{ $t("tablePlaceholderText") }}
           <el-button
             type="text"
             @click="clubsOpenCreateDialog"
           >
-            {{ $t("createClub") }}
+            {{ $t("tablePlaceholderButton") }}
           </el-button>
         </template>
       </el-table>
@@ -287,7 +287,7 @@ export default {
             club: club.name,
             members: club.membersCount
           }),
-          "Warning!", {
+          this.$t("warning"), {
             confirmButtonText: this.$t("confirmButtonText"),
             cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
@@ -326,7 +326,7 @@ export default {
       //   const count = this.clubsSelection.length
       //   await this.$confirm(
       //     `This will remove ${count} clubs and their members permanently. Continue?`,
-      //     "Warning!", {
+      //     this.$t("warning"), {
       //       confirmButtonText: "Yes, I am sure",
       //       cancelButtonText: "Cancel",
       //       customClass: "dangerous-confirmation",

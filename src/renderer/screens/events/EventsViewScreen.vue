@@ -1,6 +1,3 @@
-<style lang="stylus">
-</style>
-
 <template>
   <el-container
     id="events-view-screen"
@@ -9,126 +6,116 @@
   >
     <el-header height="auto">
       <breadcrumb-bar
-        :paths="[
-          { to: '/events', label: 'Events' },
-          { to: `/events/${eventsStateSelected.id}`, label: eventsStateSelected.title }
-        ]"
+        :paths="[{
+          to: '/events',
+          label: 'Events'
+        }, {
+          to: `/events/${eventsStateSelected.id}`,
+          label: eventsStateSelected.title
+        }]"
       />
 
       <div class="page-meta">
         <div class="page-titles">
-          <h1 class="h1">
-            <template v-if="eventsStateSelected.approbated">
-              <i class="el-icon-star-on" />
+          <div class="flex items-center">
+            <div class="mr-2 text-xl">
+              <template v-if="eventsStateSelected.approbated">
+                <i class="el-icon-star-on" />
+              </template>
+              <template v-else>
+                <i class="el-icon-star-off" />
+              </template>
+            </div>
+
+            <h1 class="h1">
+              {{ eventsStateSelected.title }}
+            </h1>
+
+            <div class="page-controls ml-2">
+              <el-dropdown
+                trigger="click"
+                @command="dispatchActions"
+              >
+                <el-button type="text">
+                  <i class="el-icon-arrow-down el-icon-more" />
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item
+                    v-if="eventsStateSelected.range"
+                    :disabled="!(eventsStateSelected.range.lat && eventsStateSelected.range.lng)"
+                    :command="{
+                      handler: 'eventsRangeOpenMap'
+                    }"
+                  >
+                    <i class="el-icon-location el-icon--left" /> Show range on map
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    :command="{
+                      handler: 'eventsOpenPrintDialog'
+                    }"
+                  >
+                    <i class="el-icon-printer el-icon--left" /> Print event
+                  </el-dropdown-item>
+
+                  <el-dropdown-item
+                    :command="{
+                      handler: 'eventsOpenEditDialog'
+                    }"
+                  >
+                    <i class="el-icon-edit el-icon--left" /> Edit event
+                  </el-dropdown-item>
+
+                  <el-dropdown-item
+                    divided
+                    class="dropdown-menu-delete"
+                    :command="{
+                      handler: 'eventsRemoveOne'
+                    }"
+                  >
+                    <i class="el-icon-delete el-icon--left" /> Remove event
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+          </div>
+
+          <page-subtitles>
+            <template
+              v-if="eventsStateSelected.range"
+              slot="range"
+            >
+              {{ eventsStateSelected.range.name }}
             </template>
-            <template v-else>
-              <i class="el-icon-star-off" />
-            </template>
-            {{ eventsStateSelected.title }}
-          </h1>
-          <small class="small">
-            <template v-if="eventsStateSelected.range">
-              {{ eventsStateSelected.range.name }},
-            </template>
-            <template v-if="eventsStateSelected.club">
+            <template
+              v-if="eventsStateSelected.club"
+              slot="club"
+            >
               {{ eventsStateSelected.club.name }}
             </template>
-          </small>
+          </page-subtitles>
         </div>
 
-        <div class="page-controls">
-          <el-dropdown
-            trigger="click"
-            @command="dispatchActions"
+        <page-info>
+          <template
+            v-if="eventsStateSelected.startsAt"
+            slot="Starts at"
           >
-            <el-button type="text">
-              <i class="el-icon-arrow-down el-icon-more" />
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item
-                :command="{
-                  handler: 'eventsOpenPrintDialog'
-                }"
-              >
-                <i class="el-icon-printer el-icon--left" /> Print event
-              </el-dropdown-item>
-
-              <el-dropdown-item
-                :command="{
-                  handler: 'eventsOpenEditDialog'
-                }"
-              >
-                <i class="el-icon-edit el-icon--left" /> Edit event
-              </el-dropdown-item>
-
-              <el-dropdown-item
-                divided
-                class="dropdown-menu-delete"
-                :command="{
-                  handler: 'eventsRemoveOne'
-                }"
-              >
-                <i class="el-icon-delete el-icon--left" /> Remove event
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
+            <date-with-tooltip :date="eventsStateSelected.startsAt" />
+          </template>
+          <template
+            v-if="eventsStateSelected.endsAt"
+            slot="Ends at"
+          >
+            <date-with-tooltip :date="eventsStateSelected.endsAt" />
+          </template>
+          <template slot="Category">
+            {{ eventsStateSelected.category }}
+          </template>
+        </page-info>
       </div>
     </el-header>
 
     <el-main>
-      <div class="info-grid">
-        <div class="info-grid_item">
-          <h6 class="h6 info-grid_item_key">
-            Starts at:
-          </h6>
-          <p
-            v-if="eventsStateSelected.startsAt"
-            class="info-grid_item_value"
-          >
-            <date-with-tooltip :date="eventsStateSelected.startsAt" />
-          </p>
-        </div>
-        <div class="info-grid_item">
-          <h6 class="h6 info-grid_item_key">
-            End at:
-          </h6>
-          <p
-            v-if="eventsStateSelected.endsAt"
-            class="info-grid_item_value"
-          >
-            <date-with-tooltip :date="eventsStateSelected.endsAt" />
-          </p>
-        </div>
-        <div class="info-grid_item">
-          <h6 class="h6 info-grid_item_key">
-            Duration:
-          </h6>
-          <p class="info-grid_item_value">
-            {{ eventsSelectedDuration }}
-          </p>
-        </div>
-        <div class="info-grid_item">
-          <h6 class="h6 info-grid_item_key">
-            Category:
-          </h6>
-          <p class="info-grid_item_value">
-            {{ eventsStateSelected.category }}
-          </p>
-        </div>
-        <div
-          v-if="eventsStateSelected.lat && eventsStateSelected.lng"
-          class="info-grid_item"
-        >
-          <h6 class="h6 info-grid_item_key">
-            Lat/Lng:
-          </h6>
-          <p class="info-grid_item_value">
-            {{ eventsStateSelected.lat }} {{ eventsStateSelected.lng }}
-          </p>
-        </div>
-      </div>
-
       <el-tabs v-model="activeTab">
         <el-tab-pane
           label="Participants"
@@ -244,6 +231,8 @@ import moment from "moment"
 import { mapActions, mapState } from "vuex"
 import BreadcrumbBar from "@/components/BreadcrumbBar"
 import DateWithTooltip from "@/components/DateWithTooltip"
+import PageInfo from "@/components/PageInfo"
+import PageSubtitles from "@/components/PageSubtitles"
 
 import EventsParticipantsListTable from "@/containers/events/participants/EventsParticipantsListTable"
 import EventsParticipantsManagerDialog from "@/containers/events/participants/EventsParticipantsManagerDialog"
@@ -261,6 +250,8 @@ export default {
   components: {
     BreadcrumbBar,
     DateWithTooltip,
+    PageInfo,
+    PageSubtitles,
     EventsParticipantsListTable,
     EventsParticipantsManagerDialog,
     ClubsMembersCreateDialog,
@@ -325,6 +316,11 @@ export default {
 
     eventsDivisionsContestantsResultsOpenCreateDialog() {
       this.eventsDivisionsContestantsResultsShowCreateDialog = true
+    },
+
+    eventsRangeOpenMap() {
+      const { range } = this.eventsStateSelected
+      window.open(`https://www.google.com/maps/@${range.lat},${range.lng},15z`)
     },
 
     eventsOpenPrintDialog() {

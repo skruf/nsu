@@ -1,3 +1,14 @@
+<i18n>
+{
+  "en": {
+    "appWarning": "This is a preview of the software and therefore errors might occur."
+  },
+  "no": {
+    "appWarning": "Dette er en forhåndsvisning av programvaren og feil kan derfor oppstå."
+  }
+}
+</i18n>
+
 <style lang="stylus">
 #app
   flex 1

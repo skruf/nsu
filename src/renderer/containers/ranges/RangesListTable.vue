@@ -1,11 +1,45 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "searchFormPlaceholder": "Search for a range by name or area",
+    "column1Label": "Name/Type",
+    "column2Label": "Area/Address",
+    "column3Label": "Country",
+    "removeSelected": "Remove selected",
+    "editRange": "Edit range",
+    "removeRange": "Remove range",
+    "showRangeMap": "Show on map",
+    "tablePlaceholderText": "No ranges yet.",
+    "tablePlaceholderButton": "Create new?",
+    "rangesRemoveOneConfirmation": "This will remove %{range} permanently. Continue?",
+    "rangesActionsRemoveOneSuccess": "%{range} was removed from the database",
+    "rangesRemoveManyConfirmation": "This will remove %{ranges} ranges permanently. Continue?",
+    "rangesActionsRemoveManySuccess": "%{ranges} ranges were removed from the database"
+  },
+  "no": {
+    "searchFormPlaceholder": "Søk etter en skyttebane med navn eller område",
+    "column1Label": "Navn/Type",
+    "column2Label": "Område/Adresse",
+    "column3Label": "Land",
+    "removeSelected": "Slett valgte",
+    "editRange": "Rediger skyttebane",
+    "removeRange": "Slett skyttebane",
+    "showRangeMap": "Vis på kart",
+    "tablePlaceholderText": "Ingen skyttebaner enda.",
+    "tablePlaceholderButton": "Opprett ny?",
+    "rangesRemoveOneConfirmation": "Dette vil fjerne %{range} permanent. Fortsett?",
+    "rangesActionsRemoveOneSuccess": "%{range} ble fjernet fra databasen",
+    "rangesRemoveManyConfirmation": "Dette vil fjerne %{ranges} skyttebaner permanent. Fortsett?",
+    "rangesActionsRemoveManySuccess": "%{ranges} skyttebaner ble fjernet fra databasen"
+  }
+}
+</i18n>
 
 <template>
   <div class="ranges-list-table">
     <search-form
       v-model="rangesSearchFilter"
-      placeholder="Search for a range by name or area"
+      :placeholder="$t('searchFormPlaceholder')"
       @submit="rangesActionsSetSearchFilter"
     />
 
@@ -26,8 +60,8 @@
 
         <el-table-column
           prop="name"
-          label="Name/Type"
           sortable="custom"
+          :label="$t('column1Label')"
           :sort-orders="rangesSortOrders"
         >
           <template slot-scope="scope">
@@ -42,8 +76,8 @@
 
         <el-table-column
           prop="area"
-          label="Area/Address"
           sortable="custom"
+          :label="$t('column2Label')"
           :sort-orders="rangesSortOrders"
         >
           <template slot-scope="scope">
@@ -58,22 +92,10 @@
 
         <el-table-column
           prop="country"
-          label="Country"
           sortable="custom"
+          :label="$t('column3Label')"
           :sort-orders="rangesSortOrders"
         />
-
-        <!-- <el-table-column
-          prop="createdAt"
-          label="Added On"
-          sortable="custom"
-          width="150px"
-          :sort-orders="rangesSortOrders"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.createdAt | moment("MM.DD.YY") }}
-          </template>
-        </el-table-column> -->
 
         <el-table-column
           width="50"
@@ -101,7 +123,7 @@
                       handler: 'rangesRemoveMany'
                     }"
                   >
-                    <i class="el-icon-delete el-icon--left" /> Remove selected
+                    <i class="el-icon-delete el-icon--left" /> {{ $t("removeSelected") }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -124,7 +146,7 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-location el-icon--left" /> Show on map
+                  <i class="el-icon-location el-icon--left" /> {{ $t("showRangeMap") }}
                 </el-dropdown-item>
                 <el-dropdown-item
                   :command="{
@@ -132,7 +154,7 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-edit el-icon--left" /> Edit range
+                  <i class="el-icon-edit el-icon--left" /> {{ $t("editRange") }}
                 </el-dropdown-item>
                 <el-dropdown-item
                   divided
@@ -142,7 +164,7 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-delete el-icon--left" /> Remove range
+                  <i class="el-icon-delete el-icon--left" />  {{ $t("removeRange") }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -150,12 +172,12 @@
         </el-table-column>
 
         <template slot="empty">
-          No ranges yet.
+          {{ $t("tablePlaceholderText") }}
           <el-button
             type="text"
             @click="rangesOpenCreateDialog"
           >
-            Create new?
+            {{ $t("tablePlaceholderButton") }}
           </el-button>
         </template>
       </el-table>
@@ -261,10 +283,10 @@ export default {
     async rangesRemoveOne(range) {
       try {
         await this.$confirm(
-          `This will remove ${range.name} permanently. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+          this.$t("rangesRemoveOneConfirmation", { range: range.name }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
@@ -277,8 +299,10 @@ export default {
         await this.rangesActionsRemoveOne(range)
         this.$notify({
           type: "success",
-          title: "Success",
-          message: `${range.name} was removed from the database`
+          title: this.$t("success"),
+          message: this.$t("rangesActionsRemoveOneSuccess", {
+            range: range.name
+          })
         })
       } catch(e) {
         this.$notify({
@@ -290,33 +314,40 @@ export default {
     },
 
     async rangesRemoveMany() {
+      const count = this.rangesSelection.length
+
       try {
-        const count = this.rangesSelection.length
         await this.$confirm(
-          `This will remove ${count} ranges permanently. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+          this.$t("rangesRemoveManyConfirmation", {
+            ranges: count
+          }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
         )
+      } catch(e) {
+        return
+      }
 
-        try {
-          await this.rangesActionsRemoveMany(this.rangesSelection)
-          this.$notify({
-            type: "success",
-            title: "Success",
-            message: `${count} ranges were removed from the database`
+      try {
+        await this.rangesActionsRemoveMany(this.rangesSelection)
+        this.$notify({
+          type: "success",
+          title: this.$t("success"),
+          message: this.$t("rangesActionsRemoveManySuccess", {
+            ranges: count
           })
-        } catch(e) {
-          this.$notify({
-            type: "error",
-            title: "Oops!",
-            message: e.message
-          })
-        }
-      } catch(e) {}
+        })
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     }
   }
 }

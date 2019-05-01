@@ -2,7 +2,7 @@
 .avatar
   border-radius 50%
   background-color #000
-  color #fff
+  color #fff !important
   display flex
   align-items center
   justify-content center

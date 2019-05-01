@@ -23,7 +23,7 @@ export default (options) => {
     state.count = 0
   }
 
-  if(config.list || config.createMany) {
+  if(config.list || config.createMany || config.editMany) {
     mutations.SET_LIST = (state, items) => {
       state.list = items
     }
@@ -191,6 +191,29 @@ export default (options) => {
       const edited = await config.editOne(item)
       commit("EDIT_ONE", edited)
       commit("SET_EDIT_ONE_LOADING", false)
+      return edited
+    }
+  }
+
+  if(config.editMany) {
+    state.editManyIsLoading = false
+
+    mutations.SET_EDIT_MANY_LOADING = (state, loading) => {
+      state.editManyIsLoading = loading
+    }
+
+    mutations.EDIT_MANY = (state, items) => {
+      const list = state.list.map(
+        (item) => items.filter((i) => i.id === item.id)[0] || item
+      )
+      state.list = [ ...list ]
+    }
+
+    actions.editMany = async ({ commit }, items) => {
+      commit("SET_EDIT_MANY_LOADING", true)
+      const edited = await config.editMany(items)
+      commit("EDIT_MANY", edited.items)
+      commit("SET_EDIT_MANY_LOADING", false)
       return edited
     }
   }

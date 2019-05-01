@@ -1,3 +1,5 @@
+import { destroyMany } from "@/db/queries"
+
 const schema = {
   title: "Classes schema",
   description: "Classes",
@@ -9,7 +11,8 @@ const schema = {
       primary: true
     },
     number: {
-      type: "string"
+      type: "string",
+      index: true
     },
     name: {
       type: "string",
@@ -81,10 +84,24 @@ const schema = {
 
 const methods = {}
 
+const preRemove = async (data, doc) => {
+  // @FIXME: query
+  await destroyMany("events_participants", { "weapons.classId": data.id })
+}
+
 export default {
   collection: {
     name: "classes",
     schema: schema,
     methods: methods
+    // migrationStrategies: {
+    //   1: (d) => d
+    // }
+  },
+  middlewares: {
+    preRemove: {
+      handle: preRemove,
+      parallel: false
+    }
   }
 }

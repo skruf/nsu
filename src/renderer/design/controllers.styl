@@ -12,6 +12,7 @@
   span
     display flex
     align-items center
+    justify-content center
   [class*=" el-icon-"], [class^=el-icon-]
     font-size 15px
   // [class*=" ion-"], [class^=ion-]
@@ -40,11 +41,13 @@
   background-color var(--bg-color)
 
 .el-button--primary
-  &, &:hover, &:focus
+  &, &:hover, &:focus, &.is-disabled, &.is-disabled:hover
     border none
     // background-image var(--button-bg)
     background-image linear-gradient(#CD3B6F, #B3315F)
     background-color transparent
+  &.is-disabled
+    opacity 0.5
 
 .el-switch.is-checked .el-switch__core
   background-color var(--primary-color)

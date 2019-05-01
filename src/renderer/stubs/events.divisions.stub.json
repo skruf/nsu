@@ -1,7 +1,9 @@
 {
   "name": "",
   "day": "",
+  "startsAt": "",
   "endsAt": "",
   "interval": "",
-  "eventId": ""
+  "eventId": "",
+  "distance": ""
 }

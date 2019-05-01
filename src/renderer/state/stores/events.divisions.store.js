@@ -19,9 +19,11 @@ const modules = [
     module: "crud",
     options: {
       list: eventsDivisionsService.list,
+      select: eventsDivisionsService.select,
       create: eventsDivisionsService.create,
       removeOne: eventsDivisionsService.removeOne,
-      removeMany: eventsDivisionsService.removeMany
+      removeMany: eventsDivisionsService.removeMany,
+      editOne: eventsDivisionsService.editOne
     }
   },
   {

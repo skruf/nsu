@@ -1,11 +1,51 @@
+<i18n>
+{
+  "en": {
+    "searchFormPlaceholder": "Search for participants by first or last name",
+    "column1Label": "Name/Email",
+    "column2Label": "Club Name/Area",
+    "column3Label": "Weapons",
+    "column4Label": "Added On",
+    "removeSelected": "Remove selected",
+    "editParticipant": "Edit participant",
+    "removeParticipant": "Remove participant",
+    "tablePlaceholderText": "No participants yet.",
+    "tablePlaceholderButton": "Add a member?",
+    "eventsParticipantsRemoveOneConfirmation": "This will remove %{member} from the event permanently. Continue?",
+    "eventsParticipantsActionsRemoveOneSuccess": "%{member} was removed from the event",
+    "eventsParticipantsRemoveManyConfirmation": "This will remove %{members} participants from the event permanently. Continue?",
+    "eventsParticipantsActionsRemoveManySuccess": "%{members} participants were removed from the event"
+  },
+  "no": {
+    "searchFormPlaceholder": "Søk etter deltakere med fornavn eller etternavn",
+    "column1Label": "Navn/Epost",
+    "column2Label": "Klubb navn/Område",
+    "column3Label": "Våpen",
+    "column4Label": "Lagt til",
+    "removeSelected": "Slett valgte",
+    "editParticipant": "Rediger deltaker",
+    "removeParticipant": "Slett deltaker",
+    "tablePlaceholderText": "Ingen deltakere enda",
+    "tablePlaceholderButton": "Legg til ett medlem?",
+    "eventsParticipantsRemoveOneConfirmation": "Dette vil fjerne %{member} fra stevnet permanent. Fortsett?",
+    "eventsParticipantsActionsRemoveOneSuccess": "%{member} ble fjernet fra stevnet",
+    "eventsParticipantsRemoveManyConfirmation": "Dette vil fjerne %{members} deltakere fra stevnet permanent. Fortsett?",
+    "eventsParticipantsActionsRemoveManySuccess": "%{members} deltakere ble fjernet fra stevnet"  }
+}
+</i18n>
+
 <style lang="stylus">
+  .participant_attributes
+    .small:not(:last-child):after
+      content "•"
 </style>
 
 <template>
   <div class="events-participants-list-table">
     <!-- <search-form
       v-model="eventsParticipantsSearchFilter"
-      placeholder="Search for participants by first or last name"
+      class="mb-5"
+      :placeholder="$t('searchFormPlaceholder')"
       @submit="eventsParticipantsActionsSetSearchFilter"
     /> -->
 
@@ -38,9 +78,9 @@
         </el-table-column>
 
         <el-table-column
-          prop="member"
-          label="Name/Email"
+          prop="memberId"
           sortable="custom"
+          :label="$t('column1Label')"
           :sort-orders="eventsParticipantsSortOrders"
         >
           <template slot-scope="scope">
@@ -55,8 +95,8 @@
 
         <el-table-column
           prop="memberId"
-          label="Club Name/Area"
           sortable="custom"
+          :label="$t('column2Label')"
           :sort-orders="eventsParticipantsSortOrders"
         >
           <template slot-scope="scope">
@@ -70,10 +110,42 @@
         </el-table-column>
 
         <el-table-column
+          prop="weapons"
+          :label="$t('column3Label')"
+          :sort-orders="eventsParticipantsSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.weapons[0].class.name }}
+              <el-tooltip
+                v-if="scope.row.weapons.length > 1"
+                placement="top"
+              >
+                <ul slot="content">
+                  <li
+                    v-for="(weapon, index) in scope.row.weapons"
+                    :key="index"
+                  >
+                    {{ weapon.class.name }} ({{ weapon.calibre }})
+                  </li>
+                </ul>
+                <el-tag size="mini">
+                  +{{ scope.row.weapons.length - 1 }}
+                </el-tag>
+              </el-tooltip>
+            </h6>
+
+            <small class="small">
+              {{ scope.row.weapons[0].calibre }}
+            </small>
+          </template>
+        </el-table-column>
+
+        <el-table-column
           prop="createdAt"
-          label="Added On"
           sortable="custom"
           width="150px"
+          :label="$t('column4Label')"
           :sort-orders="eventsParticipantsSortOrders"
         >
           <template slot-scope="scope">
@@ -107,7 +179,8 @@
                       handler: 'eventsParticipantsRemoveMany'
                     }"
                   >
-                    <i class="el-icon-delete el-icon--left" /> Remove participants
+                    <i class="el-icon-delete el-icon--left" />
+                    {{ $t("removeSelected") }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -129,7 +202,8 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-edit el-icon--left" /> Edit participant
+                  <i class="el-icon-edit el-icon--left" />
+                  {{ $t("editParticipant") }}
                 </el-dropdown-item>
 
                 <el-dropdown-item
@@ -140,7 +214,8 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-delete el-icon--left" /> Remove participant
+                  <i class="el-icon-delete el-icon--left" />
+                  {{ $t("removeParticipant") }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -148,12 +223,12 @@
         </el-table-column>
 
         <template slot="empty">
-          No participants yet.
+          {{ $t("tablePlaceholderText") }}
           <el-button
             type="text"
             @click="eventsParticipantsOpenManageDialog"
           >
-            Add a member?
+            {{ $t("tablePlaceholderButton") }}
           </el-button>
         </template>
       </el-table>
@@ -281,10 +356,12 @@ export default {
 
       try {
         await this.$confirm(
-          `This will remove ${fullName} permanently from the event. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+          this.$t("eventsParticipantsRemoveOneConfirmation", {
+            member: fullName
+          }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
@@ -296,9 +373,11 @@ export default {
       try {
         await this.eventsParticipantsActionsRemoveOne(participant)
         this.$notify({
-          title: "Success",
-          message: `${fullName} was removed from the event`,
-          type: "success"
+          type: "success",
+          title: this.$t("success"),
+          message: this.$t("eventsParticipantsActionsRemoveOneSuccess", {
+            member: fullName
+          })
         })
       } catch(e) {
         this.$notify({
@@ -314,10 +393,12 @@ export default {
 
       try {
         await this.$confirm(
-          `This will remove ${count} participants from the event permanently. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+          this.$t("eventsParticipantsRemoveManyConfirmation", {
+            members: count
+          }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
@@ -330,8 +411,10 @@ export default {
         await this.eventsParticipantsActionsRemoveMany(this.eventsParticipantsSelection)
         this.$notify({
           type: "success",
-          title: "Success",
-          message: `${count} participants were removed from the event`
+          title: this.$t("success"),
+          message: this.$t("eventsParticipantsActionsRemoveManySuccess", {
+            members: count
+          })
         })
       } catch(e) {
         this.$notify({

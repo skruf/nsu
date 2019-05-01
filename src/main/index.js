@@ -2,6 +2,7 @@
 
 import { app, BrowserWindow, ipcMain, Menu } from "electron"
 import log from "electron-log"
+import stateKeeper from "electron-window-state"
 // import { autoUpdater } from "electron-updater"
 
 /**
@@ -12,7 +13,7 @@ if(process.env.NODE_ENV !== "development") {
   global.__static = require("path").join(__dirname, "/static").replace(/\\/g, "\\\\")
 }
 
-let mainWindow
+let win
 const winURL = process.env.NODE_ENV === "development"
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
@@ -21,10 +22,18 @@ function createWindow() {
   const version = app.getVersion()
   log.info(`App (${version}) starting in ${process.env.NODE_ENV} mode`)
 
+  let state = stateKeeper({
+    defaultWidth: 1300,
+    defaultHeight: 1000
+  })
+
   const config = {
-    width: 1300,
-    height: 1000
-    // titleBarStyle: "hidden"
+    "x": state.x,
+    "y": state.y,
+    "width": state.width,
+    "height": state.height,
+    "nodeIntegration": false
+    // "titleBarStyle": "hidden"
   }
 
   if(
@@ -33,14 +42,14 @@ function createWindow() {
   ) {
     require("./sentry")
     // config.webPreferences = {
-    //   nodeIntegration: false,
     //   preload: path.join(__dirname, "sentry.js")
     // }
   }
 
-  mainWindow = new BrowserWindow(config)
-  // mainWindow.webContents.openDevTools()
-  mainWindow.loadURL(winURL)
+  win = new BrowserWindow(config)
+  state.manage(win)
+  // win.webContents.openDevTools()
+  win.loadURL(winURL)
 
   const menuTemplate = [{
     label: "NSU Stevnebehandler",
@@ -79,8 +88,8 @@ function createWindow() {
     log.info("App has successfully started")
   })
 
-  mainWindow.on("closed", () => {
-    mainWindow = null
+  win.on("closed", () => {
+    win = null
   })
 }
 
@@ -93,7 +102,7 @@ app.on("window-all-closed", () => {
 })
 
 app.on("activate", () => {
-  if(mainWindow === null) {
+  if(win === null) {
     createWindow()
   }
 })
@@ -101,7 +110,7 @@ app.on("activate", () => {
 // https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
 //
 // autoUpdater.on("update-downloaded", () => {
-//   mainWindow.webContents.send("APP_NOTIFICATION", "A new update is available. Installing and restarting now..")
+//   win.webContents.send("APP_NOTIFICATION", "A new update is available. Installing and restarting now..")
 //   autoUpdater.quitAndInstall()
 // })
 //

@@ -39,6 +39,7 @@
   <div class="ranges-list-table">
     <search-form
       v-model="rangesSearchFilter"
+      class="mb-5"
       :placeholder="$t('searchFormPlaceholder')"
       @submit="rangesActionsSetSearchFilter"
     />

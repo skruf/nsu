@@ -141,7 +141,7 @@ export default {
   data: function() {
     return {
       visible: this.shown,
-      form: classesStub,
+      form: { ...classesStub },
       formRules: {
         number: { required: true, message: this.$t("formItem1Error") },
         name: { required: true, message: this.$t("formItem2Error") },

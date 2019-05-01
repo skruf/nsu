@@ -22,6 +22,7 @@ import {
   Form,
   FormItem,
   Input,
+  InputNumber,
   Table,
   TableColumn,
   Dropdown,
@@ -67,6 +68,7 @@ Vue.use(TabPane)
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
+Vue.use(InputNumber)
 Vue.use(Table)
 Vue.use(TableColumn)
 Vue.use(Dropdown)

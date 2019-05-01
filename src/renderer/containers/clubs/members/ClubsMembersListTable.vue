@@ -1,11 +1,40 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "searchFormPlaceholder": "Search for members by first or last name",
+    "column1Label": "Name/Email",
+    "column2Label": "Phone number",
+    "column3Label": "Country",
+    "removeSelected": "Remove selected",
+    "editMember": "Edit member",
+    "removeMember": "Remove member",
+    "tablePlaceholderText": "No members yet.",
+    "tablePlaceholderButton": "Create new?",
+    "clubsMembersRemoveOneConfirmation": "This will remove %{fullName} from the club. Continue?",
+    "clubsMembersActionsRemoveOne": "%{fullName} was removed from the clubs database"
+  },
+  "no": {
+    "searchFormPlaceholder": "Søk etter medlemmer med fornavn eller etternavn",
+    "column1Label": "Navn/Epost",
+    "column2Label": "Telefonnummer",
+    "column3Label": "Land",
+    "removeSelected": "Slett valgte",
+    "editMember": "Rediger medlem",
+    "removeMember": "Slett medlem",
+    "tablePlaceholderText": "Ingen medlemmer enda.",
+    "tablePlaceholderButton": "Opprett ny?",
+    "clubsMembersRemoveOneConfirmation": "Dette vil fjerne %{fullName} fra klubben. Fortsett?",
+    "clubsMembersActionsRemoveOne": "%{fullName} ble fjernet fra klubben sin database"
+  }
+}
+</i18n>
 
 <template>
   <div class="clubs-members-list-table">
     <search-form
       v-model="clubsMembersSearchFilter"
-      placeholder="Search for members by first or last name"
+      class="mb-5"
+      :placeholder="$t('searchFormPlaceholder')"
       @submit="clubsMembersActionsSetSearchFilter"
     />
 
@@ -38,8 +67,8 @@
 
         <el-table-column
           prop="firstName"
-          label="Name/Email"
           sortable="custom"
+          :label="$t('column1Label')"
           :sort-orders="clubsMembersSortOrders"
         >
           <template slot-scope="scope">
@@ -54,41 +83,27 @@
 
         <el-table-column
           prop="phoneNumber"
-          label="Phone number"
           sortable="custom"
+          :label="$t('column2Label')"
           :sort-orders="clubsMembersSortOrders"
         >
           <template slot-scope="scope">
-            <h6 class="h6">
+            <small class="small">
               {{ scope.row.phoneNumber || "N/A" }}
-            </h6>
+            </small>
           </template>
         </el-table-column>
 
         <el-table-column
           prop="country"
-          label="Country"
-          sortable="custom"
-          :sort-orders="clubsMembersSortOrders"
+          :label="$t('column3Label')"
         >
           <template slot-scope="scope">
-            <h6 class="h6">
+            <small class="small">
               {{ scope.row.country || "N/A" }}
-            </h6>
+            </small>
           </template>
         </el-table-column>
-
-        <!-- <el-table-column
-          prop="createdAt"
-          label="Added On"
-          sortable="custom"
-          width="150px"
-          :sort-orders="clubsMembersSortOrders"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.createdAt | moment("MM.DD.YY") }}
-          </template>
-        </el-table-column> -->
 
         <el-table-column
           width="50"
@@ -115,7 +130,8 @@
                       handler: 'clubsMembersRemoveMany'
                     }"
                   >
-                    <i class="el-icon-delete el-icon--left" /> Remove selected
+                    <i class="el-icon-delete el-icon--left" />
+                    {{ $t("removeSelected") }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -137,7 +153,8 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-edit el-icon--left" /> Edit member
+                  <i class="el-icon-edit el-icon--left" />
+                  {{ $t("editMember") }}
                 </el-dropdown-item>
 
                 <el-dropdown-item
@@ -148,7 +165,8 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-delete el-icon--left" /> Remove member
+                  <i class="el-icon-delete el-icon--left" />
+                  {{ $t("removeMember") }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -156,12 +174,12 @@
         </el-table-column>
 
         <template slot="empty">
-          No members yet.
+          {{ $t("tablePlaceholderText") }}
           <el-button
             type="text"
             @click="clubsMembersOpenCreateDialog"
           >
-            Create new?
+            {{ $t("tablePlaceholderButton") }}
           </el-button>
         </template>
       </el-table>
@@ -267,10 +285,10 @@ export default {
 
       try {
         await this.$confirm(
-          `This will remove ${fullName} from the club. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+          this.$t("clubsMembersRemoveOneConfirmation", { fullName: fullName }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
@@ -283,8 +301,8 @@ export default {
         await this.clubsMembersActionsRemoveOne(clubMember)
         this.$notify({
           type: "success",
-          title: "Success",
-          message: `${fullName} was removed from the clubs database`
+          title: this.$t("success"),
+          message: this.$t("clubsMembersActionsRemoveOne", { fullName })
         })
       } catch(e) {
         this.$notify({

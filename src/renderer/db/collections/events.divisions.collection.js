@@ -29,6 +29,9 @@ const schema = {
     eventId: {
       type: "string",
       ref: "events"
+    },
+    distance: {
+      type: "string"
     }
   },
   required: [

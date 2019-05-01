@@ -1,199 +1,327 @@
+<i18n>
+{
+  "en": {
+    "selectClub": "Select a club",
+    "clubsSearchFormPlaceholder": "Search for clubs by name",
+    "addClubsMembers": "Add members from selected club",
+    "clubsMembersSearchFormPlaceholder": "Search for members by first or last name",
+    "clubsMembersPlaceholderText": "Please select a club to add its members as participants",
+    "currentParticipants": "Current participants",
+    "participantsSearchFormPlaceholder": "Search for participants by first or last name",
+    "eventsParticipantsRemoveOneSuccess": "Participant %{member} was removed from the event",
+    "column1Label": "Participant",
+    "column2Label": "Club",
+    "column3Label": "Classes",
+    "column4Label": "Calibres",
+    "editParticipant": "Edit participant",
+    "removeParticipant": "Remove participant",
+    "tablePlaceholderText": "No participants yet."
+  },
+  "no": {
+    "selectClub": "Velg en klubb",
+    "clubsSearchFormPlaceholder": "Søk etter klubber med navn",
+    "addClubsMembers": "Legg til medlemmer fra valgt klubb",
+    "clubsMembersSearchFormPlaceholder": "Søk etter medlemmer med fornavn eller etternavn",
+    "clubsMembersPlaceholderText": "Velg en klubb for å legge til deres medlemmer som deltakere",
+    "currentParticipants": "Nåværende deltakere",
+    "participantsSearchFormPlaceholder": "Søk etter deltakere med fornavn eller etternavn",
+    "eventsParticipantsRemoveOneSuccess": "Deltakeren %{member} ble fjernet fra stevnet",
+    "column1Label": "Deltaker",
+    "column2Label": "Klubb",
+    "column3Label": "Klasser",
+    "column4Label": "Kalibre",
+    "editParticipant": "Rediger deltaker",
+    "removeParticipant": "Slett deltaker",
+    "tablePlaceholderText": "Ingen deltakere enda."
+  }
+}
+</i18n>
+
 <style lang="stylus">
 .events-participants-manager
-  display flex
-  flex 1
-  padding-top 20px
-  padding-bottom 20px
 
-  .column
-    border-left 1px solid var(--border-color)
-    display flex
-    flex-direction column
-    padding-top 0
-    padding-bottom 0
-    // resize horizontal
-    &:first-child
-      border-left none
-
-  .list
-    margin-top 5px
+  .selection
+    box-shadow 0 0px 12px 2px rgba(223, 228, 234, .6)
+    background-color #F6F9FB
+    // flex 2
 
   .list_item
-    // border-bottom var(--border-width) solid var(--border-color)
     padding 10px
     display flex
     align-items center
     justify-content space-between
+    background-color var(--input-bg-color)
     border-radius var(--border-radius)
+    font-weight var(--controller-font-weight)
+    box-shadow var(--box-shadow)
+    // border var(--border-width) solid var(--border-color)
     &:hover
       color var(--primary-color)
       cursor pointer
     &.is-active
       background-color var(--bg-alt-color)
-    &:last-of-type
-      border-bottom none
-
-  .list_item_member
-    display flex
-    align-items center
-    line-height 1.2
-  .avatar
-    margin-right 10px
 
   .placeholder
     display flex
-    align-items center
-    justify-content center
-    flex 1
     text-align center
 
-  .participant_attributes
-    .small:not(:last-child):after
-      content "•"
-
-  // .event_participants
-  //   .list_item
-  //     align-items flex-start
+  .el-table
+    .h6, .small
+      overflow hidden
+      text-overflow ellipsis
+      white-space nowrap
 
 </style>
 
 <template>
-  <div class="events-participants-manager">
-    <div
-      v-loading="clubsStateListIsLoading"
-      class="content column clubs"
-    >
-      <h5 class="h5 py-2">
-        Select a club
-      </h5>
-
-      <search-form
-        v-model="clubsSearch"
-        class="small py-2"
-        placeholder="Search clubs by name"
-        :disabled="true"
-        @submit="clubsSearchSubmit"
-      />
-
-      <ul class="list">
-        <li
-          v-for="club in clubsStateList"
-          :key="club.id"
-          :class="[ 'list_item', isClubActive(club) ]"
-          @click="fetchClubsMemebersList(club)"
-        >
-          {{ club.name }} <i class="el-icon-arrow-right" />
-        </li>
-      </ul>
-    </div>
-
-    <div
-      v-loading="clubsIsLoading"
-      class="content column clubs_members"
-    >
-      <h5 class="h5 py-2">
-        Add members from selected club
-      </h5>
-
-      <search-form
-        v-model="membersSearch"
-        class="small py-2"
-        placeholder="Search members by name"
-        :disabled="true"
-        @submit="membersSearchSubmit"
-      />
-
-      <ul
-        v-if="showClubMembers"
-        class="list"
+  <div class="events-participants-manager flex flex-1">
+    <div class="selection flex flex-1">
+      <div
+        v-loading="clubsStateListIsLoading"
+        class="flex-1 py-5 pl-5 mr-2 overflow-y-scroll"
       >
-        <li
-          v-for="member in clubsMembersListFilteredByEventsParticipants"
-          :key="member.id"
-          class="list_item"
-          @click="eventsParticipantsOpenCreateDialog(member)"
-        >
-          <div class="list_item_member">
-            <avatar
-              :first-name="member.firstName"
-              :last-name="member.lastName"
-              size="small"
-            />
-            {{ member.firstName }} {{ member.lastName }}
-          </div>
-          <i class="el-icon-plus el-icon--right" />
-        </li>
-      </ul>
+        <h5 class="h5 pb-2">
+          {{ $t("selectClub") }}
+        </h5>
 
-      <template v-else>
-        <small class="small placeholder">
-          Please select a club to add members as participants
-        </small>
-      </template>
+        <search-form
+          v-model="clubsSearch"
+          class="small py-2"
+          :placeholder="$t('clubsSearchFormPlaceholder')"
+          @submit="clubsSearchSubmit"
+        />
+
+        <ul>
+          <li
+            v-for="club in clubsStateList"
+            :key="club.id"
+            :class="[ 'mt-2', 'list_item', isClubActive(club) ]"
+            @click="fetchClubsMemebersList(club)"
+          >
+            {{ club.name }} <i class="el-icon-arrow-right" />
+          </li>
+        </ul>
+      </div>
+
+      <div
+        v-loading="clubsIsLoading"
+        class="flex-1 py-5 pr-5 ml-2 overflow-y-scroll"
+      >
+        <h5 class="h5 pb-2">
+          {{ $t("addClubsMembers") }}
+        </h5>
+
+        <search-form
+          v-model="membersSearch"
+          class="small py-2"
+          :placeholder="$t('clubsMembersSearchFormPlaceholder')"
+          @submit="membersSearchSubmit"
+        />
+
+        <ul v-if="showClubMembers">
+          <li
+            v-for="member in clubsMembersListFilteredByEventsParticipants"
+            :key="member.id"
+            class="list_item mt-2"
+            @click="eventsParticipantsOpenCreateDialog(member)"
+          >
+            <div class="flex">
+              <avatar
+                :first-name="member.firstName"
+                :last-name="member.lastName"
+                size="small"
+                class="mr-3"
+              />
+              {{ member.firstName }} {{ member.lastName }}
+            </div>
+            <i class="el-icon-plus el-icon--right" />
+          </li>
+        </ul>
+        <template v-else>
+          <small class="small placeholder">
+            {{ $t("clubsMembersPlaceholderText") }}
+          </small>
+        </template>
+      </div>
     </div>
 
-    <div
+    <!-- <div
       v-loading="eventsParticipantsIsLoading"
-      class="content column event_participants"
+      class="flex-1 p-5"
     >
-      <h5 class="h5 py-2">
-        Current participants
+      <h5 class="h5 pb-2">
+        {{ $t("currentParticipants") }}
       </h5>
 
       <search-form
         v-model="participantsSearch"
         class="small py-2"
-        placeholder="Search participants by name"
+        style="display:none;"
+        :placeholder="$t('participantsSearchFormPlaceholder')"
         :disabled="true"
         @submit="participantsSearchSubmit"
       />
 
-      <ul class="list">
-        <li
-          v-for="participant in eventsParticipantsStateList"
-          :key="participant.id"
-          class="list_item"
-          @click="eventsParticipantsRemoveOne(participant)"
+      <el-table
+        :data="eventsParticipantsStateList"
+        row-key="id"
+        class="no-hover small"
+        empty-text
+      >
+        <el-table-column
+          prop="member"
+          width="48px"
         >
-          <div class="list_item_member">
+          <template slot-scope="scope">
             <avatar
-              :first-name="participant.member.firstName"
-              :last-name="participant.member.lastName"
+              :first-name="scope.row.member.firstName"
+              :last-name="scope.row.member.lastName"
               size="small"
             />
+          </template>
+        </el-table-column>
 
-            <div>
-              <div class="participant_name">
-                {{ participant.member.firstName }} {{ participant.member.lastName }}
-                <br>
-                <small class="small">
-                  ({{ participant.member.club.name }})
-                </small>
-              </div>
+        <el-table-column
+          prop="firstName"
+          :label="$t('column1Label')"
+          :sort-orders="clubsMembersSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.member.firstName }} {{ scope.row.member.lastName }}
+            </h6>
+            <small class="small">
+              {{ scope.row.member.emailAddress }}
+            </small>
+          </template>
+        </el-table-column>
 
-              <div class="participant_attributes">
-                <small
-                  v-for="(weaponClass, index) in participant.classes"
-                  :key="weaponClass.id"
-                  class="small"
-                >
-                  {{ weaponClass.name }}
-                </small>
+        <el-table-column
+          prop="club"
+          :label="$t('column2Label')"
+          :sort-orders="clubsMembersSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.member.club.name }}
+            </h6>
+            <small class="small">
+              {{ scope.row.member.club.area }}
+            </small>
+          </template>
+        </el-table-column>
 
-                <small
-                  v-for="(calibre, index) in participant.calibres"
-                  :key="index"
-                  class="small"
-                >
-                  {{ calibre }}
-                </small>
-              </div>
+        <el-table-column
+          prop="classes"
+          :label="$t('column3Label')"
+          :sort-orders="clubsMembersSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6
+              v-for="(weaponClass, index) in scope.row.classes"
+              :key="index"
+              class="h6"
+            >
+              {{ weaponClass.name }}
+            </h6>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="calibres"
+          :label="$t('column4Label')"
+          :sort-orders="clubsMembersSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6
+              v-for="(calibre, index) in scope.row.calibres"
+              :key="index"
+              class="h6"
+            >
+              {{ calibre }}
+            </h6>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          width="50"
+          align="right"
+        >
+          <template
+            slot="header"
+            slot-scope="scope"
+          >
+            <div
+              class="table-actions"
+              :class="{ 'disabled': !clubsMembersHasSelection }"
+            >
+              <el-dropdown
+                trigger="click"
+                @command="dispatchActions"
+              >
+                <span class="el-dropdown-link">
+                  <i class="table-button el-icon-more" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item
+                    :command="{
+                      handler: 'clubsMembersRemoveMany'
+                    }"
+                  >
+                    <i class="el-icon-delete el-icon--left" />
+                    {{ $t("removeSelected") }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </div>
-          </div>
-          <i class="el-icon-close el-icon--right" />
-        </li>
-      </ul>
-    </div>
+          </template>
+
+          <template slot-scope="scope">
+            <el-dropdown
+              trigger="click"
+              @command="dispatchActions"
+            >
+              <span class="el-dropdown-link">
+                <i class="table-button el-icon-more" />
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  :command="{
+                    handler: 'clubsMembersOpenEditDialog',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-edit el-icon--left" />
+                  {{ $t("editParticipant") }}
+                </el-dropdown-item>
+
+                <el-dropdown-item
+                  divided
+                  class="dropdown-menu-delete"
+                  :command="{
+                    handler: 'eventsParticipantsRemoveOne',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-delete el-icon--left" />
+                  {{ $t("removeParticipant") }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+        </el-table-column>
+
+        <template slot="empty">
+          {{ $t("tablePlaceholderText") }}
+          <el-button
+            type="text"
+            @click="clubsMembersOpenCreateDialog"
+          >
+            {{ $t("tablePlaceholderButton") }}
+          </el-button>
+        </template>
+      </el-table>
+    </div> -->
 
     <events-participants-create-dialog
       :event="event"
@@ -224,6 +352,7 @@ export default {
 
   data: function() {
     return {
+      clubsMembersSortOrders: [ "descending", "ascending" ],
       eventsParticipantsShowCreateDialog: false,
       eventsParticipantsSelectedMember: {},
       clubsSearch: "",
@@ -233,6 +362,10 @@ export default {
   },
 
   computed: {
+    clubsMembersHasSelection() {
+      return false
+    },
+
     ...mapState("clubs", {
       clubsStateListIsLoading: "listIsLoading",
       clubsStateList: "list",
@@ -252,7 +385,8 @@ export default {
     }),
 
     showClubMembers() {
-      return Object.keys(this.clubsStateSelected).length > 0
+      return Object.keys(this.clubsMembersListFilteredByEventsParticipants)
+        .length > 0
     },
 
     clubsMembersListFilteredByEventsParticipants() {
@@ -340,8 +474,10 @@ export default {
         await this.eventsParticipantsActionsRemoveOne(participant)
         this.$notify({
           type: "success",
-          title: "Success",
-          message: `${fullName} was removed from the event`
+          title: this.$t("success"),
+          message: this.$t("eventsParticipantsRemoveOneSuccess", {
+            member: fullName
+          })
         })
       } catch(e) {
         this.$notify({
@@ -350,6 +486,14 @@ export default {
           message: e.message
         })
       }
+    },
+
+    dispatchActions({ handler, payload }) {
+      this[handler](payload)
+    },
+
+    clubsMembersOpenCreateDialog() {
+      this.$emit("clubsMembersOpenCreateDialog")
     },
 
     clubsSearchSubmit() {},

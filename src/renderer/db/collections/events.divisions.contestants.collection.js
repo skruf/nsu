@@ -13,9 +13,6 @@ const schema = {
     time: {
       type: "string"
     },
-    calibre: {
-      type: "string"
-    },
     divisionId: {
       type: "string",
       ref: "events_divisions"
@@ -24,17 +21,24 @@ const schema = {
       type: "string",
       ref: "clubs_members"
     },
-    classId: {
-      type: "string",
-      ref: "classes"
+    weapon: {
+      id: {
+        type: "string"
+      },
+      calibre: {
+        type: "string"
+      },
+      classId: {
+        type: "string",
+        ref: "classes"
+      }
     }
   },
   required: [
     "time",
-    "calibre",
     "divisionId",
     "memberId",
-    "classId"
+    "weapon"
   ]
 }
 

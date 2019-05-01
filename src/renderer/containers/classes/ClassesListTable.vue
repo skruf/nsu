@@ -2,30 +2,34 @@
 {
   "en": {
     "searchFormPlaceholder": "Search for a class by name",
-    "column1Label": "Name/Number",
-    "column2Label": "Category/Condition",
+    "column1Label": "Number",
+    "column2Label": "Name",
+    "column3Label": "Category",
+    "column4Label": "Condition",
     "removeSelected": "Remove selected",
     "editClass": "Edit class",
     "removeClass": "Remove class",
     "tablePlaceholderText": "No classes yet.",
     "tablePlaceholderButton": "Create new?",
-    "classesRemoveOneConfirmation": "This will remove %{weaponClass} permanently. Continue?",
+    "classesRemoveOneConfirmation": "This will remove %{weaponClass} and participants who used this class permanently. Continue?",
     "classesActionsRemoveOneSuccess": "%{weaponClass} was removed from the database",
-    "classesRemoveManyConfirmation": "This will remove %{classes} classes permanently. Continue?",
+    "classesRemoveManyConfirmation": "This will remove %{classes} classes and participants who used these classes permanently. Continue?",
     "classesActionsRemoveManySuccess": "%{classes} classes were removed from the database"
   },
   "no": {
     "searchFormPlaceholder": "Søk etter klasser med navn",
-    "column1Label": "Navn/Nummer",
-    "column2Label": "Kategori/Tilstand",
+    "column1Label": "Nummer",
+    "column2Label": "Navn",
+    "column3Label": "Kategori",
+    "column4Label": "Tilstand",
     "removeSelected": "Slett valgte",
     "editClass": "Rediger klasse",
     "removeClass": "Slett klasse",
     "tablePlaceholderText": "Ingen klasser enda.",
     "tablePlaceholderButton": "Opprett ny?",
-    "classesRemoveOneConfirmation": "Dette vil fjerne %{weaponClass} permanent. Fortsett?",
+    "classesRemoveOneConfirmation": "Dette vil fjerne %{weaponClass} og deltakere som brukte denne klassen permanent. Fortsett?",
     "classesActionsRemoveOneSuccess": "%{weaponClass} ble fjernet fra databasen",
-    "classesRemoveManyConfirmation": "Dette vil fjerne %{classes} klasser permanent. Fortsett?",
+    "classesRemoveManyConfirmation": "Dette vil fjerne %{classes} klasser og deltakere som brukte denne klassen permanent. Fortsett?",
     "classesActionsRemoveManySuccess": "%{classes} klasser ble fjernet fra databasen"
   }
 }
@@ -35,6 +39,7 @@
   <div class="classes-list-table">
     <search-form
       v-model="classesSearchFilter"
+      class="mb-5"
       :placeholder="$t('searchFormPlaceholder')"
       @submit="classesActionsSetSearchFilter"
     />
@@ -55,31 +60,52 @@
         />
 
         <el-table-column
-          prop="name"
+          prop="number"
           sortable="custom"
+          width="110px"
           :label="$t('column1Label')"
           :sort-orders="classesSortOrders"
         >
           <template slot-scope="scope">
             <h6 class="h6">
-              {{ scope.row.name }}
-            </h6>
-            <small class="small">
               {{ scope.row.number }}
-            </small>
+            </h6>
           </template>
         </el-table-column>
 
         <el-table-column
-          prop="category"
+          prop="name"
           sortable="custom"
           :label="$t('column2Label')"
           :sort-orders="classesSortOrders"
         >
           <template slot-scope="scope">
             <h6 class="h6">
-              {{ scope.row.category }}
+              {{ scope.row.name }}
             </h6>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="category"
+          sortable="custom"
+          :label="$t('column3Label')"
+          :sort-orders="classesSortOrders"
+        >
+          <template slot-scope="scope">
+            <small class="small">
+              {{ scope.row.category }}
+            </small>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="condition"
+          sortable="custom"
+          :label="$t('column4Label')"
+          :sort-orders="classesSortOrders"
+        >
+          <template slot-scope="scope">
             <small class="small">
               {{ scope.row.condition }}
             </small>

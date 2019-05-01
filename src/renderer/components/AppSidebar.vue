@@ -16,7 +16,7 @@
     "events": "Stevner",
     "all": "Alle",
     "upcoming": "Kommende",
-    "history": "Holdte",
+    "history": "Avsluttet",
     "categories": "Kategorier",
     "clubs": "Klubber",
     "classes": "Klasser",
@@ -53,7 +53,7 @@
   font-size 13px
 
 .menu-img
-  width 25px
+  width 23px
   margin-right 8px
   filter invert(.5) sepia(1) saturate(200) hue-rotate(380deg)
 

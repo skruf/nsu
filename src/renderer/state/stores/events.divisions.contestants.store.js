@@ -23,7 +23,8 @@ const modules = [
       create: eventsDivisionsContestantsService.create,
       createMany: eventsDivisionsContestantsService.createMany,
       removeOne: eventsDivisionsContestantsService.removeOne,
-      removeMany: eventsDivisionsContestantsService.removeMany
+      removeMany: eventsDivisionsContestantsService.removeMany,
+      editMany: eventsDivisionsContestantsService.editMany
     }
   },
   {

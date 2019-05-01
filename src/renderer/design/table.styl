@@ -25,6 +25,11 @@
   &, thead
     font inherit
     color inherit
+  &.small td
+    padding-top 8px
+    padding-bottom 8px
+  .h6, .small
+    color inherit
 .table-clickable
   .el-table__row
     cursor pointer
@@ -82,7 +87,8 @@
   line-height 18px
 
 .el-table--enable-row-hover .el-table__body tr:hover > td
-  background-color #f7f7f7
+  background-color #e1e7ec
+  color #000
 .el-table.no-hover .el-table__body tr:hover > td
   background-color var(--bg-alt-color)
 

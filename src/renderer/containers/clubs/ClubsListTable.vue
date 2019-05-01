@@ -35,6 +35,7 @@
   <div class="clubs-list-table">
     <search-form
       v-model="clubsSearchFilter"
+      class="mb-5"
       :placeholder="$t('searchFormPlaceholder')"
       @submit="clubsActionsSetSearchFilter"
     />

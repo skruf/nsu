@@ -1,11 +1,50 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "searchFormPlaceholder": "Search for an event by title or club",
+    "column1Label": "Starts/Ends",
+    "column2Label": "Title/Approbated",
+    "column2LabelIsApprobated": "Is approbated",
+    "column2LabelIsntApprobated": "Isn't approbated",
+    "column3Label": "Range/Organizer",
+    "column4Label": "Category",
+    "removeSelected": "Remove selected",
+    "editEvent": "Edit event",
+    "removeEvent": "Remove event",
+    "tablePlaceholderText": "No events yet.",
+    "tablePlaceholderButton": "Create new?",
+    "eventsRemoveOneConfirmation": "This will remove %{event} permanently. Continue?",
+    "eventsActionsRemoveOneSuccess": "%{event} was removed from the database",
+    "eventsRemoveManyConfirmation": "This will remove %{events} events permanently. Continue?",
+    "eventsActionsRemoveManySuccess": "%{events} events were removed from the database"
+  },
+  "no": {
+    "searchFormPlaceholder": "Søk etter et stevne med tittel eller klubb",
+    "column1Label": "Starter/Slutter",
+    "column2Label": "Tittel/Approbert",
+    "column2LabelIsApprobated": "Er approbert",
+    "column2LabelIsntApprobated": "Ikke approbert",
+    "column3Label": "Skyttebane/Arrangør",
+    "column4Label": "Kategori",
+    "removeSelected": "Slett valgte",
+    "editEvent": "Rediger stevne",
+    "removeEvent": "Slett stevne",
+    "tablePlaceholderText": "Ingen stevner enda.",
+    "tablePlaceholderButton": "Opprett ny?",
+    "eventsRemoveOneConfirmation": "Dette vil fjerne %{event} permanent. Fortsett?",
+    "eventsActionsRemoveOneSuccess": "%{event} ble fjernet fra databasen",
+    "eventsRemoveManyConfirmation": "Dette vil fjerne %{events} stevner permanent. Fortsett?",
+    "eventsActionsRemoveManySuccess": "%{events} stevner ble fjernet fra databasen"
+  }
+}
+</i18n>
 
 <template>
   <div class="events-list-table">
     <search-form
       v-model="eventsSearchFilter"
-      placeholder="Search for an event by title or club"
+      class="mb-5"
+      :placeholder="$t('searchFormPlaceholder')"
       @submit="eventsActionsSetSearchFilter"
     />
 
@@ -27,9 +66,9 @@
 
         <el-table-column
           prop="startsAt"
-          label="Starts/Ends"
           width="150px"
           sortable="custom"
+          :label="$t('column1Label')"
           :sort-orders="eventsSortOrders"
         >
           <template slot-scope="scope">
@@ -44,8 +83,8 @@
 
         <el-table-column
           prop="title"
-          label="Title/Approbated"
           sortable="custom"
+          :label="$t('column2Label')"
           :sort-orders="eventsSortOrders"
         >
           <template slot-scope="scope">
@@ -54,10 +93,12 @@
             </h6>
             <small class="small">
               <template v-if="scope.row.approbated">
-                <i class="el-icon-star-on" /> Is approbated
+                <i class="el-icon-star-on" />
+                {{ $t("column2LabelIsApprobated") }}
               </template>
               <template v-else>
-                <i class="el-icon-star-off" /> Isn't approbated
+                <i class="el-icon-star-off" />
+                {{ $t("column2LabelIsntApprobated") }}
               </template>
             </small>
           </template>
@@ -65,8 +106,8 @@
 
         <el-table-column
           prop="rangeId"
-          label="Range/Organizer"
           sortable="custom"
+          :label="$t('column3Label')"
           :sort-orders="eventsSortOrders"
         >
           <template slot-scope="scope">
@@ -81,8 +122,8 @@
 
         <el-table-column
           prop="category"
-          label="Category"
           sortable="custom"
+          :label="$t('column4Label')"
           :sort-orders="eventsSortOrders"
         />
 
@@ -112,7 +153,8 @@
                       handler: 'eventsRemoveMany'
                     }"
                   >
-                    <i class="el-icon-delete el-icon--left" /> Remove selected
+                    <i class="el-icon-delete el-icon--left" />
+                    {{ $t("removeSelected") }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -134,7 +176,8 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-edit el-icon--left" /> Edit event
+                  <i class="el-icon-edit el-icon--left" />
+                  {{ $t("editEvent") }}
                 </el-dropdown-item>
                 <el-dropdown-item
                   divided
@@ -144,7 +187,8 @@
                     payload: scope.row
                   }"
                 >
-                  <i class="el-icon-delete el-icon--left" /> Remove event
+                  <i class="el-icon-delete el-icon--left" />
+                  {{ $t("removeEvent") }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -152,12 +196,12 @@
         </el-table-column>
 
         <template slot="empty">
-          No events yet.
+          {{ $t("tablePlaceholderText") }}
           <el-button
             type="text"
             @click="eventsOpenCreateDialog"
           >
-            Create new?
+            {{ $t("tablePlaceholderButton") }}
           </el-button>
         </template>
       </el-table>
@@ -260,10 +304,10 @@ export default {
     async eventsRemoveOne(event) {
       try {
         await this.$confirm(
-          `This will remove ${event.title} permanently. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+          this.$t("eventsRemoveOneConfirmation", { event: event.title }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
@@ -275,9 +319,11 @@ export default {
       try {
         await this.eventsActionsRemoveOne(event)
         this.$notify({
-          title: "Success",
-          message: `${event.title} was removed from the database`,
-          type: "success"
+          type: "success",
+          title: this.$t("success"),
+          message: this.$t("eventsActionsRemoveOneSuccess", {
+            event: event.title
+          })
         })
       } catch(e) {
         this.$notify({
@@ -292,10 +338,10 @@ export default {
       const count = this.eventsSelection.length
       try {
         await this.$confirm(
-          `This will remove ${count} events permanently. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+          this.$t("eventsRemoveManyConfirmation", { events: count }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
@@ -308,8 +354,10 @@ export default {
         await this.eventsActionsRemoveMany(this.eventsSelection)
         this.$notify({
           type: "success",
-          title: "Success",
-          message: `${count} events were removed from the database`
+          title: this.$t("success"),
+          message: this.$t("eventsActionsRemoveManySuccess", {
+            events: count
+          })
         })
       } catch(e) {
         this.$notify({

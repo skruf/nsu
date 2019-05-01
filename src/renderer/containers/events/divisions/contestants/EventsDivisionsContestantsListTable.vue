@@ -1,3 +1,22 @@
+<i18n>
+{
+  "en": {
+    "column1Label": "Shooting Time/Day",
+    "column2Label": "Name/Email",
+    "column3Label": "Weapon",
+    "tablePlaceholderText": "No participants yet.",
+    "tablePlaceholderButton": "Add new?"
+  },
+  "no": {
+    "column1Label": "Skytte tid/dag",
+    "column2Label": "Navn/epost",
+    "column3Label": "Våpen",
+    "tablePlaceholderText": "Ingen deltakere enda",
+    "tablePlaceholderButton": "Legg til ny?"
+  }
+}
+</i18n>
+
 <style lang="stylus">
 .events-divisions-contestants-list-table
   .el-table::before
@@ -13,6 +32,7 @@
       :data="eventsDivisionsContestantsListLocal"
       row-key="id"
       empty-text
+      class="small"
     >
       <el-table-column
         type="index"
@@ -22,8 +42,8 @@
 
       <el-table-column
         prop="time"
-        label="Shooting Time/Day"
         width="160"
+        :label="$t('column1Label')"
         :sort-orders="eventsDivisionsContestantsSortOrders"
       >
         <template slot-scope="scope">
@@ -37,21 +57,22 @@
       </el-table-column>
 
       <el-table-column
-        prop="member"
+        prop="memberId"
         width="60px"
       >
         <template slot-scope="scope">
           <avatar
             :first-name="scope.row.member.firstName"
             :last-name="scope.row.member.lastName"
+            size="small"
           />
         </template>
       </el-table-column>
 
       <el-table-column
-        prop="member"
-        label="Name/Email"
+        prop="memberId"
         sortable="custom"
+        :label="$t('column2Label')"
         :sort-orders="eventsDivisionsContestantsSortOrders"
       >
         <template slot-scope="scope">
@@ -65,55 +86,28 @@
       </el-table-column>
 
       <el-table-column
-        prop="class.name"
-        label="Class Name/Category"
+        prop="weapons"
+        :label="$t('column3Label')"
         :sort-orders="eventsDivisionsContestantsSortOrders"
       >
         <template slot-scope="scope">
           <h6 class="h6">
-            {{ scope.row.class.name }}
+            {{ scope.row.weapon.class.name }}
           </h6>
+
           <small class="small">
-            {{ scope.row.class.category }}
+            {{ scope.row.weapon.calibre }}
           </small>
         </template>
       </el-table-column>
 
-      <el-table-column
-        prop="calibre"
-        label="Calibre"
-        :sort-orders="eventsDivisionsContestantsSortOrders"
-      />
-
-      <!-- <el-table-column prop="member.clubName" label="Club" :sort-orders="eventsDivisionsContestantsSortOrders" /> -->
-      <!-- <el-table-column width="50">
-        <template slot-scope="scope">
-          <el-dropdown trigger="click" @command="eventsParticipantsTableRowDispatchActions">
-            <span class="el-dropdown-link">
-              <i class="el-icon-setting"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item :command="{ handler: 'remove', payload: scope.row }">
-                <i class="el-icon-delete el-icon--left"></i> Remove participant
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </template>
-      </el-table-column> -->
-      <!-- <template slot="empty">
-        No participants yet.
-        <el-button type="text" @click="eventsParticipantsOpenManageDialog">
-          Add a member?
-        </el-button>
-      </template> -->
-
       <template slot="empty">
-        No participants yet.
+        {{ $t("tablePlaceholderText") }}
         <el-button
           type="text"
           disabled
         >
-          Add one?
+          {{ $t("tablePlaceholderButton") }}
         </el-button>
       </template>
     </el-table>
@@ -157,6 +151,8 @@ export default {
     this.eventsDivisionsContestantsListLocal = [
       ...this.eventsDivisionsContestantsStateList
     ]
+
+    // console.log(this.eventsDivisionsContestantsStateList)
   },
 
   methods: {

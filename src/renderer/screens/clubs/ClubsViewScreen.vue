@@ -1,5 +1,29 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "breadcrumb1Label": "Clubs",
+    "editClub": "Edit club",
+    "removeClub": "Remove club",
+    "email": "Email",
+    "leader": "Leader",
+    "range": "Shooting Range",
+    "clubsMembersOpenCreateDialog": "Create member",
+    "clubsRemoveOneConfirmation": "This will remove %{club} and its %{members} members permanently. Continue?",
+    "classesActionsRemoveOneSuccess": "%{club} was removed from the database"
+  },
+  "no": {
+    "breadcrumb1Label": "Klubber",
+    "editClub": "Rediger klubb",
+    "removeClub": "Fjern klubb",
+    "email": "Epost",
+    "leader": "Leder",
+    "range": "Skyttebane",
+    "clubsMembersOpenCreateDialog": "Opprett medlem",
+    "clubsRemoveOneConfirmation": "Dette vil fjerne %{club} og deres %{members} medlemmer permanent. Fortsett?",
+    "classesActionsRemoveOneSuccess": "%{club} og deres %{members} ble fjernet fra databasen"
+  }
+}
+</i18n>
 
 <template>
   <el-container
@@ -9,10 +33,13 @@
   >
     <el-header height="auto">
       <breadcrumb-bar
-        :paths="[
-          { to: '/clubs', label: 'Clubs' },
-          { to: `/clubs/${clubsStateSelected.id}`, label: clubsStateSelected.name }
-        ]"
+        :paths="[{
+          to: '/clubs',
+          label: this.$t('breadcrumb1Label')
+        }, {
+          to: `/clubs/${clubsStateSelected.id}`,
+          label: clubsStateSelected.name
+        }]"
       />
 
       <div class="page-meta">
@@ -22,17 +49,28 @@
               {{ clubsStateSelected.name }}
             </h1>
 
-            <page-subtitles>
-              <template slot="address">
+            <small class="small page-subtitles">
+              <span
+                v-if="clubsStateSelected.address"
+                class="page-subtitles_part"
+              >
                 {{ clubsStateSelected.address }}
-              </template>
-              <template slot="area">
+              </span>
+
+              <span
+                v-if="clubsStateSelected.area"
+                class="page-subtitles_part"
+              >
                 {{ clubsStateSelected.area }}
-              </template>
-              <template slot="country">
+              </span>
+
+              <span
+                v-if="clubsStateSelected.country"
+                class="page-subtitles_part"
+              >
                 {{ clubsStateSelected.country }}
-              </template>
-            </page-subtitles>
+              </span>
+            </small>
           </div>
 
           <div class="page-controls ml-2">
@@ -50,7 +88,8 @@
                     handler: 'clubsEditOpenDialog'
                   }"
                 >
-                  <i class="el-icon-edit el-icon--left" /> Edit club
+                  <i class="el-icon-edit el-icon--left" />
+                  {{ $t("editClub") }}
                 </el-dropdown-item>
                 <el-dropdown-item
                   divided
@@ -59,34 +98,52 @@
                     handler: 'clubsRemoveOne'
                   }"
                 >
-                  <i class="el-icon-delete el-icon--left" /> Remove club
+                  <i class="el-icon-delete el-icon--left" />
+                  {{ $t("removeClub") }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
         </div>
 
-        <page-info>
-          <template
+        <div class="page-info">
+          <div
             v-if="clubsStateSelected.emailAddress"
-            slot="Email"
+            class="page-info_item"
           >
-            {{ clubsStateSelected.emailAddress }}
-          </template>
-          <template
+            <h5 class="h5">
+              {{ clubsStateSelected.emailAddress }}
+            </h5>
+            <small class="small">
+              {{ $t("email") }}
+            </small>
+          </div>
+
+          <div
             v-if="clubsStateSelected.leader"
-            slot="Leader"
+            class="page-info_item"
           >
-            {{ clubsStateSelected.leader }}
-          </template>
-          <template
+            <h5 class="h5">
+              {{ clubsStateSelected.leader }}
+            </h5>
+            <small class="small">
+              {{ $t("leader") }}
+            </small>
+          </div>
+
+          <div
             v-if="clubsStateSelected.range"
-            slot="Shooting Range"
+            class="page-info_item"
           >
-            {{ clubsStateSelected.range.name }}
-            ({{ clubsStateSelected.range.area }})
-          </template>
-        </page-info>
+            <h5 class="h5">
+              {{ clubsStateSelected.range.name }}
+              ({{ clubsStateSelected.range.area }})
+            </h5>
+            <small class="small">
+              {{ $t("range") }}
+            </small>
+          </div>
+        </div>
       </div>
     </el-header>
 
@@ -106,7 +163,8 @@
         type="primary"
         @click="clubsMembersOpenCreateDialog"
       >
-        <i class="el-icon-plus el-icon--left" /> Create member
+        <i class="el-icon-plus el-icon--left" />
+        {{ $t("clubsMembersOpenCreateDialog") }}
       </el-button>
     </el-footer>
 
@@ -131,8 +189,6 @@
 <script>
 import { mapActions, mapState } from "vuex"
 import BreadcrumbBar from "@/components/BreadcrumbBar"
-import PageInfo from "@/components/PageInfo"
-import PageSubtitles from "@/components/PageSubtitles"
 import ClubsEditDialog from "@/containers/clubs/ClubsEditDialog"
 import ClubsMembersListTable from "@/containers/clubs/members/ClubsMembersListTable"
 import ClubsMembersCreateDialog from "@/containers/clubs/members/ClubsMembersCreateDialog"
@@ -143,8 +199,6 @@ export default {
 
   components: {
     BreadcrumbBar,
-    PageInfo,
-    PageSubtitles,
     ClubsEditDialog,
     ClubsMembersListTable,
     ClubsMembersCreateDialog,
@@ -203,10 +257,13 @@ export default {
       const club = this.clubsStateSelected
       try {
         await this.$confirm(
-          `This will remove ${club.name} and its ${club.membersCount} members permanently. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+          this.$t("clubsRemoveOneConfirmation", {
+            club: club.name,
+            members: club.membersCount
+          }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
@@ -219,8 +276,11 @@ export default {
         await this.classesActionsRemoveOne(club)
         this.$notify({
           type: "success",
-          title: "Success",
-          message: `${club.name} was removed from the database`
+          title: this.$t("success"),
+          message: this.$t("classesActionsRemoveOneSuccess", {
+            club: club.name,
+            members: club.membersCount
+          })
         })
         this.$router.push("/clubs")
       } catch(e) {

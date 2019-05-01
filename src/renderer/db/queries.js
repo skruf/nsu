@@ -1,7 +1,9 @@
 import { getId, getTimestamp } from "@/utils"
 import getDb from "@/db"
 
-const buildQuery = async (collection, method, filter = {}, options = {}) => {
+const buildQuery = async (
+  collection, method, filter = {}, options = {}
+) => {
   const db = await getDb()
 
   if(options.search && options.search.value) {
@@ -45,13 +47,23 @@ const buildQuery = async (collection, method, filter = {}, options = {}) => {
   return operation
 }
 
+export const count = async (
+  collection, filter, defaultOptions = {}
+) => {
+  const options = { ...defaultOptions, skip: false, limit: false }
+  const query = await buildQuery(collection, "find", filter, options)
+  const docs = await query.exec()
+  return docs.length
+}
+
 export const findMany = async (
   collection, filter = {}, options = {}, json = false
 ) => {
   const query = await buildQuery(collection, "find", filter, options)
   let docs = await query.exec()
   if(json) docs = docs.map((doc) => doc.toJSON())
-  return { items: docs, count: docs.length }
+  const amount = await count(collection, filter, options)
+  return { items: docs, count: amount }
 }
 
 export const findOne = async (
@@ -63,13 +75,15 @@ export const findOne = async (
   return doc
 }
 
-export const insert = async (collection, data, options = {}, json = false) => {
+export const insert = async (
+  collection, data, options = {}, json = false
+) => {
   const db = await getDb()
   const timestamp = getTimestamp()
   data.id = getId()
   data.createdAt = timestamp
   data.updatedAt = timestamp
-  let doc = db[collection].insert(data)
+  let doc = await db[collection].insert(data)
   if(json) doc = doc.toJSON()
   return doc
 }
@@ -83,12 +97,16 @@ export const insertMany = async (
   return docs
 }
 
-export const destroyOne = async (collection, filter = {}, options = {}) => {
+export const destroyOne = async (
+  collection, filter = {}, options = {}
+) => {
   const doc = await findOne(collection, filter, options)
   await doc.remove()
 }
 
-export const destroyMany = async (collection, filter = {}, options = {}) => {
+export const destroyMany = async (
+  collection, filter = {}, options = {}
+) => {
   const docs = await findMany(collection, filter, options)
   await Promise.all(
     docs.items.map((doc) => doc.remove())
@@ -104,4 +122,17 @@ export const updateOne = async (
   await doc.update({ $set: item })
   if(json) doc = doc.toJSON()
   return doc
+}
+
+export const updateMany = async (
+  collection, items, filterKey = "id", options = {}, json = false
+) => {
+  items.forEach((i) => console.log(i))
+  const docs = await Promise.all(
+    items.map((item) => updateOne(
+      collection, { [filterKey]: item[filterKey] }, item, options, json
+    ))
+  )
+  docs.forEach((d) => console.log(d.toJSON()))
+  return docs
 }

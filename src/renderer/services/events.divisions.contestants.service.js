@@ -1,30 +1,21 @@
 import {
-  insert, insertMany, findMany, findOne, destroyOne, destroyMany
+  insert, insertMany, findMany, findOne, destroyOne, destroyMany, updateMany
 } from "@/db/queries"
+import { filterInput } from "@/utils"
 import { eventsDivisionsContestantsStub } from "@/stubs"
 
 const populate = async (doc) => {
   const member = await doc.populate("memberId")
   const division = await doc.populate("divisionId")
-  const classItem = await doc.populate("classId")
+
+  // const weaponClass = await doc.populate("weapon.classId")
 
   const contestant = doc.toJSON()
-
   contestant.member = member.toJSON()
   contestant.division = division.toJSON()
-  contestant.class = classItem.toJSON()
+  // contestant.weapons.class = weaponClass.toJSON()
 
   return contestant
-}
-
-const filterInput = (item) => {
-  const data = {}
-  for(let key in item) {
-    if(eventsDivisionsContestantsStub.hasOwnProperty(key)) {
-      data[key] = item[key]
-    }
-  }
-  return data
 }
 
 const list = async (filter = {}, options = {}, fetchMode) => {
@@ -42,19 +33,31 @@ const select = async (filter = {}, options = {}) => {
 }
 
 const create = async (item = {}, options = {}) => {
-  const data = filterInput(item)
+  const data = filterInput(item, eventsDivisionsContestantsStub)
   const doc = await insert("events_divisions_contestants", data, options)
   const contestant = await populate(doc)
   return contestant
 }
 
 const createMany = async (items, options = {}) => {
-  const data = items.map((i) => filterInput(i))
+  const data = filterInput(items, eventsDivisionsContestantsStub)
+
   const docs = await insertMany("events_divisions_contestants", data, options)
 
   const contestants = await Promise.all(
     docs.map((doc) => populate(doc))
   )
+
+  return {
+    items: contestants,
+    count: contestants.length
+  }
+}
+
+const editMany = async (items, options = {}) => {
+  const data = filterInput(items, eventsDivisionsContestantsStub)
+  const docs = await updateMany("events_divisions_contestants", data)
+  const contestants = await Promise.all(docs.map((doc) => populate(doc)))
 
   return {
     items: contestants,
@@ -76,5 +79,5 @@ const removeMany = async (items, options = {}) => {
 }
 
 export default {
-  list, select, create, createMany, removeOne, removeMany
+  list, select, create, createMany, removeOne, removeMany, editMany
 }

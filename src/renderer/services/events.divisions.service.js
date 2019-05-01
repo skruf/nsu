@@ -1,25 +1,23 @@
-import { insert, findMany, destroyOne, destroyMany } from "@/db/queries"
+import {
+  insert, findMany, findOne, destroyOne, destroyMany, updateOne
+} from "@/db/queries"
 import { eventsDivisionsStub } from "@/stubs"
-
-const filterInput = (item) => {
-  const data = {}
-  for(let key in item) {
-    if(eventsDivisionsStub.hasOwnProperty(key)) {
-      data[key] = item[key]
-    }
-  }
-  return data
-}
+import { filterInput } from "@/utils"
 
 const list = async (filter = {}, options = {}, fetchMode) => {
-  const result = await findMany("events_divisions", filter, options, true)
-  return result
+  const divisions = await findMany("events_divisions", filter, options, true)
+  return divisions
+}
+
+const select = async (filter = {}, options = {}) => {
+  const division = await findOne("events_divisions", filter, options, true)
+  return division
 }
 
 const create = async (item = {}, options = {}) => {
-  const data = filterInput(item)
-  const result = await insert("events_divisions", data, options, true)
-  return result
+  const data = filterInput(item, eventsDivisionsStub)
+  const division = await insert("events_divisions", data, options, true)
+  return division
 }
 
 const removeOne = async (filter, options = {}) => {
@@ -35,6 +33,13 @@ const removeMany = async (items, options = {}) => {
   return true
 }
 
+const editOne = async (item, options = {}) => {
+  const filter = { id: item.id }
+  const data = filterInput(item, eventsDivisionsStub)
+  const division = await updateOne("events_divisions", filter, data, options, true)
+  return division
+}
+
 export default {
-  list, create, removeOne, removeMany
+  list, select, create, removeOne, removeMany, editOne
 }

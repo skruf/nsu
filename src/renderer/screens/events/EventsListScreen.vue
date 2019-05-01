@@ -1,5 +1,25 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "breadcrumb1Label": "Events",
+    "breadcrumb2Label": "All",
+    "title": "Events",
+    "eventsOpenCreateDialogButton": "Create event",
+    "past": "Past",
+    "upcoming": "Upcoming",
+    "all": "All"
+  },
+  "no": {
+    "breadcrumb1Label": "Stevner",
+    "breadcrumb2Label": "Alle",
+    "title": "Stevner",
+    "eventsOpenCreateDialogButton": "Opprett stevne",
+    "past": "Avsluttet",
+    "upcoming": "Kommende",
+    "all": "Alle"
+  }
+}
+</i18n>
 
 <template>
   <el-container
@@ -8,15 +28,18 @@
   >
     <el-header height="auto">
       <breadcrumb-bar
-        :paths="[
-          { to: '/events', label: 'Events' },
-          { to: '', label: breadcrumbLabel }
-        ]"
+        :paths="[{
+          to: '/events',
+          label: $t('breadcrumb1Label')
+        }, {
+          to: '',
+          label: breadcrumbLabel
+        }]"
       />
 
       <div class="page-titles">
         <h1 class="h1">
-          {{ breadcrumbLabel }} events
+          {{ breadcrumbLabel }} {{ $t("title") }}
         </h1>
       </div>
     </el-header>
@@ -33,7 +56,8 @@
         type="primary"
         @click="eventsOpenCreateDialog"
       >
-        <i class="el-icon-plus el-icon--left" /> Create event
+        <i class="el-icon-plus el-icon--left" />
+        {{ $t("eventsOpenCreateDialogButton") }}
       </el-button>
     </el-footer>
 
@@ -78,9 +102,12 @@ export default {
 
     breadcrumbLabel() {
       if(this.eventsStateFetchMode === "history") {
-        return "Past"
+        return this.$t("past")
       }
-      return this.eventsStateFetchMode || "All"
+      if(this.eventsStateFetchMode === "upcoming") {
+        return this.$t("upcoming")
+      }
+      return "All"
     }
   },
 

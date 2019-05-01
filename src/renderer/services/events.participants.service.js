@@ -1,6 +1,7 @@
 import {
   insert, findMany, findOne, destroyOne, destroyMany, updateOne
 } from "@/db/queries"
+import { getId } from "@/utils"
 
 // @TODO: fix search on clubs_members model
 // let a
@@ -16,13 +17,15 @@ import {
 const populate = async (doc) => {
   const member = await doc.populate("memberId")
   const club = await member.populate("clubId")
-  const classes = await doc.populate("classes")
+  const weapons = await Promise.all(doc.weapons.map(async (weapon) => {
+    const classItem = await findOne("classes", { id: weapon.classId }, {}, true)
+    return { ...weapon, class: classItem }
+  }))
 
   const participant = doc.toJSON()
-
   participant.member = member.toJSON()
   participant.member.club = club.toJSON()
-  participant.classes = classes.map((d) => d.toJSON())
+  participant.weapons = weapons
 
   return participant
 }
@@ -30,8 +33,9 @@ const populate = async (doc) => {
 const filterInput = (item) => ({
   memberId: item.memberId,
   eventId: item.eventId,
-  classes: item.classes.map(({ id }) => id),
-  calibres: item.calibres
+  weapons: item.weapons.map(
+    (w) => ({ ...w, id: getId() })
+  )
 })
 
 const list = async (filter = {}, options = {}) => {

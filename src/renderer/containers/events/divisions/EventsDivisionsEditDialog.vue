@@ -1,7 +1,7 @@
 <i18n>
 {
   "en": {
-    "title": "Create divisjon",
+    "title": "Edit divisjon",
     "subtitle": "For %{event}",
     "eventsDivisionsFormTitle": "Division settings",
     "eventsDivisionsFormItem1Label": "Name",
@@ -24,10 +24,10 @@
     "availableParticipants": "Available participants",
     "participants": "Participants",
     "endsAt": "Ends at",
-    "eventsDivisionsContestantsActionsCreateManySuccess": "%{division} was successfully added to the database"
+    "eventsDivisionsContestantsActionsEditManySuccess": "%{division} was successfully updated to the database"
   },
   "no": {
-    "title": "Opprett divisjon",
+    "title": "Rediger divisjon",
     "subtitle": "For %{event}",
     "eventsDivisionsFormTitle": "Divisjon innstillinger",
     "eventsDivisionsFormItem1Label": "Navn",
@@ -50,13 +50,13 @@
     "availableParticipants": "Tilgjengelige deltakere",
     "participants": "Deltakere",
     "endsAt": "Slutter",
-    "eventsDivisionsContestantsActionsCreateManySuccess": "%{division} ble lagt til i databasen"
+    "eventsDivisionsContestantsActionsEditManySuccess": "%{division} ble oppdatert i databasen"
   }
 }
 </i18n>
 
 <style lang="stylus">
-.el-dialog.events-divisions-create-dialog
+.el-dialog.events-divisions-edit-dialog
   display flex
   flex-direction column
 
@@ -88,10 +88,10 @@
 
 <template>
   <el-dialog
-    custom-class="events-divisions-create-dialog"
+    custom-class="events-divisions-edit-dialog"
     :fullscreen="true"
     :visible.sync="visible"
-    @open="eventsDivisionsCreateDialogOpen"
+    @open="open"
     @close="close"
   >
     <template slot="title">
@@ -104,7 +104,7 @@
     </template>
 
     <div
-      v-loading="eventsDivisionsIsLoading"
+      v-loading="stateIsLoading"
       class="dialog_content flex flex-1 p-0"
     >
       <div class="px-5 side">
@@ -189,23 +189,31 @@
         </el-form>
       </div>
 
-      <div class="border-l border-r w-full px-5">
-        <h4 class="h4 mt-4 mb-8">
-          {{ $t("eventsDivisionsContestantsFormsTitle") }}
-        </h4>
+      <div class="border-l border-r w-full px-5 overflow-y-auto">
+        <div class="flex items-center mt-4 mb-8">
+          <h4 class="h4">
+            {{ $t("eventsDivisionsContestantsFormsTitle") }}
+          </h4>
 
-        <div
-          v-if="eventsDivisionsContestantsForms.length > 0"
-          v-loading="eventsParticipantsStateListIsLoading"
-        >
-          <events-divisions-contestants-form
-            v-for="(contestantForm, index) in eventsDivisionsContestantsForms"
-            ref="eventsDivisionsContestantsForms"
-            :key="index"
-            :form.sync="eventsDivisionsContestantsForms[index]"
-            :participants="eventsParticipantsStateList"
-            @update:form="eventsDivisionsContestantsFormUpdate(index)"
-          />
+          <el-button
+            type="text"
+            size="mini"
+            @click="eventsDivisionsContestantsAddForm"
+          >
+            <i class="el-icon-plus" />
+          </el-button>
+        </div>
+
+        <div v-if="eventsDivisionsContestantsForms.length > 0">
+          <template v-if="!isLoading">
+            <events-divisions-contestants-form
+              v-for="(contestantForm, index) in eventsDivisionsContestantsForms"
+              ref="eventsDivisionsContestantsForms"
+              :key="index"
+              :form.sync="eventsDivisionsContestantsForms[index]"
+              :participants="eventsParticipantsStateList"
+            />
+          </template>
         </div>
 
         <div
@@ -280,7 +288,7 @@
       <el-button
         class="block"
         type="primary"
-        @click="eventsDivisionsCreateDialogSave"
+        @click="save"
       >
         {{ $t("save") }}
       </el-button>
@@ -296,7 +304,7 @@ import Avatar from "@/components/Avatar"
 import EventsDivisionsContestantsForm from "@/components/EventsDivisionsContestantsForm"
 
 export default {
-  name: "EventsDivisionsCreateDialog",
+  name: "EventsDivisionsEditDialog",
 
   components: {
     Avatar,
@@ -305,29 +313,21 @@ export default {
 
   props: {
     shown: { type: Boolean, default: false },
-    event: { type: Object, required: true }
+    event: { type: Object, required: true },
+    eventsDivision: { type: Object, required: true }
   },
 
   data: function() {
     return {
+      isLoading: true,
       visible: this.shown,
-      // eventsDivisionsForm: { ...eventsDivisionsStub },
-      eventsDivisionsForm: {
-        "name": "day 1",
-        "day": new Date(),
-        "startsAt": "08:00",
-        "endsAt": "",
-        "interval": "00:10",
-        "eventId": "",
-        "distance": "50 meters"
-      },
+      eventsDivisionsForm: { ...eventsDivisionsStub },
       eventsDivisionsFormRules: {
         name: { required: true, message: this.$t("eventsDivisionsFormItem1Error") },
         day: { required: true, message: this.$t("eventsDivisionsFormItem2Error") },
         startsAt: { required: true, message: this.$t("eventsDivisionsFormItem3Error") },
         interval: { required: true, message: this.$t("eventsDivisionsFormItem4Error") }
       },
-
       eventsDivisionsFormTimePickerOptions: {
         start: "08:00",
         step: "00:05",
@@ -352,12 +352,14 @@ export default {
 
   computed: {
     ...mapState("events/divisions", {
-      eventsDivisionsStateCreateIsLoading: "createIsLoading"
+      eventsDivisionsStateEditIsLoading: "editIsLoading"
     }),
     ...mapState("events/divisions/contestants", {
       eventsDivisionsContestantsStateCreateManyIsLoading: "createManyIsLoading",
+      eventsDivisionsContestantsStateEditManyIsLoading: "editManyIsLoading",
       eventsDivisionsContestantsStateCount: "count",
-      eventsDivisionsContestantsStateList: "list"
+      eventsDivisionsContestantsStateList: "list",
+      eventsDivisionsContestantsStateListIsLoading: "listIsLoading"
     }),
     ...mapState("events/participants", {
       eventsParticipantsStateListIsLoading: "listIsLoading",
@@ -394,9 +396,10 @@ export default {
       return formatTime(starts + (interval * amount))
     },
 
-    eventsDivisionsIsLoading() {
+    stateIsLoading() {
       return (
-        this.eventsDivisionsStateCreateIsLoading ||
+        this.eventsDivisionsStateEditIsLoading ||
+        this.eventsDivisionsContestantsStateEditManyIsLoading ||
         this.eventsDivisionsContestantsStateCreateManyIsLoading
       )
     }
@@ -411,10 +414,15 @@ export default {
 
   methods: {
     ...mapActions("events/divisions", {
-      eventsDivisionsActionsCreate: "create"
+      eventsDivisionsActionsEditOne: "editOne"
     }),
     ...mapActions("events/divisions/contestants", {
+      eventsDivisionsContestantsActionsList: "list",
+      eventsDivisionsContestantsActionsEditMany: "editMany",
       eventsDivisionsContestantsActionsCreateMany: "createMany"
+    }),
+    ...mapMutations("events/divisions/contestants", {
+      "eventsDivisionsContestantsMutationsSetListFilter": "SET_LIST_FILTER"
     }),
     ...mapMutations("events/participants", {
       eventsParticipantsMutationsSetListFilter: "SET_LIST_FILTER"
@@ -423,38 +431,43 @@ export default {
       eventsParticipantsActionsList: "list"
     }),
 
-    eventsDivisionsFormDayPickerOptionsDisabledDate(day) {
-      const time = day.getTime()
-      return time < this.event.startsAt || time > this.event.endsAt
-    },
+    async open() {
+      this.eventsDivisionsForm = { ...this.eventsDivision }
 
-    async eventsDivisionsCreateDialogOpen() {
       this.eventsParticipantsMutationsSetListFilter({ eventId: this.event.id })
       await this.eventsParticipantsActionsList()
+
+      this.generateContestantList()
+
+      this.eventsDivisionsContestantsMutationsSetListFilter({ divisionId: this.eventsDivision.id })
+      await this.eventsDivisionsContestantsActionsList()
+
+      for(let i = 0; this.eventsDivisionsContestantsStateList.length > i; i++) {
+        this.eventsDivisionsContestantsForms[i] = { ...this.eventsDivisionsContestantsStateList[i] }
+      }
+
+      this.isLoading = false
     },
 
     generateContestantList() {
       this.eventsDivisionsContestantsForms = []
-      for(let i = 0; this.eventsParticipantsStateList.length >= i; i++) {
-        this.eventsDivisionsContestantsAddForm(i)
-      }
+      this.eventsParticipantsStateList.forEach(
+        () => { this.eventsDivisionsContestantsAddForm() }
+      )
     },
 
-    eventsDivisionsContestantsAddForm(i) {
+    eventsDivisionsContestantsAddForm() {
       const stub = { ...eventsDivisionsContestantsStub }
       const starts = toMinutes(this.starts.hours, this.starts.minutes)
       const interval = toMinutes(this.interval.hours, this.interval.minutes)
-      stub.time = formatTime(starts + (interval * i))
-      this.eventsDivisionsContestantsForms.push(stub)
+      const index = this.eventsDivisionsContestantsForms.length
+      stub.time = formatTime(starts + (interval * index))
+      this.eventsDivisionsContestantsForms.push({
+        ...stub, divisionId: this.eventsDivision.id
+      })
     },
 
-    eventsDivisionsContestantsFormUpdate(i) {
-      if(i === this.eventsDivisionsContestantsForms.length - 1) {
-        this.eventsDivisionsContestantsAddForm(i + 1)
-      }
-    },
-
-    async eventsDivisionsCreateDialogSave() {
+    async save() {
       this.$refs.eventsDivisionsForm.validate(async (isValid) => {
         if(!isValid) {
           return this.$notify({
@@ -464,30 +477,39 @@ export default {
           })
         }
 
-        const division = { ...this.eventsDivisionsForm }
-        division.eventId = this.event.id
-        division.day = division.day.toISOString()
-        division.startsAt = this.eventsDivisionsEndsAt
-        division.endsAt = this.eventsDivisionsEndsAt
+        this.eventsDivisionsForm.day = typeof this.eventsDivisionsForm.day === "string"
+          ? this.eventsDivisionsForm.day
+          : this.eventsDivisionsForm.day.toISOString()
 
         try {
-          const createdDivision = await this.eventsDivisionsActionsCreate(division)
-          const contestants = this.eventsDivisionsContestantsForms
-            .filter((contestant) => (!!contestant.memberId && !!contestant.weapon.id))
-            .map((contestant) => ({ ...contestant, divisionId: createdDivision.id }))
+          const division = await this.eventsDivisionsActionsEditOne(this.eventsDivisionsForm)
 
-          await this.eventsDivisionsContestantsActionsCreateMany(contestants)
+          const contestantsToBeUpdated = this.eventsDivisionsContestantsForms
+            .filter((contestant) => !!contestant.memberId && !!contestant.weapon.id)
+            .filter(({ id }) => (
+              this.eventsDivisionsContestantsStateList.map(({ id }) => id).includes(id)
+            ))
+
+          const contestantsToBeCreated = this.eventsDivisionsContestantsForms
+            .filter((contestant) => !!contestant.memberId && !!contestant.weapon.id)
+            .filter(({ id }) => (
+              !this.eventsDivisionsContestantsStateList.map(({ id }) => id).includes(id)
+            ))
+
+          await this.eventsDivisionsContestantsActionsCreateMany(contestantsToBeCreated)
+          await this.eventsDivisionsContestantsActionsEditMany(contestantsToBeUpdated)
 
           this.$notify({
             type: "success",
             title: this.$t("success"),
-            message: this.$t("eventsDivisionsContestantsActionsCreateManySuccess", {
+            message: this.$t("eventsDivisionsContestantsActionsEditManySuccess", {
               division: division.name
             })
           })
           this.clear()
           this.close()
         } catch(e) {
+          console.error(e)
           this.$notify({
             type: "error",
             title: "Oops!",
@@ -504,6 +526,11 @@ export default {
     close() {
       this.visible = false
       this.$emit("update:shown", false)
+    },
+
+    eventsDivisionsFormDayPickerOptionsDisabledDate(day) {
+      const time = day.getTime()
+      return time < this.event.startsAt || time > this.event.endsAt
     }
   }
 }

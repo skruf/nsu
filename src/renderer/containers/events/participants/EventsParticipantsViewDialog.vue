@@ -1,10 +1,24 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "title": "Participant %{participant}",
+    "country": "Country",
+    "club": "Club",
+    "weapons": "Weapons"
+  },
+  "no": {
+    "title": "Deltaker %{participant}",
+    "country": "Land",
+    "club": "Klubb",
+    "weapons": "Våpen"
+  }
+}
+</i18n>
 
 <template>
   <el-dialog
     custom-class="events-participants-view-dialog"
-    :title="`Participant ${eventsParticipantsFullName}`"
+    :title="$t('title', { participant: eventsParticipantsFullName })"
     :visible.sync="visible"
     @open="eventsParticipantsViewDialogOpen"
     @close="eventsParticipantsViewDialogClose"
@@ -22,9 +36,12 @@
         class="dialog_content flex flex-1"
       >
         <div class="info-grid">
-          <div class="info-grid_item">
+          <div
+            v-if="eventsParticipantsStateSelected.member.country"
+            class="info-grid_item"
+          >
             <h6 class="h6 info-grid_item_key">
-              Country:
+              {{ $t("country") }}:
             </h6>
             <p class="info-grid_item_value">
               {{ eventsParticipantsStateSelected.member.country }}
@@ -33,7 +50,7 @@
 
           <div class="info-grid_item">
             <h6 class="h6 info-grid_item_key">
-              Club:
+              {{ $t("club") }}:
             </h6>
             <p class="info-grid_item_value">
               {{ eventsParticipantsStateSelected.member.club.name }}
@@ -42,28 +59,14 @@
 
           <div class="info-grid_item">
             <h6 class="h6 info-grid_item_key">
-              Classes:
+              {{ $t("weapons") }}:
             </h6>
             <ul class="info-grid_item_value">
               <li
-                v-for="(weaponClass) in eventsParticipantsStateSelected.classes"
-                :key="weaponClass.id"
-              >
-                {{ weaponClass.name }}
-              </li>
-            </ul>
-          </div>
-
-          <div class="info-grid_item">
-            <h6 class="h6 info-grid_item_key">
-              Calibres:
-            </h6>
-            <ul class="info-grid_item_value">
-              <li
-                v-for="(calibre, index) in eventsParticipantsStateSelected.calibres"
+                v-for="(weapon, index) in eventsParticipantsStateSelected.weapons"
                 :key="index"
               >
-                {{ calibre }}
+                {{ weapon.class.name }} ({{ weapon.calibre }})
               </li>
             </ul>
           </div>
@@ -76,7 +79,7 @@
           type="text"
           @click="eventsParticipantsViewDialogClose"
         >
-          Close
+          {{ $t("close") }}
         </el-button>
       </template>
     </template>

@@ -35,6 +35,7 @@ module.exports = {
     "vue/name-property-casing": [ "warn", "PascalCase" ],
     "vue/component-name-in-template-casing": [ "warn", "kebab-case" ],
     "vue/no-unused-vars": 0,
+    "vue/no-unused-components": "warn",
     "arrow-parens": 0,
     "generator-star-spacing": 0,
     "quotes": [ 0 ],
@@ -42,6 +43,7 @@ module.exports = {
     "keyword-spacing": 0,
     "no-console": 0,
     "padded-blocks": 0,
-    "no-unused-vars": "warn"
+    "no-unused-vars": "warn",
+    "no-trailing-spaces": "warn"
   }
 }

@@ -1,10 +1,10 @@
 <style lang="stylus">
 .breadcrumb-bar
-  margin-bottom 10px
   width 100%
   display flex
   align-items center
   justify-content space-between
+  margin-bottom 5px
   .el-button
     padding 0
     & + .el-button

@@ -8,7 +8,7 @@ const schema = {
       type: "string",
       primary: true
     },
-    // result: {
+    // total: {
     //   type: "number",
     //   index: true
     // },

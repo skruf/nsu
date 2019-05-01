@@ -16,7 +16,7 @@
   display flex
   &:before
     content ""
-    height 3px
+    height 4px
     width 100%
     background-image var(--accent-border)
     position absolute

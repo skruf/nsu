@@ -3,7 +3,7 @@ import { findMany, destroyMany } from "@/db/queries"
 const schema = {
   title: "Events participants schema",
   description: "Events participants",
-  version: 0,
+  version: 1,
   type: "object",
   properties: {
     id: {
@@ -18,15 +18,23 @@ const schema = {
       type: "string",
       ref: "events"
     },
-    classes: {
+    weapons: {
       type: "array",
-      ref: "classes",
       items: {
-        type: "string"
+        type: "object",
+        properties: {
+          id: {
+            type: "string"
+          },
+          calibre: {
+            type: "string"
+          },
+          classId: {
+            type: "string",
+            ref: "classes"
+          }
+        }
       }
-    },
-    calibres: {
-      type: "array"
     }
   },
   required: [
@@ -52,7 +60,10 @@ export default {
   collection: {
     name: "events_participants",
     schema: schema,
-    methods: methods
+    methods: methods,
+    migrationStrategies: {
+      1: (d) => d
+    }
   },
   middlewares: {
     preRemove: {

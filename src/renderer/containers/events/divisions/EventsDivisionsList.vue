@@ -1,3 +1,26 @@
+<i18n>
+{
+  "en": {
+    "edit": "Edit division",
+    "remove": "Remove division",
+    "divisionStartStop": "Starts on %{day} ends at: %{time} o'clock",
+    "divisionsListPlaceholderText": "No divisions yet.",
+    "divisionsListPlaceholderButton": "Create one?",
+    "eventsDivisionsRemoveOneConfirmation": "This will remove %{division} permanently. Continue?",
+    "eventsDivisionsActionsRemoveOneSuccess": "%{division} was removed from the database"
+  },
+  "no": {
+    "edit": "Rediger divisjon",
+    "remove": "Slett divisjon",
+    "divisionStartStop": "Starter den %{day} slutter klokka %{time}",
+    "divisionsListPlaceholderText": "Ingen divisjoner enda.",
+    "divisionsListPlaceholderButton": "Opprett ny?",
+    "eventsDivisionsRemoveOneConfirmation": "Dette vil fjerne %{division} permanent. Fortsett?",
+    "eventsDivisionsActionsRemoveOneSuccess": "%{division} ble fjernet fra databasen"
+  }
+}
+</i18n>
+
 <style lang="stylus">
 .events-results_division:not(:first-child)
   border-top 1px solid var(--border-color)
@@ -27,18 +50,35 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item
               :command="{
+                handler: 'eventsDivisionsOpenEditDialog',
+                payload: division
+              }"
+            >
+              <i class="el-icon-edit el-icon--left" />
+              {{ $t("edit") }}
+            </el-dropdown-item>
+            <el-dropdown-item
+              divided
+              class="dropdown-menu-delete"
+              :command="{
                 handler: 'eventsDivisionsRemoveOne',
                 payload: division
               }"
             >
-              <i class="el-icon-delete el-icon--left" /> Remove selected
+              <i class="el-icon-delete el-icon--left" />
+              {{ $t("remove") }}
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
 
       <small class="small mb-4">
-        Starts on {{ division.day | moment("DD.MM") }} ends at: {{ division.endsAt }} o'clock
+        {{
+          $t("divisionStartStop", {
+            day: division.day, // | moment("DD.MM"),
+            time: division.endsAt
+          })
+        }}
       </small>
 
       <events-divisions-contestants-list-table
@@ -50,12 +90,12 @@
       v-if="!eventsDivisionsExists"
       class="data-placeholder"
     >
-      No divisions yet.
+      {{ $t("divisionsListPlaceholderText") }}
       <el-button
         type="text"
         @click="eventsDivisionsOpenCreateDialog"
       >
-        Create one?
+        {{ $t("divisionsListPlaceholderButton") }}
       </el-button>
     </div>
   </div>
@@ -122,6 +162,10 @@ export default {
       this.$emit("eventsDivisionsOpenCreateDialog")
     },
 
+    eventsDivisionsOpenEditDialog(division) {
+      this.$emit("eventsDivisionsOpenEditDialog", division)
+    },
+
     dispatchActions({ handler, payload }) {
       this[handler](payload)
     },
@@ -129,30 +173,36 @@ export default {
     async eventsDivisionsRemoveOne(division) {
       try {
         await this.$confirm(
-          `This will remove ${division.name} permanently. Continue?`,
-          "Warning!", {
-            confirmButtonText: "Yes, I am sure",
-            cancelButtonText: "Cancel",
+          this.$t("eventsDivisionsRemoveOneConfirmation", {
+            division: division.name
+          }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
             customClass: "dangerous-confirmation",
             type: "warning"
           }
         )
+      } catch(e) {
+        return
+      }
 
-        try {
-          await this.eventsDivisionsActionsRemoveOne(division)
-          this.$notify({
-            title: "Success",
-            message: `${division.name} was removed from the database`,
-            type: "success"
+      try {
+        await this.eventsDivisionsActionsRemoveOne(division)
+        this.$notify({
+          type: "success",
+          title: this.$t("success"),
+          message: this.$t("eventsDivisionsActionsRemoveOneSuccess", {
+            division: division.name
           })
-        } catch(e) {
-          this.$notify({
-            title: "Oops!",
-            message: e.message,
-            type: "error"
-          })
-        }
-      } catch(e) {}
+        })
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     }
   }
 }

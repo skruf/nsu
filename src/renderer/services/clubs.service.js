@@ -42,7 +42,6 @@ const create = async (item = {}, options = {}) => {
   const data = filterInput(item)
   const doc = await insert("clubs", data, options)
   const club = await populate(doc)
-  // club.membersCount = 0
   return club
 }
 

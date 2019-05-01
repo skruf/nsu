@@ -1,7 +1,10 @@
 {
   "time": "",
   "memberId": "",
-  "classId": "",
   "divisionId": "",
-  "calibre": ""
+  "weapon": {
+    "id": "",
+    "classId": "",
+    "calibre": ""
+  }
 }

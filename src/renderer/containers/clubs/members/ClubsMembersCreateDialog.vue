@@ -1,10 +1,52 @@
-<style lang="stylus">
-</style>
+<i18n>
+{
+  "en": {
+    "title": "Create member",
+    "formItem1Label": "First Name",
+    "formItem1Placeholder": "Enter a first name",
+    "formItem1Error": "First name is a required field",
+    "formItem2Label": "Last Name",
+    "formItem2Placeholder": "Enter a last name",
+    "formItem2Error": "Last name is a required field",
+    "formItem3Label": "Email Address",
+    "formItem3Placeholder": "Enter a email address",
+    "formItem3Error": "Email is a required field",
+    "formItem4Label": "Phone Number",
+    "formItem4Placeholder": "Enter a phone number",
+    "formItem5Label": "Country",
+    "formItem5Placeholder": "Select a country",
+    "formItem6Label": "Club",
+    "formItem6Placeholder": "Please select a club",
+    "formItem6Error": "Select a club",
+    "clubsMembersActionsCreateSuccess": "%{fullName} was successfully added to the database"
+  },
+  "no": {
+    "title": "Opprett ett medlem",
+    "formItem1Label": "Fornavn",
+    "formItem1Placeholder": "Skriv inn fornavn",
+    "formItem1Error": "Fornavn er et påkrevd felt",
+    "formItem2Label": "Etternavn",
+    "formItem2Placeholder": "Skriv inn etternavn",
+    "formItem2Error": "Etternavn er et påkrevd felt",
+    "formItem3Label": "Epost adresse",
+    "formItem3Placeholder": "Skriv inn en e-post adresse",
+    "formItem3Error": "Epost adresse er et påkrevd felt",
+    "formItem4Label": "Telefonnummer",
+    "formItem4Placeholder": "Skriv inn et telefonnummer",
+    "formItem5Label": "Land",
+    "formItem5Placeholder": "Velg ett land",
+    "formItem6Label": "Klubb",
+    "formItem6Placeholder": "Velg en klubb",
+    "formItem6Error": "Klubb er et påkrevd felt",
+    "clubsMembersActionsCreateSuccess": "%{fullName} ble lagt til i databasen"
+  }
+}
+</i18n>
 
 <template>
   <el-dialog
-    title="Create a club member"
     custom-class="create-dialog"
+    :title="$t('title')"
     :visible.sync="visible"
     :append-to-body="true"
     @open="open"
@@ -21,52 +63,53 @@
         :rules="formRules"
       >
         <el-form-item
-          label="First Name"
+          :label="$t('formItem1Label')"
           prop="firstName"
         >
           <el-input
             v-model="form.firstName"
-            placeholder="Enter a first name"
+            :placeholder="$t('formItem1Placeholder')"
           />
         </el-form-item>
 
         <el-form-item
-          label="Last Name"
+          :label="$t('formItem2Label')"
           prop="lastName"
         >
           <el-input
             v-model="form.lastName"
-            placeholder="Enter a last name"
+            :placeholder="$t('formItem2Placeholder')"
           />
         </el-form-item>
 
         <el-form-item
-          label="Email Address"
+          :label="$t('formItem3Label')"
           prop="emailAddress"
         >
           <el-input
             v-model="form.emailAddress"
-            placeholder="Enter a email address"
+            :placeholder="$t('formItem3Placeholder')"
           />
         </el-form-item>
 
         <el-form-item
-          label="Phone Number"
+          :label="$t('formItem4Label')"
           prop="phoneNumber"
         >
           <el-input
             v-model="form.phoneNumber"
-            placeholder="Enter a phone number"
+            :placeholder="$t('formItem4Placeholder')"
           />
         </el-form-item>
 
         <el-form-item
-          label="Country"
+          :label="$t('formItem5Label')"
           prop="country"
         >
           <el-select
             v-model="form.country"
-            placeholder="Select a country"
+            filterable
+            :placeholder="$t('formItem5Placeholder')"
           >
             <el-option
               v-for="(country, index) in clubsMembersStateCountries"
@@ -79,16 +122,17 @@
 
         <el-form-item
           v-if="clubNotProvided"
-          label="Club"
-          prop="club"
+          prop="clubId"
+          :label="$t('formItem6Label')"
           :rules="{
             required: true,
-            message: 'Please select a club'
+            message: $t('formItem6Error')
           }"
         >
           <el-select
             v-model="form.clubId"
-            placeholder="Select a club"
+            filterable
+            :placeholder="$t('formItem6Placeholder')"
             :loading="clubsStateListIsLoading"
           >
             <el-option
@@ -108,14 +152,14 @@
         type="text"
         @click="close"
       >
-        Cancel
+        {{ $t("cancel") }}
       </el-button>
       <el-button
         class="block"
         type="primary"
         @click="submit"
       >
-        Save
+        {{ $t("save") }}
       </el-button>
     </template>
   </el-dialog>
@@ -136,11 +180,11 @@ export default {
   data: function() {
     return {
       visible: this.shown,
-      form: clubsMembersStub,
+      form: { ...clubsMembersStub },
       formRules: {
-        firstName: { required: true, message: "First name is a required field" },
-        lastName: { required: true, message: "Last name is a required field" },
-        email: { required: true, message: "Email is a required field" }
+        firstName: { required: true, message: this.$t('formItem1Error') },
+        lastName: { required: true, message: this.$t('formItem2Error') },
+        email: { required: true, message: this.$t('formItem3Error') }
       }
     }
   },
@@ -189,7 +233,7 @@ export default {
           return this.$notify({
             type: "error",
             title: "Oops!",
-            message: "Please fill in all required fields before saving"
+            message: this.$t("validationError")
           })
         }
 
@@ -202,10 +246,11 @@ export default {
           const fullName = `${this.form.firstName} ${this.form.lastName}`
           this.$notify({
             type: "success",
-            title: "Great success",
-            message: `${fullName} was successfully added to the database`
+            title: this.$t("title"),
+            message: this.$t("clubsMembersActionsCreateSuccess", {
+              fullName
+            })
           })
-          this.clear()
           this.close()
         } catch(e) {
           this.$notify({
@@ -222,6 +267,7 @@ export default {
     },
 
     close() {
+      this.clear()
       this.visible = false
       this.$emit("update:shown", false)
     }

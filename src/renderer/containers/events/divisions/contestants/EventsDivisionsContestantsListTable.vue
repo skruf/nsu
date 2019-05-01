@@ -32,7 +32,7 @@
       :data="eventsDivisionsContestantsListLocal"
       row-key="id"
       empty-text
-      class="small"
+      class="small no-hover"
     >
       <el-table-column
         type="index"

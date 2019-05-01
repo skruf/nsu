@@ -112,81 +112,10 @@
           {{ $t("eventsDivisionsFormTitle") }}
         </h4>
 
-        <el-form
+        <events-divisions-form
           ref="eventsDivisionsForm"
-          label-position="top"
-          :model="eventsDivisionsForm"
-          :rules="eventsDivisionsFormRules"
-        >
-          <el-form-item
-            prop="name"
-            :label="$t('eventsDivisionsFormItem1Label')"
-          >
-            <el-input
-              v-model="eventsDivisionsForm.name"
-              :placeholder="$t('eventsDivisionsFormItem1Placeholder')"
-            />
-          </el-form-item>
-
-          <el-form-item
-            prop="day"
-            :label="$t('eventsDivisionsFormItem2Label')"
-          >
-            <el-date-picker
-              v-model="eventsDivisionsForm.day"
-              type="date"
-              :placeholder="$t('eventsDivisionsFormItem2Placeholder')"
-              :picker-options="eventsDivisionsFormDayPickerOptions"
-            />
-          </el-form-item>
-
-          <el-form-item
-            prop="startsAt"
-            :label="$t('eventsDivisionsFormItem3Label')"
-          >
-            <el-time-select
-              v-model="eventsDivisionsForm.startsAt"
-              :placeholder="$t('eventsDivisionsFormItem3Placeholder')"
-              :picker-options="eventsDivisionsFormTimePickerOptions"
-            />
-          </el-form-item>
-
-          <el-form-item
-            prop="interval"
-            :label="$t('eventsDivisionsFormItem4Label')"
-          >
-            <el-select
-              v-model="eventsDivisionsForm.interval"
-              :placeholder="$t('eventsDivisionsFormItem4Placeholder')"
-            >
-              <el-option
-                v-for="(i, index) in intervals"
-                :key="index"
-                :label="i.label"
-                :value="i.value"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item
-            prop="distance"
-            label="Distance"
-          >
-            <el-input
-              v-model="eventsDivisionsForm.distance"
-              placeholder="Enter a distance"
-            />
-          </el-form-item>
-
-          <el-button
-            class="w-full mt-2 text-center"
-            type="primary"
-            :disabled="!eventsDivisionsContestantsIsConfigured"
-            @click="generateContestantList"
-          >
-            {{ $t("eventsDivisionsFormButton") }}
-          </el-button>
-        </el-form>
+          :form.sync="eventsDivisionsForm"
+        />
       </div>
 
       <div class="border-l border-r w-full px-5 overflow-y-auto">
@@ -298,17 +227,19 @@
 
 <script>
 import { mapMutations, mapActions, mapState } from "vuex"
-import { eventsDivisionsStub, eventsDivisionsContestantsStub } from "@/stubs"
+import { eventsDivisionsContestantsStub } from "@/stubs"
 import { parseTimeInput, formatTime, toMinutes } from "@/utils/time"
 import Avatar from "@/components/Avatar"
 import EventsDivisionsContestantsForm from "@/components/EventsDivisionsContestantsForm"
+import EventsDivisionsForm from "@/components/EventsDivisionsForm"
 
 export default {
   name: "EventsDivisionsEditDialog",
 
   components: {
     Avatar,
-    EventsDivisionsContestantsForm
+    EventsDivisionsContestantsForm,
+    EventsDivisionsForm
   },
 
   props: {
@@ -321,32 +252,8 @@ export default {
     return {
       isLoading: true,
       visible: this.shown,
-      eventsDivisionsForm: { ...eventsDivisionsStub },
-      eventsDivisionsFormRules: {
-        name: { required: true, message: this.$t("eventsDivisionsFormItem1Error") },
-        day: { required: true, message: this.$t("eventsDivisionsFormItem2Error") },
-        startsAt: { required: true, message: this.$t("eventsDivisionsFormItem3Error") },
-        interval: { required: true, message: this.$t("eventsDivisionsFormItem4Error") }
-      },
-      eventsDivisionsFormTimePickerOptions: {
-        start: "08:00",
-        step: "00:05",
-        end: "23:59"
-      },
-      intervals: [
-        { label: '5 min', value: '00:05' },
-        { label: '10 min', value: '00:10' },
-        { label: '15 min', value: '00:15' },
-        { label: '20 min', value: '00:20' },
-        { label: '25 min', value: '00:25' },
-        { label: '30 min', value: '00:30' },
-        { label: '45 min', value: '00:45' },
-        { label: '60 min', value: '01:00' }
-      ],
-      eventsDivisionsContestantsForms: [],
-      eventsDivisionsFormDayPickerOptions: {
-        disabledDate: this.eventsDivisionsFormDayPickerOptionsDisabledDate
-      }
+      eventsDivisionsForm: {},
+      eventsDivisionsContestantsForms: []
     }
   },
 
@@ -443,7 +350,9 @@ export default {
       await this.eventsDivisionsContestantsActionsList()
 
       for(let i = 0; this.eventsDivisionsContestantsStateList.length > i; i++) {
-        this.eventsDivisionsContestantsForms[i] = { ...this.eventsDivisionsContestantsStateList[i] }
+        this.eventsDivisionsContestantsForms[i] = {
+          ...this.eventsDivisionsContestantsStateList[i]
+        }
       }
 
       this.isLoading = false
@@ -468,15 +377,7 @@ export default {
     },
 
     async save() {
-      this.$refs.eventsDivisionsForm.validate(async (isValid) => {
-        if(!isValid) {
-          return this.$notify({
-            type: "error",
-            title: "Oops!",
-            message: this.$t("validationError")
-          })
-        }
-
+      this.$refs.eventsDivisionsForm.validate(async () => {
         this.eventsDivisionsForm.day = typeof this.eventsDivisionsForm.day === "string"
           ? this.eventsDivisionsForm.day
           : this.eventsDivisionsForm.day.toISOString()
@@ -509,7 +410,6 @@ export default {
           this.clear()
           this.close()
         } catch(e) {
-          console.error(e)
           this.$notify({
             type: "error",
             title: "Oops!",
@@ -520,17 +420,12 @@ export default {
     },
 
     clear() {
-      this.eventsDivisionsForm = { ...eventsDivisionsStub }
+      this.$refs.eventsDivisionsForm.clear()
     },
 
     close() {
       this.visible = false
       this.$emit("update:shown", false)
-    },
-
-    eventsDivisionsFormDayPickerOptionsDisabledDate(day) {
-      const time = day.getTime()
-      return time < this.event.startsAt || time > this.event.endsAt
     }
   }
 }

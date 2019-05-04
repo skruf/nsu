@@ -99,7 +99,7 @@ export default {
   },
 
   created() {
-    this.localForm = { ...this.form }
+    this.localForm = this.form
     if(this.currentParticipant) this.setWeapons()
   },
 

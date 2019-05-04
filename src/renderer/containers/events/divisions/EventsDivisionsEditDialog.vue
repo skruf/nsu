@@ -127,29 +127,42 @@
           <el-button
             type="text"
             size="mini"
+            :disabled="!eventsDivisionsContestantsIsConfigured"
             @click="eventsDivisionsContestantsAddForm"
           >
             <i class="el-icon-plus" />
           </el-button>
         </div>
 
-        <div v-if="eventsDivisionsContestantsForms.length > 0">
-          <template v-if="!isLoading">
+        <div v-if="showEventsDivisionsContestantsForms">
+          <div
+            v-for="(contestantForm, index) in eventsDivisionsContestantsForms"
+            :key="contestantForm.id"
+            class="flex items-center"
+          >
             <events-divisions-contestants-form
-              v-for="(contestantForm, index) in eventsDivisionsContestantsForms"
               ref="eventsDivisionsContestantsForms"
-              :key="index"
+              class="w-full"
               :form.sync="eventsDivisionsContestantsForms[index]"
               :participants="eventsParticipantsStateList"
             />
-          </template>
+
+            <el-button
+              type="text"
+              size="mini"
+              class="mb-5"
+              @click="eventsDivisionsContestantsRemoveForm(contestantForm, index)"
+            >
+              <i class="el-icon-minus" />
+            </el-button>
+          </div>
         </div>
 
         <div
           v-else
           class="data-placeholder"
         >
-          Generate list first
+          Set start time and interval to assign shooters
         </div>
       </div>
 
@@ -253,7 +266,8 @@ export default {
       isLoading: true,
       visible: this.shown,
       eventsDivisionsForm: {},
-      eventsDivisionsContestantsForms: []
+      eventsDivisionsContestantsForms: [],
+      eventsDivisionsContestantsToBeRemoved: []
     }
   },
 
@@ -273,6 +287,10 @@ export default {
       eventsParticipantsStateCount: "count",
       eventsParticipantsStateList: "list"
     }),
+
+    showEventsDivisionsContestantsForms() {
+      return this.eventsDivisionsContestantsForms.length > 0 && !this.isLoading
+    },
 
     eventsDivisionsContestantsIsConfigured() {
       return this.eventsDivisionsForm.startsAt && this.eventsDivisionsForm.interval
@@ -316,6 +334,12 @@ export default {
     shown(shown) {
       this.visible = shown
       this.$emit("update:shown", shown)
+    },
+    "eventsDivisionsForm.startsAt": function() {
+      this.setOrUpdateContestantsList()
+    },
+    "eventsDivisionsForm.interval": function() {
+      this.setOrUpdateContestantsList()
     }
   },
 
@@ -339,14 +363,14 @@ export default {
     }),
 
     async open() {
-      this.eventsDivisionsForm = { ...this.eventsDivision }
-
       this.eventsParticipantsMutationsSetListFilter({ eventId: this.event.id })
       await this.eventsParticipantsActionsList()
 
-      this.generateContestantList()
-
-      this.eventsDivisionsContestantsMutationsSetListFilter({ divisionId: this.eventsDivision.id })
+      this.eventsDivisionsForm = { ...this.eventsDivision }
+      this.setContestantList()
+      this.eventsDivisionsContestantsMutationsSetListFilter({
+        divisionId: this.eventsDivision.id
+      })
       await this.eventsDivisionsContestantsActionsList()
 
       for(let i = 0; this.eventsDivisionsContestantsStateList.length > i; i++) {
@@ -358,7 +382,29 @@ export default {
       this.isLoading = false
     },
 
-    generateContestantList() {
+    getTime(index) {
+      const starts = toMinutes(this.starts.hours, this.starts.minutes)
+      const interval = toMinutes(this.interval.hours, this.interval.minutes)
+      return formatTime(starts + (interval * index))
+    },
+
+    setOrUpdateContestantsList() {
+      if(!this.eventsDivisionsContestantsIsConfigured) return
+      this.eventsDivisionsContestantsForms.length
+        ? this.updateContestantsList()
+        : this.setContestantList()
+    },
+
+    updateContestantsList() {
+      this.eventsDivisionsContestantsForms = this.eventsDivisionsContestantsForms.map(
+        (form, index) => {
+          form.time = this.getTime(index)
+          return form
+        }
+      )
+    },
+
+    setContestantList() {
       this.eventsDivisionsContestantsForms = []
       this.eventsParticipantsStateList.forEach(
         () => { this.eventsDivisionsContestantsAddForm() }
@@ -367,13 +413,22 @@ export default {
 
     eventsDivisionsContestantsAddForm() {
       const stub = { ...eventsDivisionsContestantsStub }
-      const starts = toMinutes(this.starts.hours, this.starts.minutes)
-      const interval = toMinutes(this.interval.hours, this.interval.minutes)
       const index = this.eventsDivisionsContestantsForms.length
-      stub.time = formatTime(starts + (interval * index))
-      this.eventsDivisionsContestantsForms.push({
-        ...stub, divisionId: this.eventsDivision.id
-      })
+      stub.time = this.getTime(index)
+      this.eventsDivisionsContestantsForms.push({ ...stub, id: index })
+    },
+
+    eventsDivisionsContestantsRemoveForm(contestant, index) {
+      this.eventsDivisionsContestantsForms.splice(index, 1)
+      if(this.contestantExists(contestant.id)) {
+        this.eventsDivisionsContestantsToBeRemoved.push(contestant)
+      }
+    },
+
+    contestantExists(id) {
+      return this.eventsDivisionsContestantsStateList
+        .map(({ id }) => id)
+        .includes(id)
     },
 
     async save() {
@@ -385,20 +440,16 @@ export default {
         try {
           const division = await this.eventsDivisionsActionsEditOne(this.eventsDivisionsForm)
 
-          const contestantsToBeUpdated = this.eventsDivisionsContestantsForms
+          const contestants = this.eventsDivisionsContestantsForms
             .filter((contestant) => !!contestant.memberId && !!contestant.weapon.id)
-            .filter(({ id }) => (
-              this.eventsDivisionsContestantsStateList.map(({ id }) => id).includes(id)
-            ))
+            .map((contestant) => ({ ...contestant, divisionId: division.id }))
 
-          const contestantsToBeCreated = this.eventsDivisionsContestantsForms
-            .filter((contestant) => !!contestant.memberId && !!contestant.weapon.id)
-            .filter(({ id }) => (
-              !this.eventsDivisionsContestantsStateList.map(({ id }) => id).includes(id)
-            ))
+          const contestantsToBeUpdated = contestants.filter(({ id }) => this.contestantExists(id))
+          const contestantsToBeCreated = contestants.filter(({ id }) => !this.contestantExists(id))
 
           await this.eventsDivisionsContestantsActionsCreateMany(contestantsToBeCreated)
           await this.eventsDivisionsContestantsActionsEditMany(contestantsToBeUpdated)
+          await this.eventsDivisionsContestantsActionsDeleteMany(this.eventsDivisionsContestantsToBeRemoved)
 
           this.$notify({
             type: "success",

@@ -118,30 +118,50 @@
         />
       </div>
 
-      <div class="border-l border-r w-full px-5">
-        <h4 class="h4 mt-4 mb-8">
-          {{ $t("eventsDivisionsContestantsFormsTitle") }}
-        </h4>
+      <div class="border-l border-r w-full px-5 overflow-y-auto">
+        <div class="flex items-center mt-4 mb-8">
+          <h4 class="h4">
+            {{ $t("eventsDivisionsContestantsFormsTitle") }}
+          </h4>
 
-        <div
-          v-if="eventsDivisionsContestantsForms.length > 0"
-          v-loading="eventsParticipantsStateListIsLoading"
-        >
-          <events-divisions-contestants-form
+          <el-button
+            type="text"
+            size="mini"
+            :disabled="!eventsDivisionsContestantsIsConfigured"
+            @click="eventsDivisionsContestantsAddForm"
+          >
+            <i class="el-icon-plus" />
+          </el-button>
+        </div>
+
+        <div v-if="showEventsDivisionsContestantsForms">
+          <div
             v-for="(contestantForm, index) in eventsDivisionsContestantsForms"
-            ref="eventsDivisionsContestantsForms"
-            :key="index"
-            :form.sync="eventsDivisionsContestantsForms[index]"
-            :participants="eventsParticipantsStateList"
-            @update:form="eventsDivisionsContestantsFormUpdate(index)"
-          />
+            :key="contestantForm.id"
+            class="flex items-center"
+          >
+            <events-divisions-contestants-form
+              ref="eventsDivisionsContestantsForms"
+              :form.sync="eventsDivisionsContestantsForms[index]"
+              :participants="eventsParticipantsStateList"
+            />
+
+            <el-button
+              type="text"
+              size="mini"
+              class="mb-5"
+              @click="eventsDivisionsContestantsRemoveForm(index)"
+            >
+              <i class="el-icon-minus" />
+            </el-button>
+          </div>
         </div>
 
         <div
           v-else
           class="data-placeholder"
         >
-          Generate list first
+          Set start time and interval to assign shooters
         </div>
       </div>
 
@@ -262,6 +282,10 @@ export default {
       eventsParticipantsStateList: "list"
     }),
 
+    showEventsDivisionsContestantsForms() {
+      return this.eventsDivisionsContestantsForms.length > 0
+    },
+
     eventsDivisionsContestantsIsConfigured() {
       return this.eventsDivisionsForm.startsAt && this.eventsDivisionsForm.interval
     },
@@ -303,6 +327,12 @@ export default {
     shown(shown) {
       this.visible = shown
       this.$emit("update:shown", shown)
+    },
+    "eventsDivisionsForm.startsAt": function() {
+      this.setOrUpdateContestantsList()
+    },
+    "eventsDivisionsForm.interval": function() {
+      this.setOrUpdateContestantsList()
     }
   },
 
@@ -325,25 +355,44 @@ export default {
       await this.eventsParticipantsActionsList()
     },
 
-    generateContestantList() {
-      this.eventsDivisionsContestantsForms = []
-      for(let i = 0; this.eventsParticipantsStateList.length >= i; i++) {
-        this.eventsDivisionsContestantsAddForm(i)
-      }
-    },
-
-    eventsDivisionsContestantsAddForm(i) {
-      const stub = { ...eventsDivisionsContestantsStub }
+    getTime(index) {
       const starts = toMinutes(this.starts.hours, this.starts.minutes)
       const interval = toMinutes(this.interval.hours, this.interval.minutes)
-      stub.time = formatTime(starts + (interval * i))
-      this.eventsDivisionsContestantsForms.push(stub)
+      return formatTime(starts + (interval * index))
     },
 
-    eventsDivisionsContestantsFormUpdate(i) {
-      if(i === this.eventsDivisionsContestantsForms.length - 1) {
-        this.eventsDivisionsContestantsAddForm(i + 1)
-      }
+    setOrUpdateContestantsList() {
+      if(!this.eventsDivisionsContestantsIsConfigured) return
+      this.eventsDivisionsContestantsForms.length
+        ? this.updateContestantsList()
+        : this.setContestantList()
+    },
+
+    updateContestantsList() {
+      this.eventsDivisionsContestantsForms = this.eventsDivisionsContestantsForms.map(
+        (form, index) => {
+          form.time = this.getTime(index)
+          return form
+        }
+      )
+    },
+
+    setContestantList() {
+      this.eventsDivisionsContestantsForms = []
+      this.eventsParticipantsStateList.forEach(
+        () => { this.eventsDivisionsContestantsAddForm() }
+      )
+    },
+
+    eventsDivisionsContestantsAddForm() {
+      const stub = { ...eventsDivisionsContestantsStub }
+      const index = this.eventsDivisionsContestantsForms.length
+      stub.time = this.getTime(index)
+      this.eventsDivisionsContestantsForms.push({ ...stub, id: index })
+    },
+
+    eventsDivisionsContestantsRemoveForm(index) {
+      this.eventsDivisionsContestantsForms.splice(index, 1)
     },
 
     async save() {
@@ -351,7 +400,7 @@ export default {
         const division = { ...this.eventsDivisionsForm }
         division.eventId = this.event.id
         division.day = division.day.toISOString()
-        division.startsAt = this.eventsDivisionsEndsAt
+        division.startsAt = this.eventsDivisionsEndsAt // ??
         division.endsAt = this.eventsDivisionsEndsAt
 
         try {

@@ -99,15 +99,6 @@
         placeholder="Enter a distance"
       />
     </el-form-item>
-
-    <!-- <el-button
-      class="w-full mt-2 text-center"
-      type="primary"
-      :disabled="!eventsDivisionsContestantsIsConfigured"
-      @click="generateContestantList"
-    >
-      {{ $t("eventsDivisionsFormButton") }}
-    </el-button> -->
   </el-form>
 </template>
 

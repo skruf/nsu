@@ -11,24 +11,12 @@
 }
 </i18n>
 
-<style lang="stylus">
-// .el-dialog.events-divisions-contestants-results-preview-dialog
-//   display flex
-//
-//   .el-dialog__body
-//     display flex
-//     flex-grow 1
-//     padding 0
-//     overflow-y auto
-</style>
-
 <template>
   <el-dialog
     custom-class="events-divisions-contestants-results-preview-dialog"
     :fullscreen="false"
     :visible.sync="visible"
     :append-to-body="true"
-    @open="open"
     @close="close"
   >
     <template slot="title">
@@ -42,69 +30,9 @@
     </template>
 
     <div class="flex min-h-full w-full px-6 py-3">
-      <el-table
-        :data="results"
-        row-key="id"
-        class="no-hover small"
-        empty-text
-      >
-        <el-table-column
-          type="index"
-          width="40"
-        />
-
-        <el-table-column
-          prop="total"
-          label="Total"
-          width="60px"
-        >
-          <template slot-scope="scope">
-            <h6 class="h6">
-              {{ scope.row.total }}
-            </h6>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="contestantId"
-          width="60px"
-        >
-          <template slot-scope="scope">
-            <avatar
-              size="small"
-              :first-name="scope.row.contestant.member.firstName"
-              :last-name="scope.row.contestant.member.lastName"
-            />
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="contestantId"
-          label="Participant"
-        >
-          <template slot-scope="scope">
-            <h6 class="h6">
-              {{ scope.row.contestant.member.firstName }} {{ scope.row.contestant.member.lastName }}
-            </h6>
-            <small class="small">
-              ({{ scope.row.contestant.weapon.class.name }}, {{ scope.row.contestant.weapon.calibre }})
-            </small>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="hits"
-          label="Hits"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.hits.join(" ") }}
-          </template>
-        </el-table-column>
-
-        <template slot="empty">
-          No results yet
-        </template>
-      </el-table>
+      <events-divisions-contestants-results-list-table
+        :results="results"
+      />
     </div>
 
     <template slot="footer">
@@ -120,13 +48,13 @@
 </template>
 
 <script>
-import Avatar from "@/components/Avatar"
+import EventsDivisionsContestantsResultsListTable from "@/components/EventsDivisionsContestantsResultsListTable"
 
 export default {
   name: "EventsDivisionsContestantsResultsPreviewDialog",
 
   components: {
-    Avatar
+    EventsDivisionsContestantsResultsListTable
   },
 
   props: {
@@ -140,12 +68,6 @@ export default {
     }
   },
 
-  computed: {
-    // showResults() {
-    //   return Object.keys(this.results).length > 0
-    // }
-  },
-
   watch: {
     shown(shown) {
       this.visible = shown
@@ -154,9 +76,6 @@ export default {
   },
 
   methods: {
-    open() {
-    },
-
     close() {
       this.visible = false
       this.$emit("update:shown", false)

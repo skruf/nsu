@@ -39,63 +39,37 @@
 
 <style lang="stylus">
 .events-participants-manager
-
-  .selection
-    box-shadow 0 0px 12px 2px rgba(223, 228, 234, .6)
-    background-color #F6F9FB
-    // flex 2
-
-  .list_item
-    padding 10px
-    display flex
-    align-items center
-    justify-content space-between
-    background-color var(--input-bg-color)
-    border-radius var(--border-radius)
-    font-weight var(--controller-font-weight)
-    box-shadow var(--box-shadow)
-    // border var(--border-width) solid var(--border-color)
-    &:hover
-      color var(--primary-color)
-      cursor pointer
-    &.is-active
-      background-color var(--bg-alt-color)
-
-  .placeholder
-    display flex
-    text-align center
-
   .el-table
     .h6, .small
       overflow hidden
       text-overflow ellipsis
       white-space nowrap
-
 </style>
 
 <template>
   <div class="events-participants-manager flex flex-1">
-    <div class="selection flex flex-1">
+    <div class="flex flex-1">
       <div
         v-loading="clubsStateListIsLoading"
-        class="flex-1 py-5 pl-5 mr-2 overflow-y-scroll"
+        class="p-5 dialog_sidebar"
       >
         <h5 class="h5 pb-2">
           {{ $t("selectClub") }}
         </h5>
 
-        <search-form
+        <!-- <search-form
           v-model="clubsSearch"
           class="small py-2"
           :placeholder="$t('clubsSearchFormPlaceholder')"
           @submit="clubsSearchSubmit"
-        />
+        /> -->
 
         <ul>
           <li
             v-for="club in clubsStateList"
             :key="club.id"
-            :class="[ 'mt-2', 'list_item', isClubActive(club) ]"
+            class="mt-2 card card-clickable"
+            :class="{ 'is-active': isClubActive(club) }"
             @click="fetchClubsMemebersList(club)"
           >
             {{ club.name }} <i class="el-icon-arrow-right" />
@@ -105,24 +79,24 @@
 
       <div
         v-loading="clubsIsLoading"
-        class="flex-1 py-5 pr-5 ml-2 overflow-y-scroll"
+        class="flex-1 p-5 overflow-y-scroll"
       >
         <h5 class="h5 pb-2">
           {{ $t("addClubsMembers") }}
         </h5>
 
-        <search-form
+        <!-- <search-form
           v-model="membersSearch"
           class="small py-2"
           :placeholder="$t('clubsMembersSearchFormPlaceholder')"
           @submit="membersSearchSubmit"
-        />
+        /> -->
 
         <ul v-if="showClubMembers">
           <li
             v-for="member in clubsMembersListFilteredByEventsParticipants"
             :key="member.id"
-            class="list_item mt-2"
+            class="card card-clickable mt-2"
             @click="eventsParticipantsOpenCreateDialog(member)"
           >
             <div class="flex">
@@ -138,9 +112,9 @@
           </li>
         </ul>
         <template v-else>
-          <small class="small placeholder">
+          <div class="data-placeholder">
             {{ $t("clubsMembersPlaceholderText") }}
-          </small>
+          </div>
         </template>
       </div>
     </div>
@@ -334,15 +308,15 @@
 <script>
 import { mapActions, mapState, mapMutations } from "vuex"
 import Avatar from "@/components/Avatar"
-import SearchForm from "@/components/SearchForm"
-import EventsParticipantsCreateDialog from "@/containers/events/participants/EventsParticipantsCreateDialog"
+// import SearchForm from "@/components/SearchForm"
+import EventsParticipantsCreateDialog from "@/containers/EventsParticipantsCreateDialog"
 
 export default {
   name: "EventsParticipantsManager",
 
   components: {
     Avatar,
-    SearchForm,
+    // SearchForm,
     EventsParticipantsCreateDialog
   },
 
@@ -423,7 +397,7 @@ export default {
   methods: {
     isClubActive(club) {
       if(this.clubsStateSelected && club.id === this.clubsStateSelected.id) {
-        return "is-active"
+        return true
       }
     },
 

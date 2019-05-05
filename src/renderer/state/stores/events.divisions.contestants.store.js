@@ -1,7 +1,9 @@
 import { eventsDivisionsContestantsService } from "@/services"
 import extend from "@/state/extensions"
 
-const state = {}
+const state = {
+  sortBy: "time"
+}
 const mutations = {}
 const actions = {}
 const getters = {}

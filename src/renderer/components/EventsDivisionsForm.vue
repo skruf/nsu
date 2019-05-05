@@ -170,7 +170,8 @@ export default {
       return time < this.event.startsAt || time > this.event.endsAt
     },
     clear() {
-      this.eventsDivisionsForm = { ...eventsDivisionsStub }
+      this.eventsDivisionsForm = this.form
+      // this.eventsDivisionsForm = { ...eventsDivisionsStub }
     },
     validate(cb) {
       this.$refs.eventsDivisionsForm.validate((isValid) => {

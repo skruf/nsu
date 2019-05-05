@@ -11,7 +11,7 @@ import {
   Button,
   Loading
 } from "element-ui"
-import RangesCreateDialog from "@/containers/ranges/RangesCreateDialog"
+import RangesCreateDialog from "@/containers/RangesCreateDialog"
 import { rangesStub } from "@/stubs"
 import { rangesFixture } from "@/fixtures"
 import rangesStore from "@/state/stores/ranges.store"

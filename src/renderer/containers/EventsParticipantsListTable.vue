@@ -255,7 +255,7 @@
 import { mapActions, mapState, mapMutations } from "vuex"
 // import SearchForm from "@/components/SearchForm"
 import Avatar from "@/components/Avatar"
-import EventsParticipantsViewDialog from "@/containers/events/participants/EventsParticipantsViewDialog"
+import EventsParticipantsViewDialog from "@/containers/EventsParticipantsViewDialog"
 
 export default {
   name: "EventsParticipantsListTable",

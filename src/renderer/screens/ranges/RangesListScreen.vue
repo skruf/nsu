@@ -64,9 +64,9 @@
 
 <script>
 import BreadcrumbBar from "@/components/BreadcrumbBar"
-import RangesListTable from "@/containers/ranges/RangesListTable"
-import RangesCreateDialog from "@/containers/ranges/RangesCreateDialog"
-import RangesEditDialog from "@/containers/ranges/RangesEditDialog"
+import RangesListTable from "@/containers/RangesListTable"
+import RangesCreateDialog from "@/containers/RangesCreateDialog"
+import RangesEditDialog from "@/containers/RangesEditDialog"
 
 export default {
   name: "RangesListScreen",

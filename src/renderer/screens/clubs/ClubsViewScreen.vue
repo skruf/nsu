@@ -189,10 +189,10 @@
 <script>
 import { mapActions, mapState } from "vuex"
 import BreadcrumbBar from "@/components/BreadcrumbBar"
-import ClubsEditDialog from "@/containers/clubs/ClubsEditDialog"
-import ClubsMembersListTable from "@/containers/clubs/members/ClubsMembersListTable"
-import ClubsMembersCreateDialog from "@/containers/clubs/members/ClubsMembersCreateDialog"
-import ClubsMembersEditDialog from "@/containers/clubs/members/ClubsMembersEditDialog"
+import ClubsEditDialog from "@/containers/ClubsEditDialog"
+import ClubsMembersListTable from "@/containers/ClubsMembersListTable"
+import ClubsMembersCreateDialog from "@/containers/ClubsMembersCreateDialog"
+import ClubsMembersEditDialog from "@/containers/ClubsMembersEditDialog"
 
 export default {
   name: "ClubsViewScreen",

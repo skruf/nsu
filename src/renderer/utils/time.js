@@ -12,3 +12,9 @@ export const formatTime = (minutes) => {
 }
 
 export const toMinutes = (hours, minutes) => (hours * 60) + minutes
+
+export default {
+  parseTimeInput,
+  formatTime,
+  toMinutes
+}

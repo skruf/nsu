@@ -16,20 +16,6 @@
   position relative
   background-image linear-gradient(120deg, #f59f7a, #b3315f)
   margin-bottom -20px
-  // display flex
-  // justify-content space-between
-  // flex-direction column
-  // align-items flex-start
-  // padding 20px 20px 55px
-  // color #fff
-  // font-weight 300
-  // position relative
-  // background-image linear-gradient(120deg, #F59F7A, #B3315F)
-  // background-image var(--header-bg)
-  // background-image url("../../../static/img/header-bg.svg")
-  // background-image url("../../../static/img/header-bg.png")
-  // background-size cover
-  // background-position bottom
   &:before,
   &:after
     content ""
@@ -84,7 +70,6 @@
   .page-info_item
     margin-left 2rem
     overflow-x hidden
-    // flex 1
   .small, .h5
     white-space nowrap
     text-overflow ellipsis
@@ -111,9 +96,8 @@
 
 .content
   flex 1
-  padding 20px
   margin-bottom 20px
-  // margin 20px 0
+  padding 20px
 
 .el-footer
   padding 15px 0
@@ -131,6 +115,24 @@
   background-color rgba(223, 228, 234, 0.85)
   opacity 1
 
+.card
+  padding 10px
+  display flex
+  align-items center
+  justify-content space-between
+  background-color var(--input-bg-color)
+  border-radius var(--border-radius)
+  font-weight var(--controller-font-weight)
+  box-shadow var(--box-shadow)
+  // border var(--border-width) solid var(--border-color)
+  &.card-clickable:hover
+    color var(--primary-color)
+    cursor pointer
+  &.is-active
+    // background-color var(--bg-color)
+    &, .h6
+      color var(--primary-color)
+
 .el-dialog
   box-shadow none
   border-radius 3px
@@ -138,8 +140,23 @@
   &:not(.is-fullscreen)
     margin-top 5vh !important
   &.is-fullscreen
+    display flex
+    flex-direction column
+    .el-dialog__body
+      display flex
+      flex-grow 1
+      padding 0
+      overflow-y auto
     &, .el-dialog__header:before
       border-radius 0
+
+.dialog_sidebar
+  box-shadow 0 0px 12px 2px rgba(223, 228, 234, .6)
+  background-color #F6F9FB
+  min-width 300px
+  width 30%
+  overflow-y auto
+
 .el-dialog__title
   line-height 1.5
 .el-dialog__headerbtn
@@ -184,11 +201,11 @@
   border-bottom-right-radius inherit
   padding-top 10px
   padding-bottom 10px
+  min-height 59px
 
 .el-notification
   border-radius var(--border-radius)
   border none
-  // box-shadow var(--box-shadow)
 
 .el-alert
   line-height 1.2

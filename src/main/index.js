@@ -1,8 +1,9 @@
 "use strict"
 
-import { app, BrowserWindow, ipcMain, Menu } from "electron"
+import { app, BrowserWindow, ipcMain, Menu, shell } from "electron"
 import log from "electron-log"
 import stateKeeper from "electron-window-state"
+import fs from "fs"
 // import { autoUpdater } from "electron-updater"
 
 /**
@@ -86,6 +87,18 @@ function createWindow() {
 
   ipcMain.on("APP_STARTED", (event) => {
     log.info("App has successfully started")
+  })
+
+  ipcMain.on("PRINT_WINDOW", (event, fileName) => {
+    win.webContents.printToPDF({}, (error, data) => {
+      if(error) throw error
+      const documents = app.getPath("documents")
+      const path = `${documents}/${fileName}.pdf`
+      fs.writeFile(path, data, (error) => {
+        if(error) throw error
+        shell.openExternal(`file://${path}`)
+      })
+    })
   })
 
   win.on("closed", () => {

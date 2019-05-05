@@ -10,18 +10,21 @@ export default (item, stub) => {
   return data
 }
 
-// const copy = (value, stubValue) => {
-//   if(Array.isArray(value)) {
-//   } else if(typeof value === "object") {
-//   }
-// }
-
 const filter = (item, stub) => {
   const data = {}
 
   for(let key in item) {
     if(stub.hasOwnProperty(key)) {
-      data[key] = item[key]
+      let value = item[key]
+      if(Array.isArray(value)) {
+        data[key] = value.map(
+          (v) => typeof v === "object" ? filter(v, stub[key]) : v
+        )
+      } else if(typeof value === "object") {
+        data[key] = value = filter(value, stub[key])
+      } else {
+        data[key] = value
+      }
     }
   }
 

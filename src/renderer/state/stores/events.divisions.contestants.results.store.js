@@ -1,7 +1,9 @@
 import { eventsDivisionsContestantsResultsService } from "@/services"
 import extend from "@/state/extensions"
 
-const state = {}
+const state = {
+  sortBy: "-total"
+}
 const mutations = {}
 const actions = {}
 const getters = {}

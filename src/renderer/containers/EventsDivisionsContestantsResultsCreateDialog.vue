@@ -2,51 +2,21 @@
 {
   "en": {
     "title": "Input results",
-    "subtitle": "For %{event}"
+    "subtitle": "For %{event}",
+    "preview": "Preview",
+    "saveSuccess": "Results for %{count} participants was saved"
   },
   "no": {
-    "title": "Fyll inn resultater",
-    "subtitle": "For %{event}"
+    "title": "Angi resultater",
+    "subtitle": "For %{event}",
+    "preview": "Forhåndsvis",
+    "saveSuccess": "Resultater for %{count} antall deltakere ble lagret"
   }
 }
 </i18n>
 
 <style lang="stylus">
 .el-dialog.events-divisions-contestants-results-create-dialog
-  display flex
-  flex-direction column
-
-  .selection
-    box-shadow 0 0px 12px 2px rgba(223, 228, 234, .6)
-    background-color #F6F9FB
-
-  .el-dialog__body
-    display flex
-    flex-grow 1
-    padding 0
-    overflow-y auto
-
-  .side
-    min-width 250px
-    width 25%
-
-  .list_item
-    padding 10px
-    display flex
-    align-items center
-    justify-content space-between
-    background-color var(--input-bg-color)
-    border-radius var(--border-radius)
-    font-weight var(--controller-font-weight)
-    box-shadow var(--box-shadow)
-    // border var(--border-width) solid var(--border-color)
-    &:hover
-      color var(--primary-color)
-      cursor pointer
-    &.is-active
-      &, .h6
-        color var(--primary-color)
-
   .hit
     max-width 40px
     width 100%
@@ -78,40 +48,19 @@
         {{ $t("title") }}
       </h3>
       <small class="small">
-        {{ $t("subtitle", { event: event.title }) }}
+        {{ $t("subtitle", { event: eventsStateSelected.title }) }}
       </small>
     </template>
 
-    <div
-      v-loading="eventsDivisionsStateListIsLoading"
-      class="flex min-h-full w-full"
-    >
-      <div class="side selection p-6">
-        <h5 class="h5 pb-2">
-          Select division
-        </h5>
-
-        <ul>
-          <li
-            v-for="division in eventsDivisionsStateList"
-            :key="division.id"
-            :class="[ 'mt-2', 'list_item', isDivisionActive(division) ]"
-            @click="fetchEventsDivisionsContestantsList(division)"
-          >
-            <div class="w-full">
-              <h6 class="h6 inline mr-2">
-                {{ division.name }}
-              </h6>
-              {{ division.distance }}
-            </div>
-            <i class="el-icon-arrow-right" />
-          </li>
-        </ul>
-      </div>
+    <div class="flex min-h-full w-full">
+      <events-divisions-list-menu
+        @select-division="selectDivision"
+        @eventsDivisionsOpenCreateDialog="eventsDivisionsOpenCreateDialog"
+      />
 
       <div
-        v-loading="eventsDivisionsContestantsStateListIsLoading"
-        class="flex-1 p-6 overflow-y-scroll"
+        v-loading="contestantsIsLoading"
+        class="flex-1 p-5 overflow-y-scroll"
       >
         <h5 class="h5 pb-2">
           Input results
@@ -136,7 +85,7 @@
                   :key="index"
                   class="text-center mx-1 hit"
                 >
-                  #{{ index }}
+                  #{{ index + 1 }}
                 </div>
               </div>
 
@@ -190,7 +139,10 @@
               </div>
 
               <div class="notes">
-                <el-tooltip placement="top">
+                <el-tooltip
+                  placement="top"
+                  tabindex="-1"
+                >
                   <ul slot="content">
                     notes..
                   </ul>
@@ -202,11 +154,12 @@
             </el-form>
           </li>
         </ul>
-        <template v-else>
-          <small class="small placeholder">
-            Select a division
-          </small>
-        </template>
+        <div
+          v-else
+          class="data-placeholder"
+        >
+          Select a division
+        </div>
       </div>
     </div>
 
@@ -223,11 +176,12 @@
         type="text"
         @click="preview"
       >
-        Preview
+        {{ $t("preview") }}
       </el-button>
       <el-button
         class="block"
         type="primary"
+        @click="save"
       >
         {{ $t("save") }}
       </el-button>
@@ -243,6 +197,7 @@
 <script>
 import { mapActions, mapState, mapMutations } from "vuex"
 import Avatar from "@/components/Avatar"
+import EventsDivisionsListMenu from "@/containers/EventsDivisionsListMenu"
 import EventsDivisionsContestantsResultsPreviewDialog from "@/components/EventsDivisionsContestantsResultsPreviewDialog"
 import _cloneDeep from "lodash.clonedeep"
 
@@ -255,13 +210,13 @@ export default {
   name: "EventsDivisionsContestantsResultsCreateDialog",
 
   components: {
+    EventsDivisionsListMenu,
     Avatar,
     EventsDivisionsContestantsResultsPreviewDialog
   },
 
   props: {
-    shown: { type: Boolean, default: false },
-    event: { type: Object, required: true }
+    shown: { type: Boolean, default: false }
   },
 
   data: function() {
@@ -274,24 +229,24 @@ export default {
   },
 
   computed: {
-    ...mapActions("events/divisions/contestants/results", {
-      eventsDivisionsContestantsResultsActionsCreateManyIsLoading: "createManyIsLoading"
+    ...mapState("events", {
+      eventsStateSelected: "selected"
     }),
-
+    ...mapState("events/divisions/contestants/results", {
+      eventsDivisionsContestantsResultsStateCreateManyIsLoading: "createManyIsLoading"
+    }),
     ...mapState("events/divisions/contestants", {
       eventsDivisionsContestantsStateList: "list",
       eventsDivisionsContestantsStateListIsLoading: "listIsLoading"
     }),
-
-    ...mapState("events/divisions", {
-      eventsDivisionsStateListIsLoading: "listIsLoading",
-      eventsDivisionsStateList: "list",
-      eventsDivisionsStateSelectedIsLoading: "selectedIsLoading",
-      eventsDivisionsStateSelected: "selected"
-    }),
-
     showEventsDivisionsContestantsList() {
       return Object.keys(this.eventsDivisionsContestantsStateList).length > 0
+    },
+    contestantsIsLoading() {
+      return (
+        this.eventsDivisionsContestantsResultsStateCreateManyIsLoading ||
+        this.eventsDivisionsContestantsStateListIsLoading
+      )
     }
   },
 
@@ -303,6 +258,16 @@ export default {
   },
 
   methods: {
+    ...mapActions("events/divisions/contestants/results", {
+      eventsDivisionsContestantsResultsActionsCreateMany: "createMany"
+    }),
+    ...mapMutations("events/divisions/contestants", {
+      "eventsDivisionsContestantsMutationsSetListFilter": "SET_LIST_FILTER"
+    }),
+    ...mapActions("events/divisions/contestants", {
+      eventsDivisionsContestantsActionsList: "list"
+    }),
+
     async open() {
       if(this.showEventsDivisionsContestantsList) {
         this.createEventsDivisionsContestantsResultsForms()
@@ -317,19 +282,16 @@ export default {
       this.eventsDivisionsContestantsResultsForms = form
     },
 
-    async fetchEventsDivisionsContestantsList(division) {
-      try {
-        await this.eventsDivisionsActionsSelect({ id: division.id })
-        this.eventsDivisionsContestantsMutationsSetListFilter({ divisionId: division.id })
-        await this.eventsDivisionsContestantsActionsList()
-        this.createEventsDivisionsContestantsResultsForms()
-      } catch(e) {
-        this.$notify({
-          type: "error",
-          title: "Oops!",
-          message: e.message
-        })
-      }
+    selectDivision(division) {
+      this.createEventsDivisionsContestantsResultsForms()
+    },
+
+    eventsDivisionsOpenCreateDialog() {
+      this.$emit("eventsDivisionsOpenCreateDialog")
+    },
+
+    openEventsDivisionsContestantsResultsPreviewDialog() {
+      this.showEventsDivisionsContestantsResultsPreviewDialog = true
     },
 
     getTotal(hits) {
@@ -349,7 +311,7 @@ export default {
             total,
             contestant: contestant,
             contestantId: contestant.id,
-            eventId: contestant.divisionId
+            divisionId: contestant.divisionId
           }
         }
       ).filter((contestant) => contestant.total !== 0)
@@ -360,35 +322,30 @@ export default {
       this.openEventsDivisionsContestantsResultsPreviewDialog()
     },
 
-    openEventsDivisionsContestantsResultsPreviewDialog() {
-      this.showEventsDivisionsContestantsResultsPreviewDialog = true
-    },
+    async save() {
+      this.setResults()
+      try {
+        const { count } = await this.eventsDivisionsContestantsResultsActionsCreateMany(
+          this.eventsDivisionsContestantsResults
+        )
 
-    isDivisionActive(division) {
-      if(
-        this.eventsDivisionsStateSelected &&
-        this.eventsDivisionsStateSelected.id === division.id
-      ) {
-        return "is-active"
+        this.$notify({
+          type: "success",
+          title: this.$t("success"),
+          message: this.$t("saveSuccess", {
+            count
+          })
+        })
+        // this.clear()
+        this.close()
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
       }
     },
-
-    ...mapActions("events/divisions/contestants/results", {
-      eventsDivisionsContestantsResultsActionsCreateMany: "createMany"
-    }),
-
-    ...mapMutations("events/divisions/contestants", {
-      "eventsDivisionsContestantsMutationsSetListFilter": "SET_LIST_FILTER"
-    }),
-
-    ...mapActions("events/divisions/contestants", {
-      eventsDivisionsContestantsActionsList: "list"
-    }),
-
-    ...mapActions("events/divisions", {
-      eventsDivisionsActionsList: "list",
-      eventsDivisionsActionsSelect: "select"
-    }),
 
     close() {
       this.visible = false

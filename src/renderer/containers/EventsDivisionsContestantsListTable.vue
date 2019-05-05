@@ -29,7 +29,8 @@
     class="events-divisions-contestants-list-table"
   >
     <el-table
-      :data="eventsDivisionsContestantsListLocal"
+      ref="eventsDivisionsContestantsListTable"
+      :data="eventsDivisionsContestantsStateList"
       row-key="id"
       empty-text
       class="small no-hover"
@@ -51,7 +52,7 @@
             {{ scope.row.time }}
           </h6>
           <small class="small">
-            {{ division.day | moment("DD.MM") }}
+            {{ eventsDivisionsStateSelected.day | moment("DD.MM") }}
           </small>
         </template>
       </el-table-column>
@@ -105,7 +106,7 @@
         {{ $t("tablePlaceholderText") }}
         <el-button
           type="text"
-          disabled
+          @click="eventsDivisionsContestantsOpenEditDialog"
         >
           {{ $t("tablePlaceholderButton") }}
         </el-button>
@@ -115,55 +116,41 @@
 </template>
 
 <script>
-import { mapMutations, mapActions, mapState } from "vuex"
+import { mapState } from "vuex"
 import Avatar from "@/components/Avatar"
 
 export default {
   name: "EventsDivisionsContestantsListTable",
 
-  components: { Avatar },
-
-  props: {
-    division: { type: Object, required: true }
+  components: {
+    Avatar
   },
 
   data: () => ({
-    eventsDivisionsContestantsSortOrders: [ "descending", "ascending" ],
-    eventsDivisionsContestantsListLocal: []
+    eventsDivisionsContestantsSortOrders: [ "descending", "ascending" ]
   }),
 
-  computed: mapState("events/divisions/contestants", {
-    eventsDivisionsContestantsStateListIsLoading: "listIsLoading",
-    eventsDivisionsContestantsStateCount: "count",
-    eventsDivisionsContestantsStateList: "list"
-  }),
-
-  async created() {
-    // const store = this.$store
-    // if(!(store && store.state && store.state["currentUser"])) {
-    //   this.$store.registerModule("currentUser", userModule)
-    // }
-
-    this.eventsDivisionsContestantsMutationsSetListFilter({
-      divisionId: this.division.id
+  computed: {
+    ...mapState("events/divisions", {
+      eventsDivisionsStateSelected: "selected"
+    }),
+    ...mapState("events/divisions/contestants", {
+      eventsDivisionsContestantsStateListIsLoading: "listIsLoading",
+      eventsDivisionsContestantsStateList: "list"
     })
-    await this.eventsDivisionsContestantsActionsList()
-    this.eventsDivisionsContestantsListLocal = [
-      ...this.eventsDivisionsContestantsStateList
-    ]
+  },
 
-    // console.log(this.eventsDivisionsContestantsStateList)
+  watch: {
+    eventsDivisionsContestantsStateList: function() {
+      this.$nextTick(function() {
+        this.$refs.eventsDivisionsContestantsListTable.doLayout()
+      })
+    }
   },
 
   methods: {
-    ...mapMutations("events/divisions/contestants", {
-      "eventsDivisionsContestantsMutationsSetListFilter": "SET_LIST_FILTER"
-    }),
-    ...mapActions("events/divisions/contestants", {
-      eventsDivisionsContestantsActionsList: "list"
-    }),
-    eventsDivisionsContestantsOpenCreateDialog() {
-      this.$emit("eventsDivisionsContestantsOpenCreateDialog")
+    eventsDivisionsContestantsOpenEditDialog() {
+      this.$emit("eventsDivisionsContestantsOpenEditDialog", this.division)
     }
   }
 }

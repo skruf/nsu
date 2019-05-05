@@ -133,6 +133,5 @@ export const updateMany = async (
       collection, { [filterKey]: item[filterKey] }, item, options, json
     ))
   )
-  docs.forEach((d) => console.log(d.toJSON()))
   return docs
 }

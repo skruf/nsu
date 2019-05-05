@@ -93,14 +93,14 @@
                     <i class="el-icon-location el-icon--left" />
                     {{ $t("mapRange") }}
                   </el-dropdown-item>
-                  <el-dropdown-item
+                  <!-- <el-dropdown-item
                     :command="{
                       handler: 'eventsOpenPrintDialog'
                     }"
                   >
                     <i class="el-icon-printer el-icon--left" />
                     {{ $t("printEvent") }}
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                   <el-dropdown-item
                     :command="{
                       handler: 'eventsOpenEditDialog'
@@ -215,46 +215,11 @@
           name="divisions"
           :label="$t('divisions')"
         >
-          <div class="content">
-            <events-divisions-list
+          <div class="content p-0">
+            <events-divisions-view
               v-if="!eventsStateSelectedIsLoading"
-              :event="eventsStateSelected"
-              @eventsDivisionsOpenCreateDialog="eventsDivisionsOpenCreateDialog"
-              @eventsDivisionsOpenEditDialog="eventsDivisionsOpenEditDialog"
             />
           </div>
-
-          <el-footer height="auto">
-            <el-button
-              type="primary"
-              @click="eventsDivisionsOpenCreateDialog"
-            >
-              <i class="el-icon-plus el-icon--left" />
-              {{ $t("createDivision") }}
-            </el-button>
-          </el-footer>
-        </el-tab-pane>
-
-        <el-tab-pane
-          name="results"
-          :label="$t('results')"
-        >
-          <div class="content">
-            <events-divisions-contestants-results-list
-              v-if="!eventsStateSelectedIsLoading"
-              :event="eventsStateSelected"
-            />
-          </div>
-
-          <el-footer height="auto">
-            <el-button
-              type="primary"
-              @click="eventsDivisionsContestantsResultsOpenCreateDialog"
-            >
-              <i class="el-icon-plus el-icon--left" />
-              {{ $t("inputResults") }}
-            </el-button>
-          </el-footer>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -263,29 +228,11 @@
       :shown.sync="clubsMembersShowCreateDialog"
     />
 
-    <events-divisions-create-dialog
-      v-if="!eventsStateSelectedIsLoading"
-      :shown.sync="eventsDivisionsShowCreateDialog"
-      :event="eventsStateSelected"
-    />
-
-    <events-divisions-edit-dialog
-      v-if="!eventsStateSelectedIsLoading"
-      :shown.sync="eventsDivisionsShowEditDialog"
-      :event="eventsStateSelected"
-      :events-division="eventsDivisionsEditItem"
-    />
-
     <events-participants-manager-dialog
       v-if="!eventsStateSelectedIsLoading"
       :shown.sync="eventsParticipantsShowManageDialog"
       :event="eventsStateSelected"
       @clubsMembersOpenCreateDialog="clubsMembersOpenCreateDialog"
-    />
-
-    <events-divisions-contestants-results-create-dialog
-      :shown.sync="eventsDivisionsContestantsResultsShowCreateDialog"
-      :event="eventsStateSelected"
     />
 
     <events-edit-dialog
@@ -307,16 +254,12 @@ import { mapActions, mapState } from "vuex"
 import BreadcrumbBar from "@/components/BreadcrumbBar"
 import DateWithTooltip from "@/components/DateWithTooltip"
 
-import EventsParticipantsListTable from "@/containers/events/participants/EventsParticipantsListTable"
-import EventsParticipantsManagerDialog from "@/containers/events/participants/EventsParticipantsManagerDialog"
-import ClubsMembersCreateDialog from "@/containers/clubs/members/ClubsMembersCreateDialog"
-import EventsDivisionsList from "@/containers/events/divisions/EventsDivisionsList"
-import EventsDivisionsCreateDialog from "@/containers/events/divisions/EventsDivisionsCreateDialog"
-import EventsDivisionsEditDialog from "@/containers/events/divisions/EventsDivisionsEditDialog"
-import EventsDivisionsContestantsResultsList from "@/containers/events/divisions/contestants/results/EventsDivisionsContestantsResultsList"
-import EventsDivisionsContestantsResultsCreateDialog from "@/containers/events/divisions/contestants/results/EventsDivisionsContestantsResultsCreateDialog"
-import EventsEditDialog from "@/containers/events/EventsEditDialog"
-import EventsParticipantsEditDialog from "@/containers/events/participants/EventsParticipantsEditDialog"
+import EventsParticipantsListTable from "@/containers/EventsParticipantsListTable"
+import EventsParticipantsManagerDialog from "@/containers/EventsParticipantsManagerDialog"
+import EventsParticipantsEditDialog from "@/containers/EventsParticipantsEditDialog"
+import EventsDivisionsView from "@/containers/EventsDivisionsView"
+import EventsEditDialog from "@/containers/EventsEditDialog"
+import ClubsMembersCreateDialog from "@/containers/ClubsMembersCreateDialog"
 
 export default {
   name: "EventsViewScreen",
@@ -327,11 +270,7 @@ export default {
     EventsParticipantsListTable,
     EventsParticipantsManagerDialog,
     ClubsMembersCreateDialog,
-    EventsDivisionsList,
-    EventsDivisionsCreateDialog,
-    EventsDivisionsEditDialog,
-    EventsDivisionsContestantsResultsList,
-    EventsDivisionsContestantsResultsCreateDialog,
+    EventsDivisionsView,
     EventsEditDialog,
     EventsParticipantsEditDialog
   },
@@ -339,11 +278,7 @@ export default {
   data: () => ({
     activeTab: "participants",
     eventsParticipantsShowManageDialog: false,
-    eventsDivisionsShowCreateDialog: false,
-    eventsDivisionsShowEditDialog: false,
-    eventsDivisionsEditItem: {},
     clubsMembersShowCreateDialog: false,
-    eventsDivisionsContestantsResultsShowCreateDialog: false,
     eventsShowEditDialog: false,
     eventsParticipantsShowEditDialog: false,
     eventsParticipantsEditItem: {}
@@ -357,9 +292,7 @@ export default {
     }),
 
     eventsSelectedDuration() {
-      if(!Object.keys(this.eventsStateSelected).length) {
-        return
-      }
+      if(!Object.keys(this.eventsStateSelected).length) return
       const { startsAt, endsAt } = this.eventsStateSelected
       return moment.duration(moment(endsAt).diff(startsAt)).humanize()
     },
@@ -394,31 +327,18 @@ export default {
       this.eventsParticipantsShowManageDialog = true
     },
 
-    eventsDivisionsOpenCreateDialog() {
-      this.eventsDivisionsShowCreateDialog = true
-    },
-
-    eventsDivisionsOpenEditDialog(division) {
-      this.eventsDivisionsShowEditDialog = true
-      this.eventsDivisionsEditItem = division
-    },
-
-    eventsDivisionsContestantsResultsOpenCreateDialog() {
-      this.eventsDivisionsContestantsResultsShowCreateDialog = true
-    },
-
     eventsRangeOpenMap() {
       const { range } = this.eventsStateSelected
       window.open(`https://www.google.com/maps/@${range.lat},${range.lng},15z`)
     },
 
-    eventsOpenPrintDialog() {
-      this.$notify({
-        type: "warning",
-        title: "Oops!",
-        message: "Denne funksjonen er ikke implementert enda"
-      })
-    },
+    // eventsOpenPrintDialog() {
+    //   this.$notify({
+    //     type: "warning",
+    //     title: "Oops!",
+    //     message: "Denne funksjonen er ikke implementert enda"
+    //   })
+    // },
 
     eventsOpenEditDialog() {
       this.eventsShowEditDialog = true

@@ -75,9 +75,9 @@
 <script>
 import { mapActions, mapMutations, mapState } from "vuex"
 import BreadcrumbBar from "@/components/BreadcrumbBar"
-import EventsListTable from "@/containers/events/EventsListTable"
-import EventsCreateDialog from "@/containers/events/EventsCreateDialog"
-import EventsEditDialog from "@/containers/events/EventsEditDialog"
+import EventsListTable from "@/containers/EventsListTable"
+import EventsCreateDialog from "@/containers/EventsCreateDialog"
+import EventsEditDialog from "@/containers/EventsEditDialog"
 
 export default {
   name: "EventsListScreen",

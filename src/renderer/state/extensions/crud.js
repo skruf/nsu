@@ -106,7 +106,7 @@ export default (options) => {
     actions.createMany = async ({ commit }, items) => {
       commit("SET_CREATE_MANY_LOADING", true)
       const results = await config.createMany(items)
-      commit("SET_LIST", results.items)
+      commit("SET_LIST", results.items) // @TODO: merge items
       commit("SET_COUNT", results.count)
       commit("SET_CREATE_MANY_LOADING", false)
       return results
@@ -212,7 +212,7 @@ export default (options) => {
     actions.editMany = async ({ commit }, items) => {
       commit("SET_EDIT_MANY_LOADING", true)
       const edited = await config.editMany(items)
-      commit("EDIT_MANY", edited.items)
+      commit("EDIT_MANY", edited.items) // @TODO: merge items
       commit("SET_EDIT_MANY_LOADING", false)
       return edited
     }

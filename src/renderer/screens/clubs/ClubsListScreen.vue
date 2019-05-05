@@ -64,9 +64,9 @@
 
 <script>
 import BreadcrumbBar from "@/components/BreadcrumbBar"
-import ClubsListTable from "@/containers/clubs/ClubsListTable"
-import ClubsCreateDialog from "@/containers/clubs/ClubsCreateDialog"
-import ClubsEditDialog from "@/containers/clubs/ClubsEditDialog"
+import ClubsListTable from "@/containers/ClubsListTable"
+import ClubsCreateDialog from "@/containers/ClubsCreateDialog"
+import ClubsEditDialog from "@/containers/ClubsEditDialog"
 
 export default {
   name: "ClubsListScreen",

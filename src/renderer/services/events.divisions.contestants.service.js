@@ -4,21 +4,20 @@ import {
 import { filterInput } from "@/utils"
 import { eventsDivisionsContestantsStub } from "@/stubs"
 
-const populate = async (doc) => {
+export const populate = async (doc) => {
   const member = await doc.populate("memberId")
   const division = await doc.populate("divisionId")
-
-  // const weaponClass = await doc.populate("weapon.classId")
+  const weaponClass = await findOne("classes", { id: doc.weapon.classId }, {}, true)
 
   const contestant = doc.toJSON()
   contestant.member = member.toJSON()
   contestant.division = division.toJSON()
-  // contestant.weapons.class = weaponClass.toJSON()
+  contestant.weapon.class = weaponClass
 
   return contestant
 }
 
-const list = async (filter = {}, options = {}, fetchMode) => {
+const list = async (filter = {}, options = {}) => {
   const result = await findMany("events_divisions_contestants", filter, options)
   result.items = await Promise.all(
     result.items.map(async (doc) => populate(doc))
@@ -41,12 +40,12 @@ const create = async (item = {}, options = {}) => {
 
 const createMany = async (items, options = {}) => {
   const data = filterInput(items, eventsDivisionsContestantsStub)
-
   const docs = await insertMany("events_divisions_contestants", data, options)
-
   const contestants = await Promise.all(
     docs.map((doc) => populate(doc))
   )
+
+  console.log(contestants)
 
   return {
     items: contestants,

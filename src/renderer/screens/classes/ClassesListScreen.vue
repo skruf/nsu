@@ -65,9 +65,9 @@
 
 <script>
 import BreadcrumbBar from "@/components/BreadcrumbBar"
-import ClassesListTable from "@/containers/classes/ClassesListTable"
-import ClassesCreateDialog from "@/containers/classes/ClassesCreateDialog"
-import ClassesEditDialog from "@/containers/classes/ClassesEditDialog"
+import ClassesListTable from "@/containers/ClassesListTable"
+import ClassesCreateDialog from "@/containers/ClassesCreateDialog"
+import ClassesEditDialog from "@/containers/ClassesEditDialog"
 
 export default {
   name: "ClassesListScreen",

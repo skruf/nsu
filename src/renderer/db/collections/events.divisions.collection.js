@@ -3,7 +3,7 @@ import { destroyMany } from "@/db/queries"
 const schema = {
   title: "Events divisions schema",
   description: "Events divisions",
-  version: 0,
+  version: 1,
   type: "object",
   properties: {
     id: {
@@ -15,7 +15,8 @@ const schema = {
     },
     day: {
       type: "string",
-      format: "date-time"
+      format: "date-time",
+      index: true
     },
     startsAt: {
       type: "string"
@@ -54,7 +55,10 @@ export default {
   collection: {
     name: "events_divisions",
     schema: schema,
-    methods: methods
+    methods: methods,
+    migrationStrategies: {
+      1: (d) => d
+    }
   },
   middlewares: {
     preRemove: {

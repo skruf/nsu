@@ -1,7 +1,7 @@
 <i18n>
 {
   "en": {
-    "title": "Create divisjon",
+    "title": "Edit divisjon",
     "subtitle": "For %{event}",
     "eventsDivisionsFormTitle": "Division settings",
     "eventsDivisionsFormItem1Label": "Name",
@@ -24,10 +24,10 @@
     "availableParticipants": "Available participants",
     "participants": "Participants",
     "endsAt": "Ends at",
-    "eventsDivisionsContestantsActionsCreateManySuccess": "%{division} was successfully added to the database"
+    "saveSuccess": "%{division} was successfully updated to the database"
   },
   "no": {
-    "title": "Opprett divisjon",
+    "title": "Rediger divisjon",
     "subtitle": "For %{event}",
     "eventsDivisionsFormTitle": "Divisjon innstillinger",
     "eventsDivisionsFormItem1Label": "Navn",
@@ -50,45 +50,14 @@
     "availableParticipants": "Tilgjengelige deltakere",
     "participants": "Deltakere",
     "endsAt": "Slutter",
-    "eventsDivisionsContestantsActionsCreateManySuccess": "%{division} ble lagt til i databasen"
+    "saveSuccess": "%{division} ble oppdatert i databasen"
   }
 }
 </i18n>
 
-<style lang="stylus">
-.el-dialog.events-divisions-create-dialog
-  display flex
-  flex-direction column
-
-  .el-dialog__body
-    display flex
-    flex-grow 1
-    padding 0
-    overflow-y auto
-
-  .placeholder
-    display flex
-    align-items center
-    justify-content center
-    flex 1
-
-  .available-participant
-    background-color var(--input-bg-color)
-    border-radius var(--border-radius)
-    font-weight var(--controller-font-weight)
-    box-shadow var(--box-shadow)
-    padding 10px
-    display flex
-    align-items center
-
-  .side
-    min-width 300px
-    width 30%
-</style>
-
 <template>
   <el-dialog
-    custom-class="events-divisions-create-dialog"
+    custom-class="events-divisions-edit-dialog"
     :fullscreen="true"
     :visible.sync="visible"
     @open="open"
@@ -99,15 +68,15 @@
         {{ $t("title") }}
       </h3>
       <small class="small">
-        {{ $t("subtitle", { event: event.title }) }}
+        {{ $t("subtitle", { event: eventsStateSelected.title }) }}
       </small>
     </template>
 
     <div
-      v-loading="eventsDivisionsIsLoading"
+      v-loading="stateIsLoading"
       class="dialog_content flex flex-1 p-0"
     >
-      <div class="px-5 side">
+      <div class="px-5 dialog_sidebar">
         <h4 class="h4 my-4">
           {{ $t("eventsDivisionsFormTitle") }}
         </h4>
@@ -118,7 +87,7 @@
         />
       </div>
 
-      <div class="border-l border-r w-full px-5 overflow-y-auto">
+      <div class="w-full px-5 overflow-y-auto">
         <div class="flex items-center mt-4 mb-8">
           <h4 class="h4">
             {{ $t("eventsDivisionsContestantsFormsTitle") }}
@@ -142,6 +111,7 @@
           >
             <events-divisions-contestants-form
               ref="eventsDivisionsContestantsForms"
+              class="w-full"
               :form.sync="eventsDivisionsContestantsForms[index]"
               :participants="eventsParticipantsStateList"
             />
@@ -150,7 +120,7 @@
               type="text"
               size="mini"
               class="mb-5"
-              @click="eventsDivisionsContestantsRemoveForm(index)"
+              @click="eventsDivisionsContestantsRemoveForm(contestantForm, index)"
             >
               <i class="el-icon-minus" />
             </el-button>
@@ -165,7 +135,7 @@
         </div>
       </div>
 
-      <div class="px-5 side">
+      <div class="px-5 dialog_sidebar">
         <h4 class="h4 my-4">
           {{ $t("availableParticipants") }}
         </h4>
@@ -187,7 +157,7 @@
           <li
             v-for="participant in eventsParticipantsStateList"
             :key="participant.id"
-            class="available-participant mt-2 justify-between"
+            class="card mt-2 justify-between"
           >
             <div class="flex items-center">
               <avatar
@@ -246,7 +216,7 @@ import EventsDivisionsContestantsForm from "@/components/EventsDivisionsContesta
 import EventsDivisionsForm from "@/components/EventsDivisionsForm"
 
 export default {
-  name: "EventsDivisionsCreateDialog",
+  name: "EventsDivisionsEditDialog",
 
   components: {
     Avatar,
@@ -255,26 +225,34 @@ export default {
   },
 
   props: {
-    shown: { type: Boolean, default: false },
-    event: { type: Object, required: true }
+    shown: { type: Boolean, default: false }
   },
 
   data: function() {
     return {
+      isLoading: true,
       visible: this.shown,
       eventsDivisionsForm: {},
-      eventsDivisionsContestantsForms: []
+      eventsDivisionsContestantsForms: [],
+      eventsDivisionsContestantsToBeRemoved: []
     }
   },
 
   computed: {
+    ...mapState("events", {
+      eventsStateSelected: "selected"
+    }),
     ...mapState("events/divisions", {
-      eventsDivisionsStateCreateIsLoading: "createIsLoading"
+      eventsDivisionsStateEditIsLoading: "editIsLoading",
+      eventsDivisionsStateSelected: "selected"
     }),
     ...mapState("events/divisions/contestants", {
       eventsDivisionsContestantsStateCreateManyIsLoading: "createManyIsLoading",
+      eventsDivisionsContestantsStateEditManyIsLoading: "editManyIsLoading",
       eventsDivisionsContestantsStateCount: "count",
-      eventsDivisionsContestantsStateList: "list"
+      eventsDivisionsContestantsStateList: "list",
+      eventsDivisionsContestantsStateListIsLoading: "listIsLoading",
+      eventsDivisionsContestantsStateRemoveManyIsLoading: "removeManyIsLoading"
     }),
     ...mapState("events/participants", {
       eventsParticipantsStateListIsLoading: "listIsLoading",
@@ -283,7 +261,7 @@ export default {
     }),
 
     showEventsDivisionsContestantsForms() {
-      return this.eventsDivisionsContestantsForms.length > 0
+      return this.eventsDivisionsContestantsForms.length > 0 && !this.isLoading
     },
 
     eventsDivisionsContestantsIsConfigured() {
@@ -299,9 +277,7 @@ export default {
     },
 
     eventsDivisionsEndsAt() {
-      if(!this.eventsDivisionsContestantsIsConfigured) {
-        return
-      }
+      if(!this.eventsDivisionsContestantsIsConfigured) return
 
       let amount = this.eventsDivisionsContestantsForms.length
 
@@ -315,10 +291,12 @@ export default {
       return formatTime(starts + (interval * amount))
     },
 
-    eventsDivisionsIsLoading() {
+    stateIsLoading() {
       return (
-        this.eventsDivisionsStateCreateIsLoading ||
-        this.eventsDivisionsContestantsStateCreateManyIsLoading
+        this.eventsDivisionsStateEditIsLoading ||
+        this.eventsDivisionsContestantsStateEditManyIsLoading ||
+        this.eventsDivisionsContestantsStateCreateManyIsLoading ||
+        this.eventsDivisionsContestantsStateRemoveManyIsLoading
       )
     }
   },
@@ -338,10 +316,16 @@ export default {
 
   methods: {
     ...mapActions("events/divisions", {
-      eventsDivisionsActionsCreate: "create"
+      eventsDivisionsActionsEditOne: "editOne"
     }),
     ...mapActions("events/divisions/contestants", {
-      eventsDivisionsContestantsActionsCreateMany: "createMany"
+      eventsDivisionsContestantsActionsList: "list",
+      eventsDivisionsContestantsActionsEditMany: "editMany",
+      eventsDivisionsContestantsActionsCreateMany: "createMany",
+      eventsDivisionsContestantsActionsDeleteMany: "removeMany"
+    }),
+    ...mapMutations("events/divisions/contestants", {
+      "eventsDivisionsContestantsMutationsSetListFilter": "SET_LIST_FILTER"
     }),
     ...mapMutations("events/participants", {
       eventsParticipantsMutationsSetListFilter: "SET_LIST_FILTER"
@@ -351,8 +335,25 @@ export default {
     }),
 
     async open() {
-      this.eventsParticipantsMutationsSetListFilter({ eventId: this.event.id })
+      this.eventsDivisionsForm = { ...this.eventsDivisionsStateSelected }
+
+      this.eventsParticipantsMutationsSetListFilter({ eventId: this.eventsStateSelected.id })
       await this.eventsParticipantsActionsList()
+
+      this.eventsDivisionsContestantsMutationsSetListFilter({
+        divisionId: this.eventsDivisionsStateSelected.id
+      })
+      await this.eventsDivisionsContestantsActionsList()
+
+      this.setContestantList()
+
+      for(let i = 0; this.eventsDivisionsContestantsStateList.length > i; i++) {
+        this.eventsDivisionsContestantsForms[i] = {
+          ...this.eventsDivisionsContestantsStateList[i]
+        }
+      }
+
+      this.isLoading = false
     },
 
     getTime(index) {
@@ -391,36 +392,53 @@ export default {
       this.eventsDivisionsContestantsForms.push({ ...stub, id: index })
     },
 
-    eventsDivisionsContestantsRemoveForm(index) {
+    eventsDivisionsContestantsRemoveForm(contestant, index) {
       this.eventsDivisionsContestantsForms.splice(index, 1)
+      if(this.contestantExists(contestant.id)) {
+        this.eventsDivisionsContestantsToBeRemoved.push(contestant)
+      }
+    },
+
+    contestantExists(id) {
+      return this.eventsDivisionsContestantsStateList
+        .map(({ id }) => id)
+        .includes(id)
     },
 
     async save() {
       this.$refs.eventsDivisionsForm.validate(async () => {
         const division = { ...this.eventsDivisionsForm }
-        division.eventId = this.event.id
-        division.day = division.day.toISOString()
-        division.startsAt = this.eventsDivisionsEndsAt // ??
         division.endsAt = this.eventsDivisionsEndsAt
+        division.day = typeof division.day === "string"
+          ? division.day
+          : division.day.toISOString()
 
         try {
-          const createdDivision = await this.eventsDivisionsActionsCreate(division)
+          const createdDivision = await this.eventsDivisionsActionsEditOne(division)
+
           const contestants = this.eventsDivisionsContestantsForms
-            .filter((contestant) => (!!contestant.memberId && !!contestant.weapon.id))
+            .filter((contestant) => !!contestant.memberId && !!contestant.weapon.id)
             .map((contestant) => ({ ...contestant, divisionId: createdDivision.id }))
 
-          await this.eventsDivisionsContestantsActionsCreateMany(contestants)
+          const contestantsToBeCreated = contestants.filter(({ id }) => !this.contestantExists(id))
+          const contestantsToBeUpdated = contestants.filter(({ id }) => this.contestantExists(id))
+
+          await this.eventsDivisionsContestantsActionsCreateMany(contestantsToBeCreated)
+          await this.eventsDivisionsContestantsActionsEditMany(contestantsToBeUpdated)
+          await this.eventsDivisionsContestantsActionsDeleteMany(this.eventsDivisionsContestantsToBeRemoved)
+
+          await this.eventsDivisionsContestantsActionsList()
 
           this.$notify({
             type: "success",
             title: this.$t("success"),
-            message: this.$t("eventsDivisionsContestantsActionsCreateManySuccess", {
+            message: this.$t("saveSuccess", {
               division: division.name
             })
           })
-          this.clear()
           this.close()
         } catch(e) {
+          console.error(e)
           this.$notify({
             type: "error",
             title: "Oops!",
@@ -428,10 +446,6 @@ export default {
           })
         }
       })
-    },
-
-    clear() {
-      this.$refs.eventsDivisionsForm.clear()
     },
 
     close() {

@@ -1,4 +1,4 @@
-import { destroyMany } from "@/db/queries"
+import { destroyMany, findMany } from "@/db/queries"
 
 const schema = {
   title: "Classes schema",
@@ -24,69 +24,28 @@ const schema = {
     },
     condition: {
       type: "string"
-    },
-    target: {
-      type: "string"
-    },
-    position: {
-      type: "string"
-    },
-    distance: {
-      type: "string",
-      index: true
-    },
-    type: {
-      type: "string"
-    },
-    sight: {
-      type: "string"
-    },
-    trigger: {
-      type: "string"
-    },
-    calibre: {
-      type: "string"
-    },
-    bulletType: {
-      type: "string"
-    },
-    loadingRod: {
-      type: "string"
-    },
-    cleaning: {
-      type: "string"
-    },
-    team: {
-      type: "string"
-    },
-    pictureUrl: {
-      type: "string"
-    },
-    remarks: {
-      type: "string"
     }
   },
   required: [
     "number",
     "name",
     "category",
-    "condition",
-    "target",
-    "position",
-    "distance",
-    "type",
-    "sight",
-    "trigger",
-    "calibre",
-    "bulletType"
+    "condition"
   ]
 }
 
 const methods = {}
 
 const preRemove = async (data, doc) => {
-  // @FIXME: query
-  await destroyMany("events_participants", { "weapons.classId": data.id })
+  // @TODO: refactor hack..
+  const { items } = await findMany("events_participants")
+  const participants = items.filter(
+    (participant) => participant.weapons.map(
+      ({ classId }) => classId
+    ).includes(data.id)
+  ).map(({ id }) => id)
+
+  await destroyMany("events_participants", { id: { $in: participants } })
 }
 
 export default {
@@ -94,9 +53,6 @@ export default {
     name: "classes",
     schema: schema,
     methods: methods
-    // migrationStrategies: {
-    //   1: (d) => d
-    // }
   },
   middlewares: {
     preRemove: {

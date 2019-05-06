@@ -259,7 +259,8 @@ export default {
 
   methods: {
     ...mapActions("events/divisions/contestants/results", {
-      eventsDivisionsContestantsResultsActionsCreateMany: "createMany"
+      eventsDivisionsContestantsResultsActionsCreateMany: "createMany",
+      eventsDivisionsContestantsResultsActionsList: "list"
     }),
     ...mapMutations("events/divisions/contestants", {
       "eventsDivisionsContestantsMutationsSetListFilter": "SET_LIST_FILTER"
@@ -329,6 +330,8 @@ export default {
           this.eventsDivisionsContestantsResults
         )
 
+        await this.eventsDivisionsContestantsResultsActionsList()
+
         this.$notify({
           type: "success",
           title: this.$t("success"),
@@ -336,7 +339,6 @@ export default {
             count
           })
         })
-        // this.clear()
         this.close()
       } catch(e) {
         this.$notify({

@@ -43,6 +43,7 @@
         label-position="top"
         :model="form"
         :rules="formRules"
+        class="max-w-xs"
       >
         <el-form-item
           :label="$t('formItem1Label')"

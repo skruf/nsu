@@ -7,11 +7,6 @@ export default [
         path: "",
         name: "ClassesListScreen",
         component: require("./ClassesListScreen").default
-      },
-      {
-        path: ":classId",
-        name: "ClassesViewScreen",
-        component: require("./ClassesViewScreen").default
       }
     ]
   }

@@ -1,8 +1,8 @@
 {
-  "name": "NSU-Stevnebehandler",
+  "name": "Stevnebehandler",
   "version": "0.0.3",
   "author": "Thomas <tholav@gmail.com>",
-  "description": "NSU resultat- og stevne- behandler",
+  "description": "Resultat- og stevne- behandler",
   "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
@@ -23,9 +23,9 @@
   },
   "build": {
     "appId": "io.tinyapp.nsu",
-    "productName": "NSU-Stevnebehandler",
-    "artifactName": "NSU-Stevnebehandler-${version}.${ext}",
-    "copyright": "Copyright © NSU / Thomas Laaver",
+    "productName": "Stevnebehandler",
+    "artifactName": "Stevnebehandler-${version}.${ext}",
+    "copyright": "Copyright © Thomas Laaver",
     "directories": {
       "output": "build"
     },

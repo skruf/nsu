@@ -116,7 +116,7 @@ export default {
 
   created() {
     this.isSidebarOpen = localStorage.getItem("isSidebarOpen") === "true"
-    this.appOnboardingShowDialog = !localStorage.getItem("appOnboardingHideDialog") === "true"
+    // this.appOnboardingShowDialog = !localStorage.getItem("appOnboardingHideDialog") === "true"
     this.$ipc.send("APP_STARTED")
     this.$ipc.on("APP_NOTIFICATION", (event, message) => {
       this.$notify.info({ title: "Notification", message: message })

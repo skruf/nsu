@@ -1,0 +1,64 @@
+@import "./config"
+@import "./layout"
+@import "./navigation"
+@import "./controllers"
+@import "./table"
+@import "./form"
+
+body
+  font-family var(--font-family)
+  font-size var(--text-size)
+  line-height var(--text-height)
+  color var(--text-color)
+  font-weight var(--font-weight)
+  background-color var(--bg-color)
+.h1, .h2, .h3, .h4, .h5, .h6
+  color var(--title-color)
+  font-weight 500
+  letter-spacing -0.02em
+.h1
+  font-size 27px
+.h2
+  font-size 27px
+.h3
+  font-size 21px
+  font-weight 600
+.h4
+  font-size 18px
+.h5
+  font-size 16px
+.h6
+  font-weight 600
+  font-size inherit
+.small
+  font-size 0.85rem
+  font-weight 400
+  color var(--muted-color)
+.color--primary
+  color var(--primary-color)
+.el-tag
+  border none
+  color var(--primary-color)
+.el-notification__content
+  text-align left
+  font-size 0.85rem
+.el-input,
+.el-button,
+.el-input__inner,
+.el-tabs__item
+  font-size 0.85rem
+.el-button--mini,
+.el-button--small
+  font-size 0.8rem
+.el-button--small
+  padding 10px 20px
+.el-button--mini
+  padding 4px 8px
+.el-button--text, a
+  color var(--primary-color)
+a
+  text-decoration none
+ul
+  padding 0
+li
+  list-style-type none

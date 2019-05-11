@@ -13,3 +13,4 @@ thumbs.db
 .env
 electron-builder.env
 .electron-symbols
+.cache

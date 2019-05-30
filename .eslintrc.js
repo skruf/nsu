@@ -2,7 +2,10 @@ module.exports = {
   root: true,
   parserOptions: {
     sourceType: "module",
-    parser: "babel-eslint"
+    parser: "@typescript-eslint/parser",
+    ecmaVersion: 2017,
+    sourceType: "module"
+    // parser: "babel-eslint"
   },
   env: {
     browser: true,
@@ -11,6 +14,7 @@ module.exports = {
   },
   extends: [
     "standard",
+    "plugin:@typescript-eslint/recommended",
     "plugin:jest/recommended",
     "plugin:vue/recommended"
   ],
@@ -44,6 +48,7 @@ module.exports = {
     "no-console": 0,
     "padded-blocks": 0,
     "no-unused-vars": "warn",
-    "no-trailing-spaces": "warn"
+    "no-trailing-spaces": "warn",
+    "@typescript-eslint/indent": 0
   }
 }

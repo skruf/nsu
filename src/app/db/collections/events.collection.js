@@ -45,19 +45,19 @@ const schema = {
     "title",
     "startsAt",
     "endsAt",
-    "category",
-    "organizerId",
-    "rangeId"
+    "category"
   ]
 }
 
 const methods = {}
 
 const preRemove = async (data, doc) => {
-  const divisions = await findMany("events_divisions", { eventId: data.id })
-  const divisionIds = divisions.items.map((d) => d.toJSON().id)
-  await destroyMany("events_divisions", { id: { $in: divisionIds } })
-  await destroyMany("events_participants", { eventId: data.id })
+  await destroyMany("events_divisions", {
+    eventId: data.id
+  })
+  await destroyMany("events_participants", {
+    eventId: data.id
+  })
 }
 
 export default {

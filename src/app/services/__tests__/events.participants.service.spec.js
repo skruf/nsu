@@ -2,10 +2,8 @@ import flushPromises from "flush-promises"
 import { eventsParticipantsService } from "~/services"
 import {
   eventsParticipantsFixture,
-  classesFixture,
   clubsFixture,
-  clubsMembersFixture,
-  eventsParticipantsWeaponsFixture
+  clubsMembersFixture
 } from "~/fixtures"
 import {
   findMany, insert, insertMany, destroyOne, destroyMany
@@ -13,12 +11,9 @@ import {
 
 jest.mock("~/db/queries", () => {
   const {
-    eventsFixture,
     eventsParticipantsFixture,
-    classesFixture,
     clubsFixture,
-    clubsMembersFixture,
-    eventsParticipantsWeaponsFixture
+    clubsMembersFixture
   } = require("~/fixtures")
 
   const mockQueries = require("~/utils/tests/mockQueries").default
@@ -28,13 +23,6 @@ jest.mock("~/db/queries", () => {
       data: clubsMembersFixture[0],
       populate: {
         clubId: { data: clubsFixture[0] }
-      }
-    },
-    eventId: { data: eventsFixture[0] },
-    weaponIds: {
-      data: eventsParticipantsWeaponsFixture,
-      populate: {
-        classId: { data: classesFixture[0] }
       }
     }
   }
@@ -61,8 +49,6 @@ describe("events.participants.service", () => {
     expect(participant).toEqual(eventsParticipantsFixture[0])
     expect(participant.member).toEqual(clubsMembersFixture[0])
     expect(participant.member.club).toEqual(clubsFixture[0])
-    expect(participant.weapons[0].calibre).toEqual(eventsParticipantsWeaponsFixture[0].calibre)
-    expect(participant.weapons[0].class).toEqual(classesFixture[0])
   })
 
   it("should create a event participant", async () => {
@@ -76,8 +62,6 @@ describe("events.participants.service", () => {
     expect(participant).toEqual(eventsParticipantsFixture[0])
     expect(participant.member).toEqual(clubsMembersFixture[0])
     expect(participant.member.club).toEqual(clubsFixture[0])
-    expect(participant.weapons[0].calibre).toEqual(eventsParticipantsWeaponsFixture[0].calibre)
-    expect(participant.weapons[0].class).toEqual(classesFixture[0])
   })
 
   it("should create many event participants", async () => {
@@ -90,8 +74,6 @@ describe("events.participants.service", () => {
     expect(participants).toEqual(eventsParticipantsFixture)
     expect(participants[0].member).toEqual(clubsMembersFixture[0])
     expect(participants[0].member.club).toEqual(clubsFixture[0])
-    expect(participants[0].weapons[0].calibre).toEqual(eventsParticipantsWeaponsFixture[0].calibre)
-    expect(participants[0].weapons[0].class).toEqual(classesFixture[0])
   })
 
   it("should remove a event participant", async () => {

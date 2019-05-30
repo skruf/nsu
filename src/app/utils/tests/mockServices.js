@@ -7,11 +7,16 @@ export default (fixture) => {
     items: fixture,
     count: fixture.length
   })
+  const createMany = jest.fn().mockResolvedValue({
+    items: fixture,
+    count: fixture.length
+  })
 
   return {
     list,
     select,
     create,
+    createMany,
     removeOne,
     removeMany
   }

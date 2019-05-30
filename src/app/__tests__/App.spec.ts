@@ -1,7 +1,7 @@
-import createLocalVue from "~/utils/tests/createLocalVue"
-import mount from "~/utils/tests/mount"
 import VueRouter from "vue-router"
 import Element from "element-ui"
+import createLocalVue from "~/utils/tests/createLocalVue"
+import mount from "~/utils/tests/mount"
 import AppOnboardingDialog from "~/components/AppOnboardingDialog"
 import AppSidebar from "~/components/AppSidebar"
 import App from "~/App"
@@ -32,8 +32,8 @@ describe("App", () => {
 
   it("should display sidebar and onboarding by default", () => {
     const wrapper = build()
-    expect(wrapper.vm.isSidebarOpen).toEqual(true)
-    expect(wrapper.vm.appOnboardingShowDialog).toEqual(true)
+    expect(wrapper.vm.$data.isSidebarOpen).toEqual(true)
+    expect(wrapper.vm.$data.appOnboardingShowDialog).toEqual(true)
   })
 
   it("should store display state of sidebar and onboarding", () => {

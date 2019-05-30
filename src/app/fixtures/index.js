@@ -10,5 +10,5 @@ export { default as eventsCategoriesFixture } from "./events.categories.fixture.
 export { default as eventsParticipantsFixture } from "./events.participants.fixture.json"
 export { default as eventsParticipantsWeaponsFixture } from "./events.participants.weapons.fixture.json"
 export { default as eventsDivisionsFixture } from "./events.divisions.fixture.json"
-export { default as eventsDivisionsParticipantsFixture } from "./events.divisions.participants.fixture.json"
-export { default as eventsDivisionsParticipantsResultsFixture } from "./events.divisions.participants.results.fixture.json"
+export { default as eventsContestantsFixture } from "./events.contestants.fixture.json"
+export { default as eventsContestantsResultsFixture } from "./events.contestants.results.fixture.json"

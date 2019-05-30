@@ -37,15 +37,9 @@ const schema = {
 const methods = {}
 
 const preRemove = async (data, doc) => {
-  // @TODO: refactor hack..
-  const { items } = await findMany("events_participants")
-  const participants = items.filter(
-    (participant) => participant.weapons.map(
-      ({ classId }) => classId
-    ).includes(data.id)
-  ).map(({ id }) => id)
-
-  await destroyMany("events_participants", { id: { $in: participants } })
+  await destroyMany("events_participants_weapons", {
+    classId: data.id
+  })
 }
 
 export default {

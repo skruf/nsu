@@ -1,18 +1,14 @@
 import getDb from "~/db"
 import {
-  // seedClasses,
   seedRanges,
   seedClubs,
   seedClubsMembers,
   seedEvents,
   seedEventsParticipants
-  // seedEventsDivisions,
-  // seedEventsDivisionsContestants
 } from "~/utils/tests/seeders"
 
 const setup = async () => {
   await getDb()
-  // const classes = await seedClasses()
   const ranges = await seedRanges()
   const clubs = await seedClubs()
   const clubsMembers = await seedClubsMembers({
@@ -26,16 +22,6 @@ const setup = async () => {
     eventId: events[0].id,
     memberId: clubsMembers[0].id
   })
-  // const divisions = await seedEventsDivisions({
-  //   eventId: events[0].id
-  // })
-  // await seedEventsDivisionsContestants({
-  //   divisionId: divisions[0].id,
-  //   memberId: clubsMembers[0].id,
-  //   weapon: {
-  //     classId: classes[0].id
-  //   }
-  // })
 }
 
 const cleanup = async () => {
@@ -47,20 +33,20 @@ describe("clubs.members.collection", () => {
   beforeAll(() => setup())
   afterAll(() => cleanup())
 
-  it("should be able to find clubs members", async () => {
+  it("should be able to find club members", async () => {
     const db = await getDb()
     const members = await db.clubs_members.find().exec()
     expect(members.length).toBeGreaterThan(1)
   })
 
-  it("should be able to find a clubs members", async () => {
+  it("should be able to populate a club member's club", async () => {
     const db = await getDb()
     const member = await db.clubs_members.findOne().exec()
     const club = await member.populate("clubId")
     expect(club.id).not.toBeFalsy()
   })
 
-  it("should be able to find a club member participant", async () => {
+  it("should be able to find a club member's participants", async () => {
     const db = await getDb()
     const member = await db.clubs_members.findOne().exec()
     const participants = await db.events_participants.find({
@@ -70,44 +56,20 @@ describe("clubs.members.collection", () => {
     expect(participants.length).toBeGreaterThan(0)
   })
 
-  it("removing club member should remove its participants", async () => {
+  it("removing a club member should also remove its participants", async () => {
     const db = await getDb()
     const member = await db.clubs_members.findOne().exec()
-    await member.remove()
 
-    const participants = await db.events_participants.find({
+    const participants1 = await db.events_participants.find({
       memberId: member.id
     }).exec()
+    expect(participants1).not.toHaveLength(0)
 
-    expect(participants).toHaveLength(0)
-  })
-
-  it.skip("should be able to find a club member contestants", async () => {
-    const db = await getDb()
-    const member = await db.clubs_members.findOne().exec()
-    const divisions = await db.events_divisions.find().exec()
-    const divisionIds = divisions.map((d) => d.toJSON().id)
-
-    const contestants = await db.events_divisions_contestants.find({
-      memberId: member.id,
-      divisionId: { $in: divisionIds }
-    }).exec()
-
-    expect(contestants.length).toBeGreaterThan(0)
-  })
-
-  it.skip("removing club member should remove its contestants", async () => {
-    const db = await getDb()
-    const member = await db.clubs_members.findOne().exec()
     await member.remove()
 
-    const divisions = await db.events_divisions.find().exec()
-    const divisionIds = divisions.map((d) => d.toJSON().id)
-    const contestants = await db.events_divisions_contestants.find({
-      memberId: member.id,
-      divisionId: { $in: divisionIds }
+    const participants2 = await db.events_participants.find({
+      memberId: member.id
     }).exec()
-
-    expect(contestants).toHaveLength(0)
+    expect(participants2).toHaveLength(0)
   })
 })

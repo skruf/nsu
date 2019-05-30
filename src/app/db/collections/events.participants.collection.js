@@ -22,13 +22,6 @@ const schema = {
       type: "string",
       ref: "events"
     }
-    // weaponIds: {
-    //   type: "array",
-    //   ref: "events_participants_weapons",
-    //   items: {
-    //     type: "string"
-    //   }
-    // }
   },
   required: [
     "number",
@@ -40,13 +33,8 @@ const schema = {
 const methods = {}
 
 const preRemove = async (data, doc) => {
-  // const divisions = await findMany("events_divisions", {
-  //   eventId: data.eventId
-  // })
-  // const divisionIds = divisions.items.map((d) => d.toJSON().id)
-  await destroyMany("events_divisions_participants", {
+  await destroyMany("events_contestants", {
     participantId: data.id
-    // divisionId: { $in: divisionIds }
   })
   await destroyMany("events_participants_weapons", {
     participantId: data.id

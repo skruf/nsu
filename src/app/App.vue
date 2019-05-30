@@ -90,7 +90,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import AppOnboardingDialog from "~/components/AppOnboardingDialog"
 import AppSidebar from "~/components/AppSidebar"
 

@@ -1,15 +1,16 @@
 module.exports = {
-  moduleFileExtensions: [ "js", "jsx", "json", "vue" ],
+  moduleFileExtensions: [ "js", "jsx", "json", "vue", "ts", "tsx" ],
   transform: {
-    "^.+\\.(js|jsx)?$": "babel-jest",
     "^.+\\.vue$": "vue-jest",
+    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.(js|jsx)?$": "babel-jest",
     ".+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$": "jest-transform-stub"
   },
   moduleNameMapper: { "^~(.*)$": "<rootDir>/src/app/$1" },
   snapshotSerializers: [ "jest-serializer-vue" ],
   collectCoverage: false,
   collectCoverageFrom: [
-    "<rootDir>/src/app/**/*.{js,vue}",
+    "<rootDir>/src/app/**/*.{ts,js,vue}",
     "!**/(node_modules|coverage|dist|build|plugins|utils/tests)/**",
     "!(tailwind.js|src/sentry.js|sentry-symbols.js|src/app/index.js)",
     "!**/*.config.*",

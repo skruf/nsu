@@ -1,23 +1,19 @@
 import { insertMany, findMany, destroyOne, destroyMany } from "~/db/queries"
 import { filterInput } from "~/utils"
-import { eventsDivisionsContestantsResultsStub } from "~/stubs"
-import { populate as populateContestant } from "./events.divisions.contestants.service"
+import { eventsContestantsResultsStub } from "~/stubs"
 
 const populate = async (doc) => {
-  const division = await doc.populate("divisionId")
-  const contestantDoc = await doc.populate("contestantId")
-  const contestant = await populateContestant(contestantDoc)
+  const contestant = await doc.populate("contestantId")
 
   const result = doc.toJSON()
-  result.division = division.toJSON()
-  result.contestant = contestant
+  result.contestant = contestant.toJSON()
 
   return result
 }
 
 const list = async (filter = {}, options = {}, fetchMode) => {
   const result = await findMany(
-    "events_divisions_contestants_results", filter, options
+    "events_contestants_results", filter, options
   )
   result.items = await Promise.all(
     result.items.map(async (doc) => populate(doc))
@@ -26,9 +22,9 @@ const list = async (filter = {}, options = {}, fetchMode) => {
 }
 
 const createMany = async (items, options = {}) => {
-  const data = filterInput(items, eventsDivisionsContestantsResultsStub)
+  const data = filterInput(items, eventsContestantsResultsStub)
   const docs = await insertMany(
-    "events_divisions_contestants_results", data, options
+    "events_contestants_results", data, options
   )
   const result = await Promise.all(
     docs.map(async (doc) => populate(doc))
@@ -40,7 +36,7 @@ const createMany = async (items, options = {}) => {
 }
 
 const removeOne = async (filter, options = {}) => {
-  await destroyOne("events_divisions_contestants_results", filter, options)
+  await destroyOne("events_contestants_results", filter, options)
   return true
 }
 
@@ -48,7 +44,7 @@ const removeMany = async (items, options = {}) => {
   const filter = {
     id: { $in: items.map(({ id }) => id) }
   }
-  await destroyMany("events_divisions_contestants_results", filter, options)
+  await destroyMany("events_contestants_results", filter, options)
   return true
 }
 

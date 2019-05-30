@@ -119,7 +119,8 @@ export const updateOne = async (
   let doc = await findOne(collection, filter, options)
   const timestamp = getTimestamp()
   item.updatedAt = timestamp
-  await doc.update({ $set: item })
+  // await doc.update({ $set: item })
+  await doc.atomicUpdate((old) => ({ ...old, ...item }))
   if(json) doc = doc.toJSON()
   return doc
 }
@@ -127,7 +128,6 @@ export const updateOne = async (
 export const updateMany = async (
   collection, items, filterKey = "id", options = {}, json = false
 ) => {
-  items.forEach((i) => console.log(i))
   const docs = await Promise.all(
     items.map((item) => updateOne(
       collection, { [filterKey]: item[filterKey] }, item, options, json

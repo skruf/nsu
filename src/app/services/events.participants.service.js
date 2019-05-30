@@ -17,20 +17,35 @@ import { filterInput } from "~/utils"
 const populate = async (doc) => {
   const member = await doc.populate("memberId")
   const club = await member.populate("clubId")
-  const weaponDocs = await doc.populate("weaponIds")
 
-  const weapons = weaponDocs.map((weaponDoc) => {
-    const weaponClass = weaponDoc.populate("classId")
-    return {
-      ...weaponDoc.toJSON(),
-      class: weaponClass.toJSON()
-    }
-  })
+  // const { items: weaponDocs } = await findMany("events_participants_weapons", {
+  //   participantId: doc.id
+  // })
+  // const weapons = await Promise.all(
+  //   weaponDocs.map(async (weaponDoc) => {
+  //     const weaponClassDoc = await weaponDoc.populate("classId")
+  //     return {
+  //       ...weaponClassDoc.toJSON(),
+  //       ...weaponDoc.toJSON()
+  //     }
+  //   })
+  // )
+
+  // const weaponDocs = await doc.populate("weaponIds")
+  // const weapons = Promise.all(
+  //   weaponDocs.map(async (weaponDoc) => {
+  //     const weaponClass = await weaponDoc.populate("classId")
+  //     return {
+  //       ...weaponDoc.toJSON(),
+  //       class: weaponClass.toJSON()
+  //     }
+  //   })
+  // )
 
   const participant = doc.toJSON()
   participant.member = member.toJSON()
   participant.member.club = club.toJSON()
-  participant.weapons = weapons
+  // participant.weapons = weapons
 
   return participant
 }

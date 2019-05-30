@@ -1,6 +1,6 @@
 const schema = {
-  title: "Events divisions contestants results schema",
-  description: "Events divisions contestants results",
+  title: "Events contestants results schema",
+  description: "Events contestants results",
   version: 0,
   type: "object",
   properties: {
@@ -18,15 +18,15 @@ const schema = {
         type: "number"
       }
     },
-    divisionParticipantId: {
+    contestantId: {
       type: "string",
-      ref: "events_divisions_participants"
+      ref: "events_contestants"
     }
   },
   required: [
     "total",
     "hits",
-    "divisionParticipantId"
+    "contestantId"
   ]
 }
 
@@ -34,7 +34,7 @@ const methods = {}
 
 export default {
   collection: {
-    name: "events_divisions_participants_results",
+    name: "events_contestants_results",
     schema: schema,
     methods: methods
   }

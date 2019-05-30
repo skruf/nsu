@@ -32,7 +32,7 @@ const schema = {
 const methods = {}
 
 const preRemove = async (data, doc) => {
-  await destroyMany("events_divisions_participants", {
+  await destroyMany("events_contestants", {
     weaponId: data.id
   })
 }

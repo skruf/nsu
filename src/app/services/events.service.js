@@ -2,6 +2,7 @@ import {
   insert, findMany, findOne, destroyOne, destroyMany, updateOne
 } from "~/db/queries"
 import { eventsStub } from "~/stubs"
+import { filterInput } from "~/utils"
 
 const populate = async (doc) => {
   let club = await doc.populate("organizerId")
@@ -12,16 +13,6 @@ const populate = async (doc) => {
   if(range) event.range = range.toJSON()
 
   return event
-}
-
-const filterInput = (item) => {
-  const data = {}
-  for(let key in item) {
-    if(eventsStub.hasOwnProperty(key)) {
-      data[key] = item[key]
-    }
-  }
-  return data
 }
 
 const list = async (filter = {}, options = {}, fetchMode) => {

@@ -1,4 +1,4 @@
-import { destroyMany } from "~/db/queries"
+import { destroyMany, findMany, updateMany } from "~/db/queries"
 
 const schema = {
   title: "Clubs schema",
@@ -32,15 +32,6 @@ const schema = {
     rangeId: {
       type: "string",
       ref: "ranges"
-    },
-    updatedAt: {
-      type: "string",
-      format: "date-time"
-    },
-    createdAt: {
-      type: "string",
-      format: "date-time",
-      index: true
     }
   },
   required: [
@@ -54,6 +45,13 @@ const methods = {}
 
 const preRemove = async (data, doc) => {
   await destroyMany("clubs_members", { clubId: data.id })
+
+  const { items: events } = await findMany("events", {
+    organizerId: data.id
+  }, {}, true)
+  await updateMany("events", events.map(
+    (event) => ({ ...event, organizerId: "" })
+  ))
 }
 
 export default {

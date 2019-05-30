@@ -42,8 +42,9 @@ const schema = {
 const methods = {}
 
 const preRemove = async (data, doc) => {
-  await destroyMany("events_divisions_contestants", { memberId: data.id })
-  await destroyMany("events_participants", { memberId: data.id })
+  await destroyMany("events_participants", {
+    memberId: data.id
+  })
 }
 
 export default {

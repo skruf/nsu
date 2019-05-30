@@ -8,7 +8,8 @@ import {
   seedEventsParticipants,
   seedEventsParticipantsWeapons,
   seedEventsDivisions,
-  seedEventsDivisionsParticipants
+  seedEventsContestants,
+  seedEventsContestantsResults
 } from "~/utils/tests/seeders"
 
 const setup = async () => {
@@ -34,10 +35,13 @@ const setup = async () => {
   const divisions = await seedEventsDivisions({
     eventId: events[0].id
   })
-  await seedEventsDivisionsParticipants({
+  const contestants = await seedEventsContestants({
     divisionId: divisions[0].id,
     participantId: participants[0].id,
     weaponId: weapons[0].id
+  })
+  await seedEventsContestantsResults({
+    contestantId: contestants[0].id
   })
 }
 
@@ -46,34 +50,26 @@ const cleanup = async () => {
   await db.remove()
 }
 
-describe("events.divisions.participants.collection", () => {
+describe("events.contestants.results.collection", () => {
   beforeAll(() => setup())
   afterAll(() => cleanup())
 
-  it("should be able to find participants", async () => {
+  it("should be able to find results", async () => {
     const db = await getDb()
-    const participants = await db.events_divisions_participants.find().exec()
-    expect(participants.length).toBeGreaterThan(1)
+    const results = await db.events_contestants_results.find().exec()
+    expect(results.length).toBeGreaterThan(1)
   })
 
-  it("should be able to find a divisions participants participant", async () => {
+  it("should be able to find a result", async () => {
     const db = await getDb()
-    const divisionParticipant = await db.events_divisions_participants.findOne().exec()
-    const participant = await divisionParticipant.populate("participantId")
-    expect(participant.id).not.toBeFalsy()
+    const result = await db.events_contestants_results.findOne().exec()
+    expect(result.id).not.toBeFalsy()
   })
 
-  it("should be able to find a divisions participants division", async () => {
+  it("should be able to populate a result's contestant", async () => {
     const db = await getDb()
-    const divisionParticipant = await db.events_divisions_participants.findOne().exec()
-    const division = await divisionParticipant.populate("divisionId")
-    expect(division.id).not.toBeFalsy()
-  })
-
-  it("should be able to find a divisions participants weapon", async () => {
-    const db = await getDb()
-    const divisionParticipant = await db.events_divisions_participants.findOne().exec()
-    const weapon = await divisionParticipant.populate("weaponId")
-    expect(weapon.id).not.toBeFalsy()
+    const result = await db.events_contestants_results.findOne().exec()
+    const contestant = await result.populate("contestantId")
+    expect(contestant.id).not.toBeFalsy()
   })
 })

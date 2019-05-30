@@ -1,3 +1,5 @@
+import { findMany, updateMany } from "~/db/queries"
+
 const schema = {
   title: "Ranges schema",
   description: "Ranges",
@@ -43,10 +45,32 @@ const schema = {
 
 const methods = {}
 
+const preRemove = async (data, doc) => {
+  const { items: clubs } = await findMany("clubs", {
+    rangeId: data.id
+  }, {}, true)
+  await updateMany("clubs", clubs.map(
+    (club) => ({ ...club, rangeId: "" })
+  ))
+
+  const { items: events } = await findMany("events", {
+    rangeId: data.id
+  }, {}, true)
+  await updateMany("events", events.map(
+    (event) => ({ ...event, rangeId: "" })
+  ))
+}
+
 export default {
   collection: {
     name: "ranges",
     schema: schema,
     methods: methods
+  },
+  middlewares: {
+    preRemove: {
+      handle: preRemove,
+      parallel: false
+    }
   }
 }

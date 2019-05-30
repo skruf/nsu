@@ -6,8 +6,8 @@ import eventsCollection from "./events.collection"
 import eventsParticipantsCollection from "./events.participants.collection"
 import eventsParticipantsWeaponsCollection from "./events.participants.weapons.collection"
 import eventsDivisionsCollection from "./events.divisions.collection"
-import eventsDivisionsParticipantsCollection from "./events.divisions.participants.collection"
-import eventsDivisionsParticipantsResultsCollection from "./events.divisions.participants.results.collection"
+import eventsContestantsCollection from "./events.contestants.collection"
+import eventsContestantsResultsCollection from "./events.contestants.results.collection"
 
 export default [
   rangesCollection,
@@ -18,6 +18,6 @@ export default [
   eventsParticipantsCollection,
   eventsParticipantsWeaponsCollection,
   eventsDivisionsCollection,
-  eventsDivisionsParticipantsCollection,
-  eventsDivisionsParticipantsResultsCollection
+  eventsContestantsCollection,
+  eventsContestantsResultsCollection
 ]

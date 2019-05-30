@@ -6,7 +6,9 @@ import {
   seedClubsMembers,
   seedEvents,
   seedEventsParticipants,
-  seedEventsParticipantsWeapons
+  seedEventsParticipantsWeapons,
+  seedEventsDivisions,
+  seedEventsContestants
 } from "~/utils/tests/seeders"
 
 const setup = async () => {
@@ -25,9 +27,17 @@ const setup = async () => {
     memberId: clubsMembers[0].id,
     eventId: events[0].id
   })
-  await seedEventsParticipantsWeapons({
+  const weapons = await seedEventsParticipantsWeapons({
     classId: classes[0].id,
     participantId: participants[0].id
+  })
+  const divisions = await seedEventsDivisions({
+    eventId: events[0].id
+  })
+  await seedEventsContestants({
+    divisionId: divisions[0].id,
+    participantId: participants[0].id,
+    weaponId: weapons[0].id
   })
 }
 
@@ -46,41 +56,34 @@ describe("events.participants.weapons.collection", () => {
     expect(weapons.length).toBeGreaterThan(1)
   })
 
-  it("should be able to find a weapons participant", async () => {
+  it("should be able to populate a weapon's participant", async () => {
     const db = await getDb()
     const weapon = await db.events_participants_weapons.findOne().exec()
     const participant = await weapon.populate("participantId")
     expect(participant.id).not.toBeFalsy()
   })
 
-  it("should be able to find a weapons class", async () => {
+  it("should be able to populate a weapon's class", async () => {
     const db = await getDb()
     const weapon = await db.events_participants_weapons.findOne().exec()
     const weaponClass = await weapon.populate("classId")
     expect(weaponClass.id).not.toBeFalsy()
   })
 
-  it.skip("should be able to find a participants event", async () => {
+  it("removing a participant's weapon should also remove its contestants", async () => {
     const db = await getDb()
-    const participant = await db.events_participants.findOne().exec()
-    const event = await participant.populate("eventId")
-    expect(event.id).not.toBeFalsy()
-  })
+    const weapon = await db.events_participants_weapons.findOne().exec()
 
-  it.skip("removing a participant should remove its contestants", async () => {
-    const db = await getDb()
-    const participant = await db.events_participants.findOne().exec()
-    await participant.remove()
-
-    const divisions = await db.events_divisions.find({
-      eventId: participant.eventId
+    const contestants1 = await db.events_contestants.find({
+      weaponId: weapon.id
     }).exec()
-    const divisionIds = divisions.map((d) => d.toJSON().id)
-    const contestants = await db.events_divisions_contestants.find({
-      memberId: participant.memberId,
-      divisionId: { $in: divisionIds }
-    }).exec()
+    expect(contestants1).not.toHaveLength(0)
 
-    expect(contestants).toHaveLength(0)
+    await weapon.remove()
+
+    const contestants2 = await db.events_contestants.find({
+      weaponId: weapon.id
+    }).exec()
+    expect(contestants2).toHaveLength(0)
   })
 })

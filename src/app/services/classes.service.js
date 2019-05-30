@@ -2,16 +2,7 @@ import {
   insert, findMany, findOne, destroyOne, destroyMany, updateOne
 } from "~/db/queries"
 import { classesStub } from "~/stubs"
-
-const filterInput = (item) => {
-  const data = {}
-  for(let key in item) {
-    if(classesStub.hasOwnProperty(key)) {
-      data[key] = item[key]
-    }
-  }
-  return data
-}
+import { filterInput } from "~/utils"
 
 const list = async (filter = {}, options = {}) => {
   const result = await findMany("classes", filter, options, true)

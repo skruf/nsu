@@ -1,6 +1,8 @@
 import getDb from "~/db"
 import { clubsFixture } from "~/fixtures"
-import { insert, findMany, findOne, destroyOne, destroyMany } from "~/db/queries"
+import {
+  insert, findMany, findOne, destroyOne, destroyMany
+} from "~/db/queries"
 import seed from "~/utils/tests/seed"
 
 const setup = async () => {

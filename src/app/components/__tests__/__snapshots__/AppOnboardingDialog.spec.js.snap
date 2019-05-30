@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AppOnboardingDialog renders the component 1`] = `
-<el-dialog-stub title="" modal="true" modalappendtobody="true" appendtobody="true" lockscroll="true" closeonclickmodal="true" closeonpressescape="true" showclose="true" customclass="app-onboarding-dialog" top="15vh">
-  <el-carousel-stub initialindex="0" height="560px" trigger="click" interval="3000" indicator="true" arrow="hover" loop="true">
+exports[`AppOnboardingDialog should render the component 1`] = `
+<el-dialog-stub modal="true" modalfade="true" modalappendtobody="true" lockscroll="true" closeonpressescape="true" closeonclickmodal="true" title="" appendtobody="true" customclass="app-onboarding-dialog" top="15vh">
+  <el-carousel-stub initialindex="0" height="560px" trigger="click" interval="3000" indicator="true" arrow="hover" loop="true" direction="horizontal">
     <el-carousel-item-stub label="">
-      <div class="onboarding-slide"><img src="static/img/onboarding-slide-1.svg" class="onboarding-slide-image">
+      <div class="onboarding-slide"><img src="img/onboarding-slide-1.svg" class="onboarding-slide-image">
         <div class="onboarding-slide-text">
           <h2 class="h2 onboarding-slide-text-title">
             Welcome to NSUs Event Management app!
@@ -16,7 +16,7 @@ exports[`AppOnboardingDialog renders the component 1`] = `
       </div>
     </el-carousel-item-stub>
     <el-carousel-item-stub label="">
-      <div class="onboarding-slide"><img src="static/img/onboarding-slide-2.svg" class="onboarding-slide-image">
+      <div class="onboarding-slide"><img src="img/onboarding-slide-2.svg" class="onboarding-slide-image">
         <div class="onboarding-slide-text">
           <h2 class="h2 onboarding-slide-text-title">
             Manage clubs &amp; their members
@@ -28,7 +28,7 @@ exports[`AppOnboardingDialog renders the component 1`] = `
       </div>
     </el-carousel-item-stub>
     <el-carousel-item-stub label="">
-      <div class="onboarding-slide"><img src="static/img/onboarding-slide-3.svg" class="onboarding-slide-image">
+      <div class="onboarding-slide"><img src="img/onboarding-slide-3.svg" class="onboarding-slide-image">
         <div class="onboarding-slide-text">
           <h2 class="h2 onboarding-slide-text-title">
             Stay up to date on weapon class rules
@@ -40,7 +40,7 @@ exports[`AppOnboardingDialog renders the component 1`] = `
       </div>
     </el-carousel-item-stub>
     <el-carousel-item-stub label="">
-      <div class="onboarding-slide"><img src="static/img/onboarding-slide-4.svg" class="onboarding-slide-image">
+      <div class="onboarding-slide"><img src="img/onboarding-slide-4.svg" class="onboarding-slide-image">
         <div class="onboarding-slide-text">
           <h2 class="h2 onboarding-slide-text-title">
             Great, now how do I get started?

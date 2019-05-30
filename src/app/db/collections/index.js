@@ -4,9 +4,10 @@ import clubsCollection from "./clubs.collection"
 import clubsMembersCollection from "./clubs.members.collection"
 import eventsCollection from "./events.collection"
 import eventsParticipantsCollection from "./events.participants.collection"
+import eventsParticipantsWeaponsCollection from "./events.participants.weapons.collection"
 import eventsDivisionsCollection from "./events.divisions.collection"
-import eventsDivisionsContestantsCollection from "./events.divisions.contestants.collection"
-import eventsDivisionsContestantsResultsCollection from "./events.divisions.contestants.results.collection"
+import eventsDivisionsParticipantsCollection from "./events.divisions.participants.collection"
+import eventsDivisionsParticipantsResultsCollection from "./events.divisions.participants.results.collection"
 
 export default [
   rangesCollection,
@@ -15,7 +16,8 @@ export default [
   clubsMembersCollection,
   eventsCollection,
   eventsParticipantsCollection,
+  eventsParticipantsWeaponsCollection,
   eventsDivisionsCollection,
-  eventsDivisionsContestantsCollection,
-  eventsDivisionsContestantsResultsCollection
+  eventsDivisionsParticipantsCollection,
+  eventsDivisionsParticipantsResultsCollection
 ]

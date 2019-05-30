@@ -1,8 +1,8 @@
 import { destroyMany } from "~/db/queries"
 
 const schema = {
-  title: "Events divisions contestants schema",
-  description: "Events divisions contestants",
+  title: "Events divisions participants schema",
+  description: "Events divisions participants",
   version: 0,
   type: "object",
   properties: {
@@ -10,50 +10,43 @@ const schema = {
       type: "string",
       primary: true
     },
-    time: {
-      type: "string",
+    stand: {
+      type: "number",
       index: true
     },
     divisionId: {
       type: "string",
       ref: "events_divisions"
     },
-    memberId: {
+    participantId: {
       type: "string",
-      ref: "clubs_members"
+      ref: "events_participants"
     },
-    weapon: {
-      id: {
-        type: "string"
-      },
-      calibre: {
-        type: "string"
-      },
-      classId: {
-        type: "string",
-        ref: "classes"
-      }
+    weaponId: {
+      type: "string",
+      ref: "events_participants_weapons"
     }
   },
   required: [
-    "time",
+    "stand",
     "divisionId",
-    "memberId",
-    "weapon"
+    "participantId",
+    "weaponId"
   ]
 }
 
 const methods = {}
 
 const preRemove = async (data, doc) => {
-  await destroyMany("events_divisions_contestants_results",
-    { contestantId: data.id }
-  )
+  await destroyMany("events_divisions_participants_results", {
+    participantId: data.id,
+    divisionId: data.divisionId
+  })
 }
 
 export default {
   collection: {
-    name: "events_divisions_contestants",
+    name: "events_divisions_participants",
     schema: schema,
     methods: methods
   },

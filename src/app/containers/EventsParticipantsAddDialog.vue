@@ -113,7 +113,7 @@
   </el-dialog>
 </template>
 
-<script lang="ts">
+<script>
 import _get from "lodash.get"
 import { mapActions, mapState } from "vuex"
 // import { eventsParticipantsStub } from "~/stubs"

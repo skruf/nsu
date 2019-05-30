@@ -1,35 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`RangesCreateDialog renders the component 1`] = `
-<el-dialog-stub title="Create a new range" modal="true" modalappendtobody="true" lockscroll="true" closeonclickmodal="true" closeonpressescape="true" showclose="true" customclass="create-dialog" top="15vh">
+exports[`RangesCreateDialog should render the component 1`] = `
+<el-dialog-stub modal="true" modalfade="true" modalappendtobody="true" lockscroll="true" closeonpressescape="true" closeonclickmodal="true" title="title" showclose="true" customclass="create-dialog" top="15vh">
   <div class="dialog_content">
     <el-form-stub model="[object Object]" rules="[object Object]" labelposition="top" labelsuffix="" showmessage="true" validateonrulechange="true">
-      <el-form-item-stub label="Name" prop="name" inlinemessage="" showmessage="true">
-        <el-input-stub value="" type="text" autocomplete="off" validateevent="true" placeholder="Enter a name"></el-input-stub>
+      <el-form-item-stub label="formItem1Label" prop="name" inlinemessage="" showmessage="true">
+        <el-input-stub value="" type="text" autocomplete="off" validateevent="true" placeholder="formItem1Placeholder"></el-input-stub>
       </el-form-item-stub>
-      <el-form-item-stub label="Address" prop="address" inlinemessage="" showmessage="true">
-        <el-input-stub value="" type="text" autocomplete="off" validateevent="true" placeholder="Enter a address"></el-input-stub>
+      <el-form-item-stub label="formItem2Label" prop="address" inlinemessage="" showmessage="true">
+        <el-input-stub value="" type="text" autocomplete="off" validateevent="true" placeholder="formItem2Placeholder"></el-input-stub>
       </el-form-item-stub>
-      <el-form-item-stub label="Area" prop="area" inlinemessage="" showmessage="true">
-        <el-input-stub value="" type="text" autocomplete="off" validateevent="true" placeholder="Enter an area"></el-input-stub>
+      <el-form-item-stub label="formItem3Label" prop="area" inlinemessage="" showmessage="true">
+        <el-input-stub value="" type="text" autocomplete="off" validateevent="true" placeholder="formItem3Placeholder"></el-input-stub>
       </el-form-item-stub>
-      <el-form-item-stub label="Country" prop="country" inlinemessage="" showmessage="true">
-        <el-select-stub value="" autocomplete="off" multiplelimit="0" placeholder="Select a country" valuekey="value" popperappendtobody="true"></el-select-stub>
+      <el-form-item-stub label="formItem4Label" prop="country" inlinemessage="" showmessage="true">
+        <el-select-stub value="" autocomplete="off" multiplelimit="0" placeholder="formItem4Placeholder" valuekey="value" popperappendtobody="true"></el-select-stub>
       </el-form-item-stub>
       <div class="flex">
         <div class="flex-1 mr-2">
-          <el-form-item-stub label="Latitude" prop="lat" inlinemessage="" showmessage="true">
-            <el-input-stub value="" type="text" autocomplete="off" validateevent="true" placeholder="Enter coordinates"></el-input-stub>
+          <el-form-item-stub label="formItem5Label" prop="lat" inlinemessage="" showmessage="true">
+            <el-input-stub value="" type="text" autocomplete="off" validateevent="true" placeholder="formItem5Placeholder"></el-input-stub>
           </el-form-item-stub>
         </div>
         <div class="flex-1 ml-2">
-          <el-form-item-stub label="Longitude" prop="lng" inlinemessage="" showmessage="true">
-            <el-input-stub value="" type="text" autocomplete="off" validateevent="true" placeholder="Enter coordinates"></el-input-stub>
+          <el-form-item-stub label="formItem6Label" prop="lng" inlinemessage="" showmessage="true">
+            <el-input-stub value="" type="text" autocomplete="off" validateevent="true" placeholder="formItem6Placeholder"></el-input-stub>
           </el-form-item-stub>
         </div>
       </div>
-      <el-form-item-stub label="Type" prop="type" inlinemessage="" showmessage="true">
-        <el-select-stub value="" autocomplete="off" multiplelimit="0" placeholder="Select a type" valuekey="value" popperappendtobody="true">
+      <el-form-item-stub label="formItem7Label" prop="type" inlinemessage="" showmessage="true">
+        <el-select-stub value="" autocomplete="off" multiplelimit="0" placeholder="formItem7Placeholder" valuekey="value" popperappendtobody="true">
           <el-option-stub value="Indoor" label="Indoor"></el-option-stub>
           <el-option-stub value="Outdoor" label="Outdoor"></el-option-stub>
         </el-select-stub>

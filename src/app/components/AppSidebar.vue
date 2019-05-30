@@ -204,11 +204,11 @@
     >
       <i
         v-if="isOpen"
-        class="menu-icon ion-ios-expand"
+        class="menu-icon el-icon-arrow-right"
       />
       <i
         v-else
-        class="menu-icon ion-ios-contract"
+        class="menu-icon el-icon-arrow-left"
       />
     </el-button>
   </el-aside>

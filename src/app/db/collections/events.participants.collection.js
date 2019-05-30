@@ -3,7 +3,7 @@ import { findMany, destroyMany } from "~/db/queries"
 const schema = {
   title: "Events participants schema",
   description: "Events participants",
-  version: 1,
+  version: 0,
   type: "object",
   properties: {
     id: {
@@ -21,27 +21,17 @@ const schema = {
     eventId: {
       type: "string",
       ref: "events"
-    },
-    weapons: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          id: {
-            type: "string"
-          },
-          calibre: {
-            type: "string"
-          },
-          classId: {
-            type: "string",
-            ref: "classes"
-          }
-        }
-      }
     }
+    // weaponIds: {
+    //   type: "array",
+    //   ref: "events_participants_weapons",
+    //   items: {
+    //     type: "string"
+    //   }
+    // }
   },
   required: [
+    "number",
     "memberId",
     "eventId"
   ]
@@ -50,13 +40,16 @@ const schema = {
 const methods = {}
 
 const preRemove = async (data, doc) => {
-  const divisions = await findMany("events_divisions", {
-    eventId: data.eventId
+  // const divisions = await findMany("events_divisions", {
+  //   eventId: data.eventId
+  // })
+  // const divisionIds = divisions.items.map((d) => d.toJSON().id)
+  await destroyMany("events_divisions_participants", {
+    participantId: data.id
+    // divisionId: { $in: divisionIds }
   })
-  const divisionIds = divisions.items.map((d) => d.toJSON().id)
-  await destroyMany("events_divisions_contestants", {
-    memberId: data.memberId,
-    divisionId: { $in: divisionIds }
+  await destroyMany("events_participants_weapons", {
+    participantId: data.id
   })
 }
 
@@ -64,10 +57,7 @@ export default {
   collection: {
     name: "events_participants",
     schema: schema,
-    methods: methods,
-    migrationStrategies: {
-      1: (d) => d
-    }
+    methods: methods
   },
   middlewares: {
     preRemove: {

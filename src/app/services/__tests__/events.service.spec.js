@@ -11,7 +11,7 @@ jest.mock("~/db/queries", () => {
   return mockQueries(eventsFixture, {
     rangeId: { data: rangesFixture[0] },
     organizerId: { data: clubsFixture[0] }
-  })
+  }, true)
 })
 
 describe("events.service", () => {

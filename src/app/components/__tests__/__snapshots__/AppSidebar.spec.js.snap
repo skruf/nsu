@@ -1,28 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AppSidebar renders the component 1`] = `
-<el-aside-stub width="auto" class="app_aside"><img src="https://norsksvartkruttunion.no/test/wp-content/uploads/2014/03/nsu-logo-full.png" class="logo mx-auto block">
+exports[`AppSidebar should render the component 1`] = `
+<el-aside-stub width="auto" class="app_aside"><img src="../../../static/img/nsu-logo.png" class="logo mx-auto block">
   <el-menu-stub mode="vertical" defaultactive="1-1" menutrigger="hover" collapse="true" collapsetransition="true">
-    <el-submenu-stub index="1" showtimeout="300" hidetimeout="300"><template></template>
+    <el-submenu-stub offset="0" boundariespadding="5" popperoptions="[object Object]" index="1" showtimeout="300" hidetimeout="300"><template></template>
       <el-menu-item-stub index="1-1">
-        All
+        all
       </el-menu-item-stub>
       <el-menu-item-stub index="1-2">
-        Upcoming
+        upcoming
       </el-menu-item-stub>
       <el-menu-item-stub index="1-3">
-        History
+        history
       </el-menu-item-stub>
       <el-menu-item-stub index="1-4" disabled="true">
-        Categories
+        categories
       </el-menu-item-stub>
     </el-submenu-stub>
-    <el-menu-item-stub index="2"><i class="menu-icon ion-ios-nuclear"></i> <span>Classes</span></el-menu-item-stub>
-    <el-menu-item-stub index="3"><i class="menu-icon ion-ios-people"></i> <span>Clubs</span></el-menu-item-stub>
-    <el-menu-item-stub index="4"><i class="menu-icon ion-ios-people"></i> <span>Ranges</span></el-menu-item-stub>
-    <el-menu-item-stub index="5" disabled="true"><i class="menu-icon ion-ios-star"></i> <span>Records</span></el-menu-item-stub>
-    <el-menu-item-stub index="6" disabled="true"><i class="menu-icon ion-ios-settings"></i> <span>Settings</span></el-menu-item-stub>
+    <el-menu-item-stub index="2"><img src="../../../static/img/club-icon.svg" class="menu-img"> <span>clubs</span></el-menu-item-stub>
+    <el-menu-item-stub index="3"><img src="../../../static/img/class-icon.svg" class="menu-img"> <span>classes</span></el-menu-item-stub>
+    <el-menu-item-stub index="4"><img src="../../../static/img/range-icon.svg" class="menu-img"> <span>ranges</span></el-menu-item-stub>
+    <el-menu-item-stub index="5" disabled="true"><img src="../../../static/img/record-icon.svg" class="menu-img"> <span>records</span></el-menu-item-stub>
+    <el-menu-item-stub index="6"><img src="../../../static/img/settings-icon.svg" class="menu-img"> <span>settings</span></el-menu-item-stub>
   </el-menu-stub>
-  <el-button-stub type="default" icon="" nativetype="button" class="button--text collapse-button"><i class="menu-icon ion-ios-expand"></i></el-button-stub>
+  <el-button-stub type="default" icon="" nativetype="button" class="button--text collapse-button"><i class="menu-icon el-icon-arrow-right"></i></el-button-stub>
 </el-aside-stub>
 `;

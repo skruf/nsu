@@ -12,7 +12,7 @@ import {
   Loading
 } from "element-ui"
 import SearchForm from "~/components/SearchForm"
-import RangesListTable from "~/containers/ranges/RangesListTable"
+import RangesListTable from "~/containers/RangesListTable"
 
 import { rangesFixture } from "~/fixtures"
 import rangesStore from "~/state/stores/ranges.store"
@@ -46,7 +46,7 @@ describe("RangesListTable", () => {
     jest.resetAllMocks()
   })
 
-  it("renders the component", () => {
+  it("should render the component", () => {
     const wrapper = build()
     expect(wrapper.html()).toMatchSnapshot()
   })

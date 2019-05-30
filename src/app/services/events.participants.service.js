@@ -1,7 +1,7 @@
 import {
   insert, insertMany, findMany, findOne, destroyOne, destroyMany, updateOne
 } from "~/db/queries"
-import { getId } from "~/utils"
+import { filterInput } from "~/utils"
 
 // @TODO: fix search on clubs_members model
 // let a
@@ -17,10 +17,15 @@ import { getId } from "~/utils"
 const populate = async (doc) => {
   const member = await doc.populate("memberId")
   const club = await member.populate("clubId")
-  const weapons = await Promise.all(doc.weapons.map(async (weapon) => {
-    const classItem = await findOne("classes", { id: weapon.classId }, {}, true)
-    return { ...weapon, class: classItem }
-  }))
+  const weaponDocs = await doc.populate("weaponIds")
+
+  const weapons = weaponDocs.map((weaponDoc) => {
+    const weaponClass = weaponDoc.populate("classId")
+    return {
+      ...weaponDoc.toJSON(),
+      class: weaponClass.toJSON()
+    }
+  })
 
   const participant = doc.toJSON()
   participant.member = member.toJSON()
@@ -30,13 +35,13 @@ const populate = async (doc) => {
   return participant
 }
 
-const filterInput = (item) => ({
-  memberId: item.memberId,
-  eventId: item.eventId,
-  weapons: item.weapons.map(
-    (w) => ({ ...w, id: getId() })
-  )
-})
+// const filterInput = (item) => ({
+//   memberId: item.memberId,
+//   eventId: item.eventId,
+//   weapons: item.weapons && item.weapons.map(
+//     (w) => ({ ...w, id: getId() })
+//   )
+// })
 
 const list = async (filter = {}, options = {}) => {
   const result = await findMany("events_participants", filter, options)
@@ -61,8 +66,10 @@ const createOne = async (item = {}, options = {}) => {
 
 const createMany = async (items = {}, options = {}) => {
   const data = items.map((item) => filterInput(item))
-  const doc = await insertMany("events_participants", data, options)
-  const participants = await populate(doc)
+  const docs = await insertMany("events_participants", data, options)
+  const participants = await Promise.all(
+    docs.map((doc) => populate(doc))
+  )
   return participants
 }
 

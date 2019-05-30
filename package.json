@@ -9,7 +9,7 @@
   },
   "main": "src/main.js",
   "scripts": {
-    "dev": "NODE_ENV=development concurrently 'npm run dev:frontend' 'npm run dev:backend'",
+    "dev": "NODE_ENV=development concurrently 'npm run dev:frontend' 'npm run dev:backend' 'npm run vuetools'",
     "dev:frontend": "parcel ./src/app/index.html -d build/",
     "dev:backend": "electron .",
     "build:beta": "NODE_ENV=beta parcel build ./src/app/index.html -d build/ --public-url ./",
@@ -18,12 +18,13 @@
     "pack:prod": "npm run build:prod && NODE_ENV=production electron-builder --dir",
     "deploy:beta": "npm run build:beta && NODE_ENV=beta electron-builder",
     "deploy:prod": "npm run build:prod && NODE_ENV=production electron-builder",
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "patch-package && electron-builder install-app-deps",
     "tests": "jest --verbose",
     "tests:watch": "jest --watch",
     "tests:coverage": "jest --verbose --coverage",
     "lint": "eslint --ext .js,.vue src",
-    "lint:fix": "eslint --ext .js,.vue --fix src"
+    "lint:fix": "eslint --ext .js,.vue --fix src",
+    "vuetools": "./node_modules/.bin/vue-devtools"
   },
   "posthtml": {
     "recognizeSelfClosing": true
@@ -37,6 +38,7 @@
     "artifactName": "Stevnebehandler-${version}.${ext}",
     "copyright": "Copyright © Thomas Laaver",
     "directories": {
+      "buildResources": "static/icons",
       "output": "build"
     },
     "files": [
@@ -45,19 +47,16 @@
       "build/*"
     ],
     "mac": {
-      "icon": "build/icons/icon.icns",
+      "icon": "./static/icons/icon.icns",
       "target": {
         "target": "zip"
       }
     },
     "win": {
-      "icon": "build/icons/icon.ico",
+      "icon": "./static/icons/icon.ico",
       "target": {
         "target": "nsis"
       }
-    },
-    "linux": {
-      "icon": "build/icons"
     },
     "publish": {
       "provider": "github",
@@ -73,7 +72,6 @@
     "lodash.merge": "^4.6.1",
     "lodash.pickby": "^4.6.0",
     "pouchdb-adapter-idb": "^7.0.0",
-    "pouchdb-adapter-memory": "^7.0.0",
     "rxdb": "^8.1.0",
     "rxjs": "^6.5.1",
     "uuid": "^3.3.2",
@@ -86,14 +84,15 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
     "@vue/component-compiler-utils": "^3.0.0",
+    "@vue/devtools": "^5.1.0",
     "@vue/test-utils": "^1.0.0-beta.29",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
-    "babel-plugin-component": "^1.1.1",
     "concurrently": "^4.1.0",
     "electron": "^5.0.1",
     "electron-builder": "^20.39.0",
-    "electron-devtools-installer": "^2.2.4",
     "electron-reload": "^1.4.0",
     "element-ui": "^2.8.2",
     "eslint": "^5.16.0",
@@ -106,8 +105,13 @@
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^5.2.2",
     "flush-promises": "^1.0.2",
+    "jest": "^24.8.0",
+    "jest-serializer-vue": "^2.0.2",
+    "jest-transform-stub": "^2.0.0",
     "parcel-bundler": "^1.12.3",
     "parcel-plugin-static-files-copy": "^2.0.0",
+    "patch-package": "^6.1.2",
+    "pouchdb-adapter-memory": "^7.0.0",
     "stylus": "^0.54.5",
     "tailwindcss": "^0.7.4",
     "typescript": "^3.4.5",

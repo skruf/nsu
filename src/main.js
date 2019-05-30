@@ -61,8 +61,6 @@ const createWindow = async () => {
   }]
 
   if(!IS_PROD) {
-    const ext = require("electron-devtools-installer")
-    ext.default(ext.VUEJS_DEVTOOLS)
     win.webContents.openDevTools()
 
     menuItems.push({

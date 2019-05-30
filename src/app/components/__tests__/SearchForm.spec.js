@@ -1,16 +1,16 @@
 import createLocalVue from "~/utils/tests/createLocalVue"
 import mount from "~/utils/tests/mount"
-import { Form, Input } from "element-ui"
+import Element, { Form, Input } from "element-ui"
 import SearchForm from "~/components/SearchForm"
 
-const localVue = createLocalVue([ Form, Input ])
+const localVue = createLocalVue([ Element ])
+
+const build = (deep = false, overrides = {}) => {
+  return mount(SearchForm, localVue, overrides, deep)
+}
 
 describe("SearchForm", () => {
-  const build = (deep = false, overrides = {}) => {
-    return mount(SearchForm, localVue, overrides, deep)
-  }
-
-  it("renders the component", () => {
+  it("should render the component", () => {
     const wrapper = build()
     expect(wrapper.html()).toMatchSnapshot()
   })

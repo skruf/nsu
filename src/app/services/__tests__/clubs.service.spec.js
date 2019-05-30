@@ -10,7 +10,7 @@ jest.mock("~/db/queries", () => {
   const mockQueries = require("~/utils/tests/mockQueries").default
   return mockQueries(clubsFixture, {
     rangeId: { data: rangesFixture[0] }
-  })
+  }, true)
 })
 
 describe("clubs.service", () => {

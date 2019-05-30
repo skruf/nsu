@@ -1,8 +1,9 @@
 {
-  "plugins": [[
-    "component", {
-      "libraryName": "element-ui",
-      "styleLibraryName": "theme-chalk"
-    }
-  ]]
+  "presets": [
+    [
+      "@babel/preset-env",
+      { "targets": { "node": "current" } }
+    ]
+  ],
+  "retainLines": true
 }

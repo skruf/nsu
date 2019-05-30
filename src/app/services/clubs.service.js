@@ -2,6 +2,7 @@ import {
   insert, findMany, findOne, destroyOne, destroyMany, updateOne
 } from "~/db/queries"
 import { clubsStub } from "~/stubs"
+import { filterInput } from "~/utils"
 
 const populate = async (doc) => {
   let range = await doc.populate("rangeId")
@@ -12,16 +13,6 @@ const populate = async (doc) => {
   if(range) club.range = range.toJSON()
 
   return club
-}
-
-const filterInput = (item) => {
-  const data = {}
-  for(let key in item) {
-    if(clubsStub.hasOwnProperty(key)) {
-      data[key] = item[key]
-    }
-  }
-  return data
 }
 
 const list = async (filter = {}, options = {}) => {
@@ -39,7 +30,7 @@ const select = async (filter = {}, options = {}) => {
 }
 
 const create = async (item = {}, options = {}) => {
-  const data = filterInput(item)
+  const data = filterInput(item, clubsStub)
   const doc = await insert("clubs", data, options)
   const club = await populate(doc)
   return club
@@ -60,7 +51,7 @@ const removeMany = async (items, options = {}) => {
 
 const editOne = async (item, options = {}) => {
   const filter = { id: item.id }
-  const data = filterInput(item)
+  const data = filterInput(item, clubsStub)
   const doc = await updateOne("clubs", filter, data, options)
   const club = await populate(doc)
   return club

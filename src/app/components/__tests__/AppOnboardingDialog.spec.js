@@ -5,16 +5,16 @@ import AppOnboardingDialog from "~/components/AppOnboardingDialog"
 
 const localVue = createLocalVue([ Dialog, Carousel, CarouselItem, Button ])
 
-describe("AppOnboardingDialog", () => {
-  const build = (deep = false, overrides = {}) => {
-    return mount(AppOnboardingDialog, localVue, overrides, deep)
-  }
+const build = (deep = false, overrides = {}) => {
+  return mount(AppOnboardingDialog, localVue, overrides, deep)
+}
 
+describe("AppOnboardingDialog", () => {
   beforeEach(() => {
     jest.resetAllMocks()
   })
 
-  it("renders the component", () => {
+  it("should render the component", () => {
     const wrapper = build()
     expect(wrapper.html()).toMatchSnapshot()
   })

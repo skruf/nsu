@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App should render the component 1`] = `
+<div>
+  <el-alert-stub title="appWarning" description="" type="warning" closetext="" center="true" effect="light" class="app-warning"></el-alert-stub>
+  <el-container-stub id="app" class="sidebar-open">
+    <div class="titlebar"></div>
+    <app-sidebar-stub open="true"></app-sidebar-stub>
+    <app-onboarding-dialog-stub shown="true"></app-onboarding-dialog-stub>
+    <router-view-stub name="default"></router-view-stub>
+  </el-container-stub>
+</div>
+`;

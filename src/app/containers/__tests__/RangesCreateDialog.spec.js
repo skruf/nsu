@@ -45,7 +45,7 @@ describe("RangesCreateDialog", () => {
     jest.resetAllMocks()
   })
 
-  it("renders the component", () => {
+  it("should render the component", () => {
     const wrapper = build()
     expect(wrapper.html()).toMatchSnapshot()
   })

@@ -212,7 +212,7 @@
   </el-dialog>
 </template>
 
-<script lang="ts">
+<script>
 import { mapActions, mapState, mapMutations } from "vuex"
 import Avatar from "~/components/Avatar"
 import EventsParticipantsAddDialog from "~/containers/EventsParticipantsAddDialog"

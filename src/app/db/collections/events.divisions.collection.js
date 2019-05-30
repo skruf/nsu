@@ -15,32 +15,28 @@ const schema = {
     },
     day: {
       type: "string",
-      format: "date-time",
+      format: "date",
       index: true
     },
-    startsAt: {
+    time: {
       type: "string"
     },
-    endsAt: {
+    distance: {
       type: "string"
     },
-    interval: {
-      type: "string"
+    stands: {
+      type: "number"
     },
     eventId: {
       type: "string",
       ref: "events"
-    },
-    distance: {
-      type: "string"
     }
   },
   required: [
     "name",
     "day",
-    "startsAt",
-    "endsAt",
-    "interval",
+    "time",
+    "stands",
     "eventId"
   ]
 }
@@ -48,7 +44,9 @@ const schema = {
 const methods = {}
 
 const preRemove = async (data, doc) => {
-  await destroyMany("events_divisions_contestants", { divisionId: data.id })
+  await destroyMany("events_divisions_participants", {
+    divisionId: data.id
+  })
 }
 
 export default {

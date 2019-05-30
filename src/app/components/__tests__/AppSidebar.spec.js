@@ -1,6 +1,6 @@
+import { Aside, Menu, Submenu, MenuItem, Button } from "element-ui"
 import createLocalVue from "~/utils/tests/createLocalVue"
 import mount from "~/utils/tests/mount"
-import { Aside, Menu, Submenu, MenuItem, Button } from "element-ui"
 import AppSidebar from "~/components/AppSidebar"
 
 const localVue = createLocalVue([ Aside, Menu, Submenu, MenuItem, Button ])
@@ -14,7 +14,7 @@ describe("AppSidebar", () => {
     jest.resetAllMocks()
   })
 
-  it("renders the component", () => {
+  it("should render the component", () => {
     const wrapper = build()
     expect(wrapper.html()).toMatchSnapshot()
   })

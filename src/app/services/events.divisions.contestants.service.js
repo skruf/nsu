@@ -57,11 +57,7 @@ const editMany = async (items, options = {}) => {
   const data = filterInput(items, eventsDivisionsContestantsStub)
   const docs = await updateMany("events_divisions_contestants", data)
   const contestants = await Promise.all(docs.map((doc) => populate(doc)))
-
-  return {
-    items: contestants,
-    count: contestants.length
-  }
+  return contestants
 }
 
 const removeOne = async (filter, options = {}) => {

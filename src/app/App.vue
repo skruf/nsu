@@ -81,16 +81,16 @@
         :open.sync="isSidebarOpen"
       />
 
-      <!-- <app-onboarding-dialog
+      <app-onboarding-dialog
         :shown.sync="appOnboardingShowDialog"
-      /> -->
+      />
 
       <router-view />
     </el-container>
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import AppOnboardingDialog from "~/components/AppOnboardingDialog"
 import AppSidebar from "~/components/AppSidebar"
 
@@ -112,14 +112,19 @@ export default {
       localStorage.setItem("isSidebarOpen", this.isSidebarOpen)
     },
     appOnboardingShowDialog() {
-      localStorage.setItem("appOnboardingHideDialog", this.appOnboardingShowDialog)
+      localStorage.setItem("appOnboardingShowDialog", this.appOnboardingShowDialog)
     }
   },
 
   created() {
     // this.$electron.ipcRenderer.send("APP_STARTED")
-    this.isSidebarOpen = localStorage.getItem("isSidebarOpen") === "true"
-    // this.appOnboardingShowDialog = !localStorage.getItem("appOnboardingHideDialog") === "true"
+
+    if(localStorage.isSidebarOpen !== undefined) {
+      this.isSidebarOpen = localStorage.isSidebarOpen === "true"
+    }
+    if(localStorage.appOnboardingShowDialog !== undefined) {
+      this.appOnboardingShowDialog = localStorage.appOnboardingShowDialog === "true"
+    }
 
     // this.$electron.ipcRenderer.on("SET_UPDATE_STATUS", (e, status) => {
     //   let title = "Update"

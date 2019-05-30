@@ -9,7 +9,7 @@ describe("Avatar", () => {
     return mount(Avatar, localVue, overrides, deep)
   }
 
-  it("renders the component", () => {
+  it("should render the component", () => {
     const wrapper = build(false, {
       propsData: { firstName: "Ola", lastName: "Dunk" }
     })

@@ -3,8 +3,8 @@ import { eventsDivisionsContestantsService } from "~/services"
 import {
   eventsDivisionsContestantsFixture,
   eventsDivisionsFixture,
-  clubsMembersFixture,
-  classesFixture
+  clubsMembersFixture
+  // classesFixture
 } from "~/fixtures"
 import {
   findMany, findOne, insert, destroyOne, destroyMany
@@ -14,17 +14,16 @@ jest.mock("~/db/queries", () => {
   const {
     eventsDivisionsContestantsFixture,
     eventsDivisionsFixture,
-    clubsMembersFixture,
-    classesFixture
+    clubsMembersFixture
+    // classesFixture
   } = require("~/fixtures")
 
   const mockQueries = require("~/utils/tests/mockQueries").default
 
   return mockQueries(eventsDivisionsContestantsFixture, {
     divisionId: { data: eventsDivisionsFixture[0] },
-    memberId: { data: clubsMembersFixture[0] },
-    classId: { data: classesFixture[0] }
-  })
+    memberId: { data: clubsMembersFixture[0] }
+  }, true)
 })
 
 describe("events.divisions.contestants.service", () => {
@@ -46,7 +45,7 @@ describe("events.divisions.contestants.service", () => {
     expect(contestant).toEqual(eventsDivisionsContestantsFixture[0])
     expect(contestant.division).toEqual(eventsDivisionsFixture[0])
     expect(contestant.member).toEqual(clubsMembersFixture[0])
-    expect(contestant.class).toEqual(classesFixture[0])
+    // expect(contestant.class).toEqual(classesFixture[0])
   })
 
   it("should select a event division contestant", async () => {
@@ -60,7 +59,7 @@ describe("events.divisions.contestants.service", () => {
     expect(contestant).toEqual(eventsDivisionsContestantsFixture[0])
     expect(contestant.division).toEqual(eventsDivisionsFixture[0])
     expect(contestant.member).toEqual(clubsMembersFixture[0])
-    expect(contestant.class).toEqual(classesFixture[0])
+    // expect(contestant.weapon.class).toEqual(classesFixture[0])
   })
 
   it("should create a event division contestant", async () => {
@@ -74,7 +73,7 @@ describe("events.divisions.contestants.service", () => {
     expect(contestant).toEqual(eventsDivisionsContestantsFixture[0])
     expect(contestant.division).toEqual(eventsDivisionsFixture[0])
     expect(contestant.member).toEqual(clubsMembersFixture[0])
-    expect(contestant.class).toEqual(classesFixture[0])
+    // expect(contestant.class).toEqual(classesFixture[0])
   })
 
   it("should remove a event division contestant", async () => {

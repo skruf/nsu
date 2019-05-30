@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SearchForm renders the component 1`] = `
+exports[`SearchForm should render the component 1`] = `
 <el-form-stub labelsuffix="" showmessage="true" validateonrulechange="true" class="search-form">
   <el-input-stub value="" type="text" autocomplete="off" validateevent="true" prefixicon="el-icon-search" clearable="true" placeholder="Enter search words.."></el-input-stub>
 </el-form-stub>

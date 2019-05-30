@@ -5,7 +5,7 @@ export default async (relations = {}) => {
   const participants = await seedArray(
     "events_participants",
     eventsParticipantsFixture.map(
-      (division) => ({ ...division, ...relations })
+      (participant) => ({ ...participant, ...relations })
     )
   )
 

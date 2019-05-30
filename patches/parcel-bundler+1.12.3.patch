@@ -1,0 +1,32 @@
+diff --git a/node_modules/parcel-bundler/src/assets/VueAsset.js b/node_modules/parcel-bundler/src/assets/VueAsset.js
+index ade6524..8465434 100644
+--- a/node_modules/parcel-bundler/src/assets/VueAsset.js
++++ b/node_modules/parcel-bundler/src/assets/VueAsset.js
+@@ -31,6 +31,11 @@ class VueAsset extends Asset {
+     let descriptor = this.ast;
+     let parts = [];
+ 
++    let i18nBlock = descriptor.customBlocks.find(r => r.type === 'i18n');
++    if (i18nBlock) {
++      this.i18nData = JSON.parse(i18nBlock.content);
++    }
++
+     if (descriptor.script) {
+       parts.push({
+         type: descriptor.script.lang || 'js',
+@@ -97,6 +102,15 @@ class VueAsset extends Asset {
+       }
+     `;
+ 
++    if (this.i18nData) {
++      supplemental += `
++        ${optsVar}.__i18n = ${optsVar}.__i18n || [];
++        ${optsVar}.__i18n.push(${JSON.stringify(
++        JSON.stringify(this.i18nData)
++      )});
++      `;
++    }
++
+     supplemental += this.compileTemplate(generated, scopeId, optsVar);
+     supplemental += this.compileCSSModules(generated, optsVar);
+     supplemental += this.compileHMR(generated, optsVar);

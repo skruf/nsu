@@ -103,13 +103,17 @@ export default (options) => {
       state.createManyIsLoading = loading
     }
 
+    mutations.ADD_MANY = (state, items) => {
+      items.forEach((i) => state.list.push(i))
+      state.count += items.length
+    }
+
     actions.createMany = async ({ commit }, items) => {
       commit("SET_CREATE_MANY_LOADING", true)
-      const results = await config.createMany(items)
-      commit("SET_LIST", results.items) // @TODO: merge items
-      commit("SET_COUNT", results.count)
+      const added = await config.createMany(items)
+      commit("ADD_MANY", added)
       commit("SET_CREATE_MANY_LOADING", false)
-      return results
+      return added
     }
   }
 
@@ -212,7 +216,7 @@ export default (options) => {
     actions.editMany = async ({ commit }, items) => {
       commit("SET_EDIT_MANY_LOADING", true)
       const edited = await config.editMany(items)
-      commit("EDIT_MANY", edited.items) // @TODO: merge items
+      commit("EDIT_MANY", edited)
       commit("SET_EDIT_MANY_LOADING", false)
       return edited
     }

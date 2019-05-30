@@ -1,4 +1,5 @@
-import { createLocalVue } from "@vue/test-utils"
+import VueTestUtils, { createLocalVue } from "@vue/test-utils"
+VueTestUtils.config.mocks.$t = (key) => key
 
 export default (dependencies) => {
   const localVue = createLocalVue()

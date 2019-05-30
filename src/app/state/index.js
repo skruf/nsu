@@ -4,8 +4,8 @@ import {
   eventsStore,
   eventsParticipantsStore,
   eventsDivisionsStore,
-  eventsDivisionsContestantsStore,
-  eventsDivisionsContestantsResultsStore,
+  eventsContestantsStore,
+  eventsContestantsResultsStore,
   clubsStore,
   clubsMembersStore,
   classesStore,
@@ -17,15 +17,11 @@ const stores = {
     ...eventsStore,
     modules: {
       participants: eventsParticipantsStore,
-      divisions: {
-        ...eventsDivisionsStore,
+      divisions: eventsDivisionsStore,
+      contestants: {
+        ...eventsContestantsStore,
         modules: {
-          contestants: {
-            ...eventsDivisionsContestantsStore,
-            modules: {
-              results: eventsDivisionsContestantsResultsStore
-            }
-          }
+          results: eventsContestantsResultsStore
         }
       }
     }

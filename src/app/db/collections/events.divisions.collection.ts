@@ -1,6 +1,33 @@
+import { RxJsonSchema, RxCollection, RxDocument } from "rxdb"
 import { destroyMany } from "~/db/queries"
 
-const schema = {
+type Properties = {
+  id: string
+  name: string
+  day: string
+  time: string
+  distance?: string
+  stands: number
+  eventId: string
+  createdAt: string
+  updatedAt: string
+}
+
+type Methods = {}
+type Statics = {}
+
+export type EventsDivisionsDocument = RxDocument<
+  Properties,
+  Methods
+>
+
+export type EventsDivisionsCollection = RxCollection<
+  Properties,
+  Methods,
+  Statics
+>
+
+const schema: RxJsonSchema = {
   title: "Events divisions schema",
   description: "Events divisions",
   version: 0,
@@ -41,9 +68,10 @@ const schema = {
   ]
 }
 
-const methods = {}
+const methods: Methods = {}
+const statics: Statics = {}
 
-const preRemove = async (data, doc) => {
+const preRemove = async (data: Properties) => {
   await destroyMany("events_contestants", {
     divisionId: data.id
   })
@@ -53,7 +81,8 @@ export default {
   collection: {
     name: "events_divisions",
     schema: schema,
-    methods: methods
+    methods: methods,
+    statics: statics
   },
   middlewares: {
     preRemove: {

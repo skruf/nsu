@@ -44,10 +44,11 @@ export default (options) => {
       state.listFilter = listFilter
     }
 
-    actions.list = async function({ commit, state }) {
+    actions.list = async function({ commit, state }, filter) {
       commit("SET_LIST_LOADING", true)
       const cfg = queryHelper(state)
-      const results = await config.list(state.listFilter, cfg)
+      const query = filter || state.listFilter
+      const results = await config.list(query, cfg)
       commit("SET_LIST", results.items)
       commit("SET_COUNT", results.count)
       commit("SET_LIST_LOADING", false)
@@ -66,7 +67,7 @@ export default (options) => {
       state.selected = item
     }
 
-    actions.select = async ({ commit }, filter = {}) => {
+    actions.select = async ({ commit }, filter) => {
       commit("SET_SELECTED_LOADING", true)
       const item = await config.select(filter)
       commit("SET_SELECTED", item)
@@ -103,9 +104,9 @@ export default (options) => {
       state.createManyIsLoading = loading
     }
 
-    mutations.ADD_MANY = (state, items) => {
-      items.forEach((i) => state.list.push(i))
-      state.count += items.length
+    mutations.ADD_MANY = (state, added) => {
+      added.items.forEach((i) => state.list.push(i))
+      state.count += added.count
     }
 
     actions.createMany = async ({ commit }, items) => {

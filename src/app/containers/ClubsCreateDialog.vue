@@ -246,6 +246,7 @@ export default {
             })
           })
           this.close()
+          this.clear()
         } catch(e) {
           this.$notify({
             type: "error",
@@ -261,7 +262,6 @@ export default {
     },
 
     close() {
-      this.clear()
       this.visible = false
       this.$emit("update:shown", false)
     }

@@ -2,30 +2,22 @@
 {
   "en": {
     "title": "Edit participant %{member}",
-    "formItem1Label": "Class(es)",
-    "formItem1Placeholder": "Select one or more class(es)",
+    "formItem1Label": "Class",
+    "formItem1Placeholder": "Select a class",
     "formItem2Label": "Calibre(s)",
-    "formItem2Placeholder": "Select one or more calibre(s)",
-    "eventsParticipantsActionsEditOneSuccess": "Participant %{member} was updated"
+    "formItem2Placeholder": "Enter a calibre",
+    "saveSuccess": "Participant %{member} was updated"
   },
   "no": {
     "title": "Rediger deltaker %{member}",
-    "formItem1Label": "Klasser",
-    "formItem1Placeholder": "Velg en eller flere klasser",
+    "formItem1Label": "Klasse",
+    "formItem1Placeholder": "Velg en klasser",
     "formItem2Label": "Kaliber",
-    "formItem2Placeholder": "Velg en eller flere kaliber",
-    "eventsParticipantsActionsEditOneSuccess": "Deltakeren %{member} ble oppdatert"
+    "formItem2Placeholder": "Skriv inn et kaliber",
+    "saveSuccess": "Deltakeren %{member} ble oppdatert"
   }
 }
 </i18n>
-
-<style lang="stylus">
-.calibre
-  width calc(33.3333% - 0.67rem)
-  margin-right 1rem
-  &:nth-child(3n)
-    margin-right 0
-</style>
 
 <template>
   <el-dialog
@@ -37,7 +29,7 @@
     @close="close"
   >
     <div
-      v-loading="eventsParticipantsStateEditIsLoading"
+      v-loading="isLoading"
       class="dialog_content"
     >
       <div class="flex mb-2 justify-between">
@@ -53,6 +45,18 @@
         </el-button>
       </div>
 
+      <div class="flex">
+        <div class="w-2/3 mr-2">
+          {{ $t('formItem1Label') }}
+        </div>
+
+        <div class="w-1/3 mr-2">
+          {{ $t('formItem2Label') }}
+        </div>
+
+        <div class="w-10" />
+      </div>
+
       <el-form
         v-for="(form, index) in forms"
         :key="index"
@@ -64,8 +68,7 @@
       >
         <el-form-item
           prop="classId"
-          class="w-1/2 mr-2"
-          :label="$t('formItem1Label')"
+          class="w-2/3 mr-2"
         >
           <el-select
             v-model="form.classId"
@@ -84,8 +87,7 @@
 
         <el-form-item
           prop="calibre"
-          class="w-1/2 mx-2"
-          :label="$t('formItem2Label')"
+          class="w-1/3 mr-2"
         >
           <el-input
             v-model="form.calibre"
@@ -94,10 +96,11 @@
         </el-form-item>
 
         <el-button
-          class="self-center mt-5"
+          class="self-center text-center w-10"
+          style="margin-bottom: 18px;"
           type="text"
           size="mini"
-          @click="removeWeapon(index)"
+          @click="removeWeapon(form)"
         >
           <i class="el-icon-minus" />
         </el-button>
@@ -115,7 +118,7 @@
       <el-button
         class="block"
         type="primary"
-        @click="submit"
+        @click="save"
       >
         {{ $t("save") }}
       </el-button>
@@ -124,11 +127,10 @@
 </template>
 
 <script>
+import { db } from "~/db"
 import _get from "lodash.get"
 import { mapActions, mapState } from "vuex"
-// import _cloneDeep from "lodash.cloneDeep"
-// import { eventsParticipantsStub } from "~/stubs"
-const eventsParticipantsStub = { classId: "", calibre: "" }
+import { eventsParticipantsWeaponsStub } from "~/stubs"
 
 export default {
   name: "EventsParticipantsEditDialog",
@@ -136,30 +138,30 @@ export default {
   props: {
     shown: { type: Boolean, default: false },
     event: { type: Object, required: true },
-    participant: { type: Object, default: () => eventsParticipantsStub }
+    participant: { type: Object, required: true }
   },
 
-  data: function() {
-    return {
-      visible: false,
-      forms: [],
-      formRules: {
-        classId: { required: true, message: "Choose a class" },
-        calibre: { required: true, message: "Enter a calibre" }
-      }
-    }
-  },
+  data: () => ({
+    visible: false,
+    isLoading: false,
+    forms: [],
+    formRules: {
+      classId: { required: true, message: "Choose a class" },
+      calibre: { required: true, message: "Enter a calibre" }
+    },
+    weaponsToRemove: [],
+    sub: null,
+    weaponDocs: []
+  }),
 
   computed: {
     ...mapState("events/participants", {
       eventsParticipantsStateEditIsLoading: "editIsLoading"
     }),
-
     ...mapState("classes", {
       classesStateListIsLoading: "listIsLoading",
       classesStateList: "list"
     }),
-
     memberFullName() {
       const firstName = _get(this.participant, "member.firstName", "")
       const lastName = _get(this.participant, "member.lastName", "")
@@ -174,26 +176,46 @@ export default {
     }
   },
 
+  beforeDestroy() {
+    if(this.sub) this.sub.unsubscribe()
+  },
+
   methods: {
-    ...mapActions("events/participants", {
-      eventsParticipantsActionsEditOne: "editOne"
-    }),
     ...mapActions("classes", {
       classesActionsList: "list"
     }),
 
     addWeapon() {
-      this.forms.push({ ...eventsParticipantsStub })
+      const form = { ...eventsParticipantsWeaponsStub }
+      form.participantId = this.participant.id
+      this.forms.push(form)
     },
 
-    removeWeapon(i) {
-      if(this.forms.length !== 1) this.forms.splice(i, 1)
+    removeWeapon(weapon) {
+      if(this.forms.length !== 1) {
+        this.forms.splice(
+          this.forms.findIndex((form) => form.id === weapon.id), 1
+        )
+        if(weapon.exists) {
+          this.weaponsToRemove.push(weapon)
+        }
+      }
     },
 
     async open() {
-      this.forms = this.participant.weapons.map((weapon) => ({
-        calibre: weapon.calibre, classId: weapon.class.id
-      }))
+      const query = db.events_participants_weapons.find({
+        participantId: this.participant.id
+      })
+
+      this.sub = query.$.subscribe((weapons) => {
+        this.weaponDocs = weapons
+        this.forms = weapons.map((doc) => {
+          const weapon = doc.toJSON()
+          weapon.existing = true
+          return weapon
+        })
+      })
+
       if(this.forms.length === 0) this.addWeapon()
       await this.classesActionsList()
     },
@@ -208,7 +230,7 @@ export default {
       ))
     },
 
-    async submit() {
+    async save() {
       try {
         await this.validate()
       } catch(e) {
@@ -220,14 +242,28 @@ export default {
       }
 
       try {
-        await this.eventsParticipantsActionsEditOne({
-          ...this.participant,
-          weapons: this.forms
-        })
+        const toCreate = this.forms.filter((form) => !form.existing)
+        const created = await Promise.all(toCreate.map(
+          (weapon) => db.events_participants_weapons.insert(weapon)
+        ))
+
+        const toEdit = this.forms.filter((form) => !!form.existing)
+        const edited = await Promise.all(toEdit.map((weapon) => {
+          delete weapon.existing
+          const doc = this.weaponDocs.find((d) => d.id === weapon.id)
+          return doc.atomicUpdate((data) => ({ ...data, ...weapon }))
+        }))
+
+        await Promise.all(this.weaponsToRemove.map(
+          (weapon) => weapon.remove()
+        ))
+
+        this.sub.next([ ...created, ...edited ])
+
         this.$notify({
           type: "success",
           title: this.$t("success"),
-          message: this.$t("eventsParticipantsActionsEditOneSuccess", {
+          message: this.$t("saveSuccess", {
             member: this.memberFullName
           })
         })
@@ -241,12 +277,7 @@ export default {
       }
     },
 
-    clear() {
-      this.forms = [{ ...eventsParticipantsStub }]
-    },
-
     close() {
-      this.clear()
       this.visible = false
       this.$emit("update:shown", false)
     }

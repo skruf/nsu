@@ -58,11 +58,11 @@
           <el-select
             v-model="form.classId"
             :placeholder="$t('formItem1Placeholder')"
-            :loading="classesStateListIsLoading"
+            :loading="classesIsLoading"
             filterable
           >
             <el-option
-              v-for="classItem in classesStateList"
+              v-for="classItem in classes"
               :key="classItem.id"
               :label="`${classItem.name} (${classItem.condition})`"
               :value="classItem.id"
@@ -114,8 +114,8 @@
 </template>
 
 <script>
+import DB from "~/db"
 import _get from "lodash.get"
-import { mapActions, mapState } from "vuex"
 // import { eventsParticipantsStub } from "~/stubs"
 const eventsParticipantsStub = { classId: "", calibre: "" }
 
@@ -135,16 +135,14 @@ export default {
       formRules: {
         classId: { required: true, message: "Choose a class" },
         calibre: { required: true, message: "Enter a calibre" }
-      }
+      },
+
+      classesIsLoading: false,
+      classes: []
     }
   },
 
   computed: {
-    ...mapState("classes", {
-      classesStateListIsLoading: "listIsLoading",
-      classesStateList: "list"
-    }),
-
     memberFullName() {
       const firstName = _get(this.member, "firstName", "")
       const lastName = _get(this.member, "lastName", "")
@@ -160,13 +158,6 @@ export default {
   },
 
   methods: {
-    ...mapActions("events/participants", {
-      eventsParticipantsActionsCreate: "create"
-    }),
-    ...mapActions("classes", {
-      classesActionsList: "list"
-    }),
-
     addWeapon() {
       this.forms.push({ ...eventsParticipantsStub })
     },
@@ -177,7 +168,12 @@ export default {
 
     async open() {
       if(this.forms.length === 0) this.addWeapon()
-      await this.classesActionsList()
+      this.classesIsLoading = true
+      const db = await DB.get()
+      db.classes.find().$.subscribe((classes) => {
+        this.classes = classes
+      })
+      this.classesIsLoading = false
     },
 
     validate() {
@@ -203,15 +199,15 @@ export default {
 
       const weapons = this.forms.map((weapon) => ({
         ...weapon,
-        class: this.classesStateList.filter(
+        class: this.classes.filter(
           ({ id }) => id === weapon.classId
         )[0]
       }))
 
       this.$emit("add", {
+        weapons,
         memberId: this.member.id,
         eventId: this.event.id,
-        weapons: weapons,
         member: this.member
       })
 

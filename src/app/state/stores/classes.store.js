@@ -1,4 +1,4 @@
-import { classesService } from "~/services"
+import classesService from "~/services/classes.service"
 import extend from "~/state/extensions"
 import { classesCategoriesFixture, classesConditionsFixture } from "~/fixtures"
 

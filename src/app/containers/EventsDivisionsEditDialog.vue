@@ -1,56 +1,44 @@
 <i18n>
 {
   "en": {
-    "title": "Edit divisjon",
+    "title": "Edit division",
     "subtitle": "For %{event}",
-    "eventsDivisionsFormTitle": "Division settings",
-    "eventsDivisionsFormItem1Label": "Name",
-    "eventsDivisionsFormItem1Placeholder": "Enter a name",
-    "eventsDivisionsFormItem1Error": "Name is a required field",
-    "eventsDivisionsFormItem2Label": "Choose a Day",
-    "eventsDivisionsFormItem2Placeholder": "Pick a day",
-    "eventsDivisionsFormItem2Error": "Day is a required field",
-    "eventsDivisionsFormItem3Label": "Starts At",
-    "eventsDivisionsFormItem3Placeholder": "Pick a start time",
-    "eventsDivisionsFormItem3Error": "Starts At is a required field",
-    "eventsDivisionsFormItem4Label": "Shooting Interval",
-    "eventsDivisionsFormItem4Placeholder": "Select an interval",
-    "eventsDivisionsFormItem4Error": "Shooting Interval is a required field",
-    "eventsDivisionsFormButton": "Generate list",
-    "eventsDivisionsContestantsFormsTitle": "Assign participants to time slots",
-    "eventsDivisionsContestantsFormsFormItem1Placeholder": "Select a participant",
-    "eventsDivisionsContestantsFormsFormItem2Placeholder": "Select a weapon",
-    "eventsDivisionsContestantsFormsFormItem3Placeholder": "Enter a calibre",
-    "availableParticipants": "Available participants",
-    "participants": "Participants",
-    "endsAt": "Ends at",
-    "saveSuccess": "%{division} was successfully updated to the database"
+    "formItem1Label": "Name",
+    "formItem1Placeholder": "Enter a name",
+    "formItem1Error": "Name is a required field",
+    "formItem2Label": "Choose a Day",
+    "formItem2Placeholder": "Pick a day",
+    "formItem2Error": "Day is a required field",
+    "formItem3Label": "Time",
+    "formItem3Placeholder": "Pick a time",
+    "formItem3Error": "Time is a required field",
+    "formItem4Label": "Distance",
+    "formItem4Placeholder": "Enter distance",
+    "formItem4Error": "Distance is a required field",
+    "formItem5Label": "Number of lanes",
+    "formItem5Placeholder": "Enter number",
+    "formItem5Error": "Number of lanes is a required field",
+    "saveSuccess": "%{division} was successfully edited"
   },
   "no": {
-    "title": "Rediger divisjon",
+    "title": "Rediger standplassliste",
     "subtitle": "For %{event}",
-    "eventsDivisionsFormTitle": "Divisjon innstillinger",
-    "eventsDivisionsFormItem1Label": "Navn",
-    "eventsDivisionsFormItem1Placeholder": "Skriv ett navn",
-    "eventsDivisionsFormItem1Error": "Navn er et påkrevd felt",
-    "eventsDivisionsFormItem2Label": "Velg en dag",
-    "eventsDivisionsFormItem2Placeholder": "Velg en dag",
-    "eventsDivisionsFormItem2Error": "Dag er et påkrevd felt",
-    "eventsDivisionsFormItem3Label": "Starter",
-    "eventsDivisionsFormItem3Placeholder": "Velg en start tid",
-    "eventsDivisionsFormItem3Error": "Starter er et påkrevd felt",
-    "eventsDivisionsFormItem4Label": "Skytteinterval",
-    "eventsDivisionsFormItem4Placeholder": "Velg ett interval",
-    "eventsDivisionsFormItem4Error": "Skytteinterval er et påkrevd felt",
-    "eventsDivisionsFormButton": "Generer listen",
-    "eventsDivisionsContestantsFormsTitle": "Tildel deltakere til listen",
-    "eventsDivisionsContestantsFormsFormItem1Placeholder": "Velg en deltaker",
-    "eventsDivisionsContestantsFormsFormItem2Placeholder": "Velg ett våpen",
-    "eventsDivisionsContestantsFormsFormItem3Placeholder": "Skriv inn kaliber",
-    "availableParticipants": "Tilgjengelige deltakere",
-    "participants": "Deltakere",
-    "endsAt": "Slutter",
-    "saveSuccess": "%{division} ble oppdatert i databasen"
+    "formItem1Label": "Navn",
+    "formItem1Placeholder": "Skriv ett navn",
+    "formItem1Error": "Navn er et påkrevd felt",
+    "formItem2Label": "Velg en dato",
+    "formItem2Placeholder": "Velg en dato",
+    "formItem2Error": "Dato er et påkrevd felt",
+    "formItem3Label": "Klokkeslett",
+    "formItem3Placeholder": "Velg eller skriv et klokkeslett",
+    "formItem3Error": "Klokkeslett er et påkrevd felt",
+    "formItem4Label": "Distanse",
+    "formItem4Placeholder": "Skriv inn en distanse",
+    "formItem4Error": "Distanse er et påkrevd felt",
+    "formItem5Label": "Antall baner",
+    "formItem5Placeholder": "Skriv inn antall",
+    "formItem5Error": "Antall baner er et påkrevd felt",
+    "saveSuccess": "%{division} ble redigert"
   }
 }
 </i18n>
@@ -58,7 +46,6 @@
 <template>
   <el-dialog
     custom-class="events-divisions-edit-dialog"
-    :fullscreen="true"
     :visible.sync="visible"
     @open="open"
     @close="close"
@@ -73,119 +60,69 @@
     </template>
 
     <div
-      v-loading="stateIsLoading"
-      class="dialog_content flex flex-1 p-0"
+      v-loading="eventsDivisionsStateEditOneIsLoading"
+      class="dialog_content"
     >
-      <div class="px-5 dialog_sidebar">
-        <h4 class="h4 my-4">
-          {{ $t("eventsDivisionsFormTitle") }}
-        </h4>
-
-        <events-divisions-form
-          ref="eventsDivisionsForm"
-          :form.sync="eventsDivisionsForm"
-        />
-      </div>
-
-      <div class="w-full px-5 overflow-y-auto">
-        <div class="flex items-center mt-4 mb-8">
-          <h4 class="h4">
-            {{ $t("eventsDivisionsContestantsFormsTitle") }}
-          </h4>
-
-          <el-button
-            type="text"
-            size="mini"
-            :disabled="!eventsDivisionsContestantsIsConfigured"
-            @click="eventsDivisionsContestantsAddForm"
-          >
-            <i class="el-icon-plus" />
-          </el-button>
-        </div>
-
-        <div v-if="showEventsDivisionsContestantsForms">
-          <div
-            v-for="(contestantForm, index) in eventsDivisionsContestantsForms"
-            :key="contestantForm.id"
-            class="flex items-center"
-          >
-            <events-divisions-contestants-form
-              ref="eventsDivisionsContestantsForms"
-              class="w-full"
-              :form.sync="eventsDivisionsContestantsForms[index]"
-              :participants="eventsParticipantsStateList"
-            />
-
-            <el-button
-              type="text"
-              size="mini"
-              class="mb-5"
-              @click="eventsDivisionsContestantsRemoveForm(contestantForm, index)"
-            >
-              <i class="el-icon-minus" />
-            </el-button>
-          </div>
-        </div>
-
-        <div
-          v-else
-          class="data-placeholder"
+      <el-form
+        ref="form"
+        label-position="top"
+        :model="form"
+        :rules="formRules"
+      >
+        <el-form-item
+          :label="$t('formItem1Label')"
+          prop="name"
         >
-          Set start time and interval to assign shooters
-        </div>
-      </div>
+          <el-input
+            v-model="form.name"
+            :placeholder="$t('formItem1Placeholder')"
+          />
+        </el-form-item>
 
-      <div class="px-5 dialog_sidebar">
-        <h4 class="h4 my-4">
-          {{ $t("availableParticipants") }}
-        </h4>
+        <el-form-item
+          prop="day"
+          :label="$t('formItem2Label')"
+        >
+          <el-date-picker
+            v-model="form.day"
+            type="date"
+            :placeholder="$t('formItem2Placeholder')"
+          />
+        </el-form-item>
 
-        <div class="flex flex-col">
-          <div>
-            <h6 class="h6 inline">
-              {{ $t("participants") }}:
-            </h6> {{ eventsParticipantsStateList.length }}
-          </div>
-          <div>
-            <h6 class="h6 inline">
-              {{ $t("endsAt") }}:
-            </h6> {{ eventsDivisionsEndsAt || 'TBD' }}
-          </div>
-        </div>
+        <el-form-item
+          prop="time"
+          :label="$t('formItem3Label')"
+        >
+          <el-time-select
+            v-model="form.time"
+            :placeholder="$t('formItem3Placeholder')"
+            :picker-options="formTimePickerOptions"
+          />
+        </el-form-item>
 
-        <ul class="mt-4 mb-2">
-          <li
-            v-for="participant in eventsParticipantsStateList"
-            :key="participant.id"
-            class="card mt-2 justify-between"
-          >
-            <div class="flex items-center">
-              <avatar
-                :first-name="participant.member.firstName"
-                :last-name="participant.member.lastName"
-                size="small"
-                class="mr-3"
-              />
+        <el-form-item
+          :label="$t('formItem4Label')"
+          prop="distance"
+        >
+          <el-input
+            v-model="form.distance"
+            :placeholder="$t('formItem4Placeholder')"
+          />
+        </el-form-item>
 
-              {{ participant.member.firstName }} {{ participant.member.lastName }}
-            </div>
-
-            <el-tooltip placement="top">
-              <ul slot="content">
-                <li
-                  v-for="(weapon, index) in participant.weapons"
-                  :key="index"
-                >
-                  {{ weapon.class.name }} ({{ weapon.calibre }})
-                </li>
-              </ul>
-              <el-tag size="mini">
-                {{ participant.weapons.length }} weapons
-              </el-tag>
-            </el-tooltip>
-          </li>
-        </ul>
-      </div>
+        <el-form-item
+          :label="$t('formItem5Label')"
+          prop="stands"
+        >
+          <el-input-number
+            v-model="form.stands"
+            controls-position="right"
+            size="small"
+            :min="1"
+          />
+        </el-form-item>
+      </el-form>
     </div>
 
     <template slot="footer">
@@ -207,34 +144,35 @@
   </el-dialog>
 </template>
 
-<script>
-import { mapMutations, mapActions, mapState } from "vuex"
-import { eventsDivisionsContestantsStub } from "~/stubs"
-import { parseTimeInput, formatTime, toMinutes } from "~/utils/time"
-import Avatar from "~/components/Avatar"
-import EventsDivisionsContestantsForm from "~/components/EventsDivisionsContestantsForm"
-import EventsDivisionsForm from "~/components/EventsDivisionsForm"
+<script lang="ts">
+import Vue from "vue"
+import { mapActions, mapState } from "vuex"
+import { eventsDivisionsStub } from "~/stubs"
 
-export default {
+export default Vue.extend({
   name: "EventsDivisionsEditDialog",
 
-  components: {
-    Avatar,
-    EventsDivisionsContestantsForm,
-    EventsDivisionsForm
-  },
-
   props: {
-    shown: { type: Boolean, default: false }
+    shown: { type: Boolean, default: false },
+    division: { type: Object, required: true }
   },
 
   data: function() {
     return {
-      isLoading: true,
       visible: this.shown,
-      eventsDivisionsForm: {},
-      eventsDivisionsContestantsForms: [],
-      eventsDivisionsContestantsToBeRemoved: []
+      form: {},
+      formRules: {
+        name: { required: true, message: this.$t("formItem1Error") },
+        day: { required: true, message: this.$t("formItem2Error") },
+        time: { required: true, message: this.$t("formItem3Error") },
+        distance: { required: true, message: this.$t("formItem4Error") },
+        stands: { required: true, message: this.$t("formItem5Error") }
+      },
+      formTimePickerOptions: {
+        start: "08:00",
+        step: "00:15",
+        end: "23:59"
+      }
     }
   },
 
@@ -243,74 +181,14 @@ export default {
       eventsStateSelected: "selected"
     }),
     ...mapState("events/divisions", {
-      eventsDivisionsStateEditIsLoading: "editIsLoading",
-      eventsDivisionsStateSelected: "selected"
-    }),
-    ...mapState("events/divisions/contestants", {
-      eventsDivisionsContestantsStateCreateManyIsLoading: "createManyIsLoading",
-      eventsDivisionsContestantsStateEditManyIsLoading: "editManyIsLoading",
-      eventsDivisionsContestantsStateCount: "count",
-      eventsDivisionsContestantsStateList: "list",
-      eventsDivisionsContestantsStateListIsLoading: "listIsLoading",
-      eventsDivisionsContestantsStateRemoveManyIsLoading: "removeManyIsLoading"
-    }),
-    ...mapState("events/participants", {
-      eventsParticipantsStateListIsLoading: "listIsLoading",
-      eventsParticipantsStateCount: "count",
-      eventsParticipantsStateList: "list"
-    }),
-
-    showEventsDivisionsContestantsForms() {
-      return this.eventsDivisionsContestantsForms.length > 0 && !this.isLoading
-    },
-
-    eventsDivisionsContestantsIsConfigured() {
-      return this.eventsDivisionsForm.startsAt && this.eventsDivisionsForm.interval
-    },
-
-    starts() {
-      return parseTimeInput(this.eventsDivisionsForm.startsAt)
-    },
-
-    interval() {
-      return parseTimeInput(this.eventsDivisionsForm.interval)
-    },
-
-    eventsDivisionsEndsAt() {
-      if(!this.eventsDivisionsContestantsIsConfigured) return
-
-      let amount = this.eventsDivisionsContestantsForms.length
-
-      if(!amount) {
-        amount = this.eventsParticipantsStateList.length
-      }
-
-      const starts = toMinutes(this.starts.hours, this.starts.minutes)
-      const interval = toMinutes(this.interval.hours, this.interval.minutes)
-
-      return formatTime(starts + (interval * amount))
-    },
-
-    stateIsLoading() {
-      return (
-        this.eventsDivisionsStateEditIsLoading ||
-        this.eventsDivisionsContestantsStateEditManyIsLoading ||
-        this.eventsDivisionsContestantsStateCreateManyIsLoading ||
-        this.eventsDivisionsContestantsStateRemoveManyIsLoading
-      )
-    }
+      eventsDivisionsStateEditOneIsLoading: "editOneIsLoading"
+    })
   },
 
   watch: {
     shown(shown) {
       this.visible = shown
       this.$emit("update:shown", shown)
-    },
-    "eventsDivisionsForm.startsAt": function() {
-      this.setOrUpdateContestantsList()
-    },
-    "eventsDivisionsForm.interval": function() {
-      this.setOrUpdateContestantsList()
     }
   },
 
@@ -318,127 +196,39 @@ export default {
     ...mapActions("events/divisions", {
       eventsDivisionsActionsEditOne: "editOne"
     }),
-    ...mapActions("events/divisions/contestants", {
-      eventsDivisionsContestantsActionsList: "list",
-      eventsDivisionsContestantsActionsEditMany: "editMany",
-      eventsDivisionsContestantsActionsCreateMany: "createMany",
-      eventsDivisionsContestantsActionsDeleteMany: "removeMany"
-    }),
-    ...mapMutations("events/divisions/contestants", {
-      "eventsDivisionsContestantsMutationsSetListFilter": "SET_LIST_FILTER"
-    }),
-    ...mapMutations("events/participants", {
-      eventsParticipantsMutationsSetListFilter: "SET_LIST_FILTER"
-    }),
-    ...mapActions("events/participants", {
-      eventsParticipantsActionsList: "list"
-    }),
 
-    async open() {
-      this.eventsDivisionsForm = { ...this.eventsDivisionsStateSelected }
-
-      this.eventsParticipantsMutationsSetListFilter({ eventId: this.eventsStateSelected.id })
-      await this.eventsParticipantsActionsList()
-
-      this.eventsDivisionsContestantsMutationsSetListFilter({
-        divisionId: this.eventsDivisionsStateSelected.id
-      })
-      await this.eventsDivisionsContestantsActionsList()
-
-      this.setContestantList()
-
-      for(let i = 0; this.eventsDivisionsContestantsStateList.length > i; i++) {
-        this.eventsDivisionsContestantsForms[i] = {
-          ...this.eventsDivisionsContestantsStateList[i]
-        }
-      }
-
-      this.isLoading = false
-    },
-
-    getTime(index) {
-      const starts = toMinutes(this.starts.hours, this.starts.minutes)
-      const interval = toMinutes(this.interval.hours, this.interval.minutes)
-      return formatTime(starts + (interval * index))
-    },
-
-    setOrUpdateContestantsList() {
-      if(!this.eventsDivisionsContestantsIsConfigured) return
-      this.eventsDivisionsContestantsForms.length
-        ? this.updateContestantsList()
-        : this.setContestantList()
-    },
-
-    updateContestantsList() {
-      this.eventsDivisionsContestantsForms = this.eventsDivisionsContestantsForms.map(
-        (form, index) => {
-          form.time = this.getTime(index)
-          return form
-        }
-      )
-    },
-
-    setContestantList() {
-      this.eventsDivisionsContestantsForms = []
-      this.eventsParticipantsStateList.forEach(
-        () => { this.eventsDivisionsContestantsAddForm() }
-      )
-    },
-
-    eventsDivisionsContestantsAddForm() {
-      const stub = { ...eventsDivisionsContestantsStub }
-      const index = this.eventsDivisionsContestantsForms.length
-      stub.time = this.getTime(index)
-      this.eventsDivisionsContestantsForms.push({ ...stub, id: index })
-    },
-
-    eventsDivisionsContestantsRemoveForm(contestant, index) {
-      this.eventsDivisionsContestantsForms.splice(index, 1)
-      if(this.contestantExists(contestant.id)) {
-        this.eventsDivisionsContestantsToBeRemoved.push(contestant)
-      }
-    },
-
-    contestantExists(id) {
-      return this.eventsDivisionsContestantsStateList
-        .map(({ id }) => id)
-        .includes(id)
+    open() {
+      this.form = { ...this.division }
     },
 
     async save() {
-      this.$refs.eventsDivisionsForm.validate(async () => {
-        const division = { ...this.eventsDivisionsForm }
-        division.endsAt = this.eventsDivisionsEndsAt
-        division.day = typeof division.day === "string"
-          ? division.day
-          : division.day.toISOString()
+      this.$refs.form.validate(async (isValid) => {
+        if(!isValid) {
+          return this.$notify({
+            type: "error",
+            title: "Oops!",
+            message: this.$t("validationError")
+          })
+        }
+
+        const data = { ...this.form }
+        data.eventId = this.eventsStateSelected.id
+        if(typeof data.day !== "string") {
+          data.day = data.day.toISOString().split("T")[0]
+        }
 
         try {
-          const createdDivision = await this.eventsDivisionsActionsEditOne(division)
-
-          const contestants = this.eventsDivisionsContestantsForms
-            .filter((contestant) => !!contestant.memberId && !!contestant.weapon.id)
-            .map((contestant) => ({ ...contestant, divisionId: createdDivision.id }))
-
-          const contestantsToBeCreated = contestants.filter(({ id }) => !this.contestantExists(id))
-          const contestantsToBeUpdated = contestants.filter(({ id }) => this.contestantExists(id))
-
-          await this.eventsDivisionsContestantsActionsCreateMany(contestantsToBeCreated)
-          await this.eventsDivisionsContestantsActionsEditMany(contestantsToBeUpdated)
-          await this.eventsDivisionsContestantsActionsDeleteMany(this.eventsDivisionsContestantsToBeRemoved)
-
-          await this.eventsDivisionsContestantsActionsList()
-
+          await this.eventsDivisionsActionsEditOne(data)
           this.$notify({
             type: "success",
             title: this.$t("success"),
             message: this.$t("saveSuccess", {
-              division: division.name
+              division: data.name
             })
           })
           this.close()
+          this.clear()
         } catch(e) {
-          console.error(e)
           this.$notify({
             type: "error",
             title: "Oops!",
@@ -448,10 +238,14 @@ export default {
       })
     },
 
+    clear() {
+      this.form = { ...eventsDivisionsStub }
+    },
+
     close() {
       this.visible = false
       this.$emit("update:shown", false)
     }
   }
-}
+})
 </script>

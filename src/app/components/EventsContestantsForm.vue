@@ -16,17 +16,13 @@
 <template>
   <el-form
     ref="form"
-    class="flex"
+    class="flex items-center"
     label-position="top"
     :model="localForm"
   >
-    <el-form-item
-      label=""
-      prop="time"
-      class="w-32"
-    >
-      {{ localForm.time }}
-    </el-form-item>
+    <div class="w-48">
+      {{ form.stand }}
+    </div>
 
     <el-form-item
       label=""
@@ -34,16 +30,16 @@
       class="pl-2 w-full"
     >
       <el-select
-        v-model="localForm.memberId"
+        v-model="localForm.participantId"
         filterable
         :placeholder="$t('formItem1Placeholder')"
-        @change="setWeapons(localForm.memberId)"
+        @change="changeParticipant"
       >
         <el-option
           v-for="participant in participants"
-          :key="participant.memberId"
+          :key="participant.id"
           :label="`${participant.member.firstName} ${participant.member.lastName}`"
-          :value="participant.memberId"
+          :value="participant.id"
         />
       </el-select>
     </el-form-item>
@@ -54,18 +50,17 @@
       class="pl-2 w-full"
     >
       <el-select
-        v-model="localForm.weapon"
+        v-model="localForm.weaponId"
         filterable
-        value-key="id"
         :disabled="weapons.length < 1"
         :placeholder="$t('formItem2Placeholder')"
         @change="updateForm"
       >
         <el-option
-          v-for="(weapon, index) in weapons"
-          :key="index"
+          v-for="(weapon, i) in weapons"
+          :key="weapon.id"
           :label="`${weapon.class.name} (${weapon.calibre})`"
-          :value="weapon"
+          :value="weapon.id"
         />
       </el-select>
     </el-form-item>
@@ -73,10 +68,10 @@
 </template>
 
 <script>
-import { eventsDivisionsContestantsStub } from "~/stubs"
+import { eventsContestantsStub } from "~/stubs"
 
 export default {
-  name: "EventsDivisionsContestantsForm",
+  name: "EventsContestantsForm",
 
   props: {
     form: { type: Object, required: true },
@@ -85,27 +80,30 @@ export default {
 
   data: function() {
     return {
-      localForm: { ...eventsDivisionsContestantsStub },
+      localForm: { ...eventsContestantsStub },
       weapons: []
     }
   },
 
   computed: {
     currentParticipant() {
-      const memberId = this.localForm.memberId
-      const index = this.participants.findIndex((p) => p.memberId === memberId)
+      const participantId = this.localForm.participantId
+      const index = this.participants.findIndex((p) => p.id === participantId)
       return this.participants[index]
     }
   },
 
   created() {
     this.localForm = this.form
-    if(this.currentParticipant) this.setWeapons()
+    if(this.currentParticipant) {
+      this.changeParticipant()
+    }
   },
 
   methods: {
-    setWeapons() {
+    changeParticipant() {
       this.weapons = this.currentParticipant.weapons
+      this.localForm.memberId = this.currentParticipant.memberId
     },
     updateForm() {
       this.$emit("update:form", this.localForm)

@@ -219,7 +219,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { mapActions, mapMutations, mapState } from "vuex"
 import SearchForm from "~/components/SearchForm"
 

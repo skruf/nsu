@@ -35,8 +35,8 @@ describe("events.service", () => {
     expect(event.club).toEqual(clubsFixture[0])
   })
 
-  it("should select a event", async () => {
-    const filter = {}
+  it("should select an event", async () => {
+    const filter = { id: "0" }
     const options = {}
 
     const event = await eventsService.select(filter, options)
@@ -48,8 +48,8 @@ describe("events.service", () => {
     expect(event.club).toEqual(clubsFixture[0])
   })
 
-  it("should create a event", async () => {
-    const data = {}
+  it("should create an event", async () => {
+    const data = eventsFixture[0]
     const options = {}
 
     const event = await eventsService.create(data, options)
@@ -61,8 +61,8 @@ describe("events.service", () => {
     expect(event.club).toEqual(clubsFixture[0])
   })
 
-  it("should remove a event", async () => {
-    const filter = {}
+  it("should remove an event", async () => {
+    const filter = { id: "0" }
     const options = {}
 
     const res = await eventsService.removeOne(filter, options)
@@ -73,7 +73,7 @@ describe("events.service", () => {
   })
 
   it("should remove many events", async () => {
-    const items = [{ id: 0 }]
+    const items = [{ id: "0" }]
     const options = {}
 
     const res = await eventsService.removeMany(items, options)

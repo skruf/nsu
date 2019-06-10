@@ -1,6 +1,31 @@
-import { destroyMany, findMany } from "~/db/queries"
+import { RxJsonSchema, RxCollection, RxDocument } from "rxdb"
+import { destroyMany } from "~/db/queries"
 
-const schema = {
+export type ClassesProperties = {
+  id: string
+  number: string
+  name: string
+  category: string
+  condition: string
+  createdAt: string
+  updatedAt: string
+}
+
+type ClassesMethods = {}
+type ClassesStatics = {}
+
+export type ClassesDocument = RxDocument<
+  ClassesProperties,
+  ClassesMethods
+>
+
+export type ClassesCollection = RxCollection<
+  ClassesProperties,
+  ClassesMethods,
+  ClassesStatics
+>
+
+const schema: RxJsonSchema = {
   title: "Classes schema",
   description: "Classes",
   version: 0,
@@ -34,9 +59,10 @@ const schema = {
   ]
 }
 
-const methods = {}
+const methods: ClassesMethods = {}
+const statics: ClassesStatics = {}
 
-const preRemove = async (data, doc) => {
+const preRemove = async (data: ClassesProperties) => {
   await destroyMany("events_participants_weapons", {
     classId: data.id
   })
@@ -46,7 +72,8 @@ export default {
   collection: {
     name: "classes",
     schema: schema,
-    methods: methods
+    methods: methods,
+    statics: statics
   },
   middlewares: {
     preRemove: {

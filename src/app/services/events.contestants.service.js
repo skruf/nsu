@@ -8,6 +8,7 @@ export const populate = async (doc) => {
   const division = await doc.populate("divisionId")
   const participant = await doc.populate("participantId")
   const member = await participant.populate("memberId")
+  const club = await member.populate("clubId")
   const weapon = await doc.populate("weaponId")
   const weaponClass = await weapon.populate("classId")
 
@@ -15,13 +16,14 @@ export const populate = async (doc) => {
   contestant.division = division.toJSON()
   contestant.participant = participant.toJSON()
   contestant.participant.member = member.toJSON()
+  contestant.participant.member.club = club.toJSON()
   contestant.weapon = weapon.toJSON()
   contestant.weapon.class = weaponClass.toJSON()
 
   return contestant
 }
 
-const list = async (filter = {}, options = {}) => {
+const list = async (filter, options = {}) => {
   const result = await findMany("events_contestants", filter, options)
   result.items = await Promise.all(
     result.items.map(async (doc) => populate(doc))
@@ -29,22 +31,22 @@ const list = async (filter = {}, options = {}) => {
   return result
 }
 
-const select = async (filter = {}, options = {}) => {
-  const doc = await findOne("events_contestants", filter, options)
+const select = async (filter) => {
+  const doc = await findOne("events_contestants", filter)
   const contestant = await populate(doc)
   return contestant
 }
 
-const create = async (item = {}, options = {}) => {
+const create = async (item) => {
   const data = filterInput(item, eventsContestantsStub)
-  const doc = await insert("events_contestants", data, options)
+  const doc = await insert("events_contestants", data)
   const contestant = await populate(doc)
   return contestant
 }
 
-const createMany = async (items, options = {}) => {
+const createMany = async (items) => {
   const data = filterInput(items, eventsContestantsStub)
-  const docs = await insertMany("events_contestants", data, options)
+  const docs = await insertMany("events_contestants", data)
   const contestants = await Promise.all(
     docs.map((doc) => populate(doc))
   )
@@ -55,23 +57,23 @@ const createMany = async (items, options = {}) => {
   }
 }
 
-const editMany = async (items, options = {}) => {
+const editMany = async (items) => {
   const data = filterInput(items, eventsContestantsStub)
   const docs = await updateMany("events_contestants", data)
   const contestants = await Promise.all(docs.map((doc) => populate(doc)))
   return contestants
 }
 
-const removeOne = async (filter, options = {}) => {
-  await destroyOne("events_contestants", filter, options)
+const removeOne = async (contestant) => {
+  await destroyOne("events_contestants", { id: contestant.id })
   return true
 }
 
-const removeMany = async (items, options = {}) => {
+const removeMany = async (contestants) => {
   const filter = {
-    id: { $in: items.map(({ id }) => id) }
+    id: { $in: contestants.map(({ id }) => id) }
   }
-  await destroyMany("events_contestants", filter, options)
+  await destroyMany("events_contestants", filter)
   return true
 }
 

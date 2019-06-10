@@ -3,12 +3,12 @@
   "en": {
     "title": "Select a division",
     "divisionsListPlaceholderText": "No divisions yet.",
-    "divisionsListPlaceholderButton": "Create one?"
+    "divisionsListPlaceholderButton": "Create division"
   },
   "no": {
-    "title": "Velg en divisjon",
-    "divisionsListPlaceholderText": "Ingen divisjoner enda.",
-    "divisionsListPlaceholderButton": "Opprett ny?"
+    "title": "Velg en standplassliste",
+    "divisionsListPlaceholderText": "Ingen standplasslister enda.",
+    "divisionsListPlaceholderButton": "Opprett standplassliste"
   }
 }
 </i18n>
@@ -45,21 +45,27 @@
       class="data-placeholder"
     >
       {{ $t("divisionsListPlaceholderText") }}
-      <el-button
-        type="text"
-        @click="eventsDivisionsOpenCreateDialog"
-      >
-        {{ $t("divisionsListPlaceholderButton") }}
-      </el-button>
     </div>
+
+    <el-button
+      class="mt-4 p-2"
+      type="text"
+      @click="eventsDivisionsOpenCreateDialog"
+    >
+      <i class="el-icon-plus mr-2" /> {{ $t("divisionsListPlaceholderButton") }}
+    </el-button>
   </div>
 </template>
 
 <script>
-import { mapMutations, mapActions, mapState } from "vuex"
+import { mapActions, mapState } from "vuex"
 
 export default {
   name: "EventsDivisionsListMenu",
+
+  data: () => ({
+    selected: null
+  }),
 
   computed: {
     ...mapState("events", {
@@ -67,58 +73,26 @@ export default {
     }),
     ...mapState("events/divisions", {
       eventsDivisionsStateListIsLoading: "listIsLoading",
-      eventsDivisionsStateCount: "count",
-      eventsDivisionsStateList: "list",
-      eventsDivisionsStateSelected: "selected"
+      eventsDivisionsStateList: "list"
     })
   },
 
   async created() {
-    this.eventsDivisionsMutationsSetListFilter({
+    await this.eventsDivisionsActionsList({
       eventId: this.eventsStateSelected.id
     })
-    await this.eventsDivisionsActionsList()
   },
 
   methods: {
-    ...mapMutations("events/divisions", {
-      "eventsDivisionsMutationsSetListFilter": "SET_LIST_FILTER"
-    }),
     ...mapActions("events/divisions", {
-      eventsDivisionsActionsList: "list",
-      eventsDivisionsActionsSelect: "select"
+      eventsDivisionsActionsList: "list"
     }),
-    ...mapMutations("events/divisions/contestants", {
-      "eventsDivisionsContestantsMutationsSetListFilter": "SET_LIST_FILTER"
-    }),
-    ...mapActions("events/divisions/contestants", {
-      eventsDivisionsContestantsActionsList: "list"
-    }),
-    ...mapMutations("events/divisions/contestants/results", {
-      "eventsDivisionsContestantsResultsMutationsSetListFilter": "SET_LIST_FILTER"
-    }),
-    ...mapActions("events/divisions/contestants/results", {
-      eventsDivisionsContestantsResultsActionsList: "list"
-    }),
-
-    async selectDivision(division) {
-      try {
-        await this.eventsDivisionsActionsSelect({ id: division.id })
-        this.eventsDivisionsContestantsMutationsSetListFilter({ divisionId: division.id })
-        await this.eventsDivisionsContestantsActionsList()
-        this.eventsDivisionsContestantsResultsMutationsSetListFilter({ divisionId: division.id })
-        await this.eventsDivisionsContestantsResultsActionsList()
-        this.$emit("select-division", division)
-      } catch(e) {
-        this.$notify({
-          type: "error",
-          title: "Oops!",
-          message: e.message
-        })
-      }
+    selectDivision(division) {
+      this.selected = division
+      this.$emit("selectDivision", division)
     },
     isActive(division) {
-      return this.eventsDivisionsStateSelected.id === division.id
+      return this.selected && this.selected.id === division.id
     },
     eventsDivisionsOpenCreateDialog() {
       this.$emit("eventsDivisionsOpenCreateDialog")

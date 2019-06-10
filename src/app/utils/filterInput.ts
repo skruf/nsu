@@ -1,17 +1,9 @@
-export default (item, stub) => {
-  let data
-
-  if(Array.isArray(item)) {
-    data = item.map((i) => filter(i, stub))
-  } else {
-    data = filter(item, stub)
-  }
-
-  return data
+type mockObject = {
+  [key: string]: any
 }
 
-const filter = (item, stub) => {
-  const data = {}
+const filter = (item: mockObject, stub: mockObject): mockObject => {
+  const data: any = {}
 
   for(let key in item) {
     if(stub.hasOwnProperty(key)) {
@@ -26,6 +18,18 @@ const filter = (item, stub) => {
         data[key] = value
       }
     }
+  }
+
+  return data
+}
+
+export default (item: (mockObject | mockObject[]), stub: mockObject): mockObject => {
+  let data: mockObject
+
+  if(Array.isArray(item)) {
+    data = item.map((i) => filter(i, stub))
+  } else {
+    data = filter(item, stub)
   }
 
   return data

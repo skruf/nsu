@@ -2,7 +2,7 @@ import { eventsContestantsService } from "~/services"
 import extend from "~/state/extensions"
 
 const state = {
-  sortBy: "time"
+  sortBy: "stand"
 }
 const mutations = {}
 const actions = {}

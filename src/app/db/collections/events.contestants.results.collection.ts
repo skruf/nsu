@@ -1,4 +1,29 @@
-const schema = {
+import { RxJsonSchema, RxCollection, RxDocument } from "rxdb"
+
+type Properties = {
+  id: string
+  total: number
+  hits: number[]
+  contestantId: string
+  createdAt: string
+  updatedAt: string
+}
+
+type Methods = {}
+type Statics = {}
+
+export type EventsContestantsResultsDocument = RxDocument<
+  Properties,
+  Methods
+>
+
+export type EventsContestantsResultsCollection = RxCollection<
+  Properties,
+  Methods,
+  Statics
+>
+
+const schema: RxJsonSchema = {
   title: "Events contestants results schema",
   description: "Events contestants results",
   version: 0,
@@ -30,12 +55,14 @@ const schema = {
   ]
 }
 
-const methods = {}
+const methods: Methods = {}
+const statics: Statics = {}
 
 export default {
   collection: {
     name: "events_contestants_results",
     schema: schema,
-    methods: methods
+    methods: methods,
+    statics: statics
   }
 }

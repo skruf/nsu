@@ -1,0 +1,81 @@
+import rangesCollection, {
+  RangesCollection,
+  RangesDocument
+} from "./ranges.collection"
+import classesCollection, {
+  ClassesCollection,
+  ClassesDocument
+} from "./classes.collection"
+import clubsCollection, {
+  ClubsCollection,
+  ClubsDocument
+} from "./clubs.collection"
+import clubsMembersCollection, {
+  ClubsMembersCollection,
+  ClubsMembersDocument
+} from "./clubs.members.collection"
+import eventsCollection, {
+  EventsCollection,
+  EventsDocument
+} from "./events.collection"
+import eventsParticipantsCollection, {
+  EventsParticipantsCollection,
+  EventsParticipantsDocument
+} from "./events.participants.collection"
+import eventsParticipantsWeaponsCollection, {
+  EventsParticipantsWeaponsCollection,
+  EventsParticipantsWeaponsDocument
+} from "./events.participants.weapons.collection"
+import eventsDivisionsCollection, {
+  EventsDivisionsCollection,
+  EventsDivisionsDocument
+} from "./events.divisions.collection"
+import eventsContestantsCollection, {
+  EventsContestantsCollection,
+  EventsContestantsDocument
+} from "./events.contestants.collection"
+import eventsContestantsResultsCollection, {
+  EventsContestantsResultsCollection,
+  EventsContestantsResultsDocument
+} from "./events.contestants.results.collection"
+
+export interface DatabaseCollections {
+  [x: string]: (
+    RangesCollection |
+    ClassesCollection |
+    ClubsCollection |
+    ClubsMembersCollection |
+    EventsCollection |
+    EventsParticipantsCollection |
+    EventsParticipantsWeaponsCollection |
+    EventsDivisionsCollection |
+    EventsContestantsCollection |
+    EventsContestantsResultsCollection
+  )
+}
+
+export type DatabaseDocument = (
+  RangesDocument |
+  ClassesDocument |
+  ClubsDocument |
+  ClubsMembersDocument |
+  EventsDocument |
+  EventsParticipantsDocument |
+  EventsParticipantsWeaponsDocument |
+  EventsDivisionsDocument |
+  EventsContestantsDocument |
+  EventsContestantsResultsDocument
+)
+
+export default [
+  rangesCollection,
+  classesCollection,
+  clubsCollection,
+  clubsMembersCollection,
+  eventsCollection,
+  eventsParticipantsCollection,
+  eventsParticipantsWeaponsCollection,
+  eventsDivisionsCollection,
+  eventsContestantsCollection,
+  eventsContestantsResultsCollection
+]

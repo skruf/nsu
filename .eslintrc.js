@@ -49,6 +49,7 @@ module.exports = {
     "padded-blocks": 0,
     "no-unused-vars": "warn",
     "no-trailing-spaces": "warn",
-    "@typescript-eslint/indent": 0
+    "@typescript-eslint/indent": 0,
+    "@typescript-eslint/no-var-requires": 0
   }
 }

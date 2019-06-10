@@ -3,8 +3,7 @@
   "en": {
     "edit": "Edit division",
     "remove": "Remove division",
-    "divisionStartsAt": "Starts on",
-    "divisionEndsAt": "and ends at",
+    "starts": "Starts",
     "divisionsListPlaceholderText": "No divisions yet.",
     "divisionsListPlaceholderButton": "Create one?",
     "eventsDivisionsRemoveOneConfirmation": "This will remove %{division} permanently. Continue?",
@@ -12,23 +11,20 @@
     "placeholderText": "Select a division to see the shooting schedule",
     "contestants": "Participants",
     "results": "Results",
-    "createDivision": "Create division",
-    "inputResults": "Input results"
+    "assignParticipants": "Assign stands"
   },
   "no": {
-    "edit": "Rediger divisjon",
-    "remove": "Slett divisjon",
-    "divisionStartsAt": "Starter den",
-    "divisionEndsAt": "og slutter",
-    "divisionsListPlaceholderText": "Ingen divisjoner enda.",
+    "edit": "Rediger standplassliste",
+    "remove": "Slett standplassliste",
+    "starts": "Starter",
+    "divisionsListPlaceholderText": "Ingen standplasslister enda.",
     "divisionsListPlaceholderButton": "Opprett ny?",
     "eventsDivisionsRemoveOneConfirmation": "Dette vil fjerne %{division} permanent. Fortsett?",
     "eventsDivisionsActionsRemoveOneSuccess": "%{division} ble fjernet fra databasen",
-    "placeholderText": "Velg en divisjon for å se standplasslisten",
+    "placeholderText": "Velg en standplassliste først",
     "contestants": "Deltakere",
     "results": "Resultater",
-    "createDivision": "Opprett divisjon",
-    "inputResults": "Angi resultater"
+    "assignParticipants": "Angi standplasser"
   }
 }
 </i18n>
@@ -37,13 +33,18 @@
   <div class="events-divisions-view flex h-full w-full">
     <events-divisions-list-menu
       @eventsDivisionsOpenCreateDialog="eventsDivisionsOpenCreateDialog"
+      @selectDivision="setSelectedDivision"
     />
 
     <div class="flex-1 flex flex-col">
-      <template v-if="hasEventsDivisionsSelected">
+      <template v-if="division">
         <div class="flex items-center justify-between mt-5 px-5">
           <h2 class="h2 mb-2">
-            {{ eventsDivisionsStateSelected.name }}
+            {{ division.name }}
+
+            <small class="small">
+              {{ division.distance }}
+            </small>
           </h2>
 
           <el-dropdown
@@ -57,7 +58,7 @@
               <el-dropdown-item
                 :command="{
                   handler: 'eventsDivisionsOpenEditDialog',
-                  payload: eventsDivisionsStateSelected
+                  payload: division
                 }"
               >
                 <i class="el-icon-edit el-icon--left" />
@@ -66,7 +67,7 @@
               <el-dropdown-item
                 :command="{
                   handler: 'eventsDivisionsOpenPrintDialog',
-                  payload: eventsDivisionsStateSelected
+                  payload: division
                 }"
               >
                 <i class="el-icon-printer el-icon--left" />
@@ -77,7 +78,7 @@
                 class="dropdown-menu-delete"
                 :command="{
                   handler: 'eventsDivisionsRemoveOne',
-                  payload: eventsDivisionsStateSelected
+                  payload: division
                 }"
               >
                 <i class="el-icon-delete el-icon--left" />
@@ -88,53 +89,25 @@
         </div>
 
         <small class="small px-5">
-          {{ $t("divisionStartsAt") }} {{ eventsDivisionsStateSelected.day | moment("DD.MM") }} {{ $t("divisionEndsAt") }} {{ eventsDivisionsStateSelected.endsAt }}
+          {{ $t("starts") }} {{ division.day | moment("DD MMM") }}, {{ division.time }}
         </small>
 
-        <el-tabs v-model="activeTab">
-          <!-- v-if="!eventsStateSelectedIsLoading" -->
-          <el-tab-pane
-            name="contestants"
-            :label="$t('contestants')"
+        <div class="content">
+          <events-contestants-list-table
+            :division="division"
+            @openAssignmentDialog="eventsDivisionsOpenAssignmentDialog"
+          />
+        </div>
+
+        <el-footer height="auto">
+          <el-button
+            type="primary"
+            @click="eventsDivisionsOpenAssignmentDialog"
           >
-            <div class="content">
-              <events-divisions-contestants-list-table
-                @eventsDivisionsContestantsOpenEditDialog="eventsDivisionsOpenEditDialog"
-              />
-            </div>
-
-            <el-footer height="auto">
-              <el-button
-                type="primary"
-                @click="eventsDivisionsOpenCreateDialog"
-              >
-                <i class="el-icon-plus el-icon--left" />
-                {{ $t("createDivision") }}
-              </el-button>
-            </el-footer>
-          </el-tab-pane>
-
-          <el-tab-pane
-            name="results"
-            :label="$t('results')"
-          >
-            <div class="content">
-              <events-divisions-contestants-results-list
-                @eventsDivisionsContestantsResultsOpenCreateDialog="eventsDivisionsContestantsResultsOpenCreateDialog"
-              />
-            </div>
-
-            <el-footer height="auto">
-              <el-button
-                type="primary"
-                @click="eventsDivisionsContestantsResultsOpenCreateDialog"
-              >
-                <i class="el-icon-plus el-icon--left" />
-                {{ $t("inputResults") }}
-              </el-button>
-            </el-footer>
-          </el-tab-pane>
-        </el-tabs>
+            <i class="el-icon-plus el-icon--left" />
+            {{ $t("assignParticipants") }}
+          </el-button>
+        </el-footer>
       </template>
 
       <div
@@ -149,17 +122,23 @@
       :shown.sync="eventsDivisionsShowCreateDialog"
     />
 
-    <events-divisions-edit-dialog
-      :shown.sync="eventsDivisionsShowEditDialog"
+    <events-divisions-assignment-dialog
+      v-if="division"
+      :shown.sync="eventsDivisionsShowAssignmentDialog"
+      :division="division"
     />
 
+    <events-divisions-edit-dialog
+      v-if="division"
+      :shown.sync="eventsDivisionsShowEditDialog"
+      :division="division"
+    />
+
+    <!--
     <events-divisions-print-dialog
       :shown.sync="eventsDivisionsShowPrintDialog"
     />
-
-    <events-divisions-contestants-results-create-dialog
-      :shown.sync="eventsDivisionsContestantsResultsShowCreateDialog"
-    />
+    -->
   </div>
 </template>
 
@@ -168,10 +147,9 @@ import { mapActions, mapState } from "vuex"
 import EventsDivisionsCreateDialog from "~/containers/EventsDivisionsCreateDialog"
 import EventsDivisionsEditDialog from "~/containers/EventsDivisionsEditDialog"
 import EventsDivisionsListMenu from "~/containers/EventsDivisionsListMenu"
-import EventsDivisionsContestantsListTable from "~/containers/EventsDivisionsContestantsListTable"
-import EventsDivisionsPrintDialog from "~/containers/EventsDivisionsPrintDialog"
-import EventsDivisionsContestantsResultsList from "~/containers/EventsDivisionsContestantsResultsList"
-import EventsDivisionsContestantsResultsCreateDialog from "~/containers/EventsDivisionsContestantsResultsCreateDialog"
+import EventsContestantsListTable from "~/containers/EventsContestantsListTable"
+// import EventsDivisionsPrintDialog from "~/containers/EventsDivisionsPrintDialog"
+import EventsDivisionsAssignmentDialog from "~/containers/EventsDivisionsAssignmentDialog"
 
 export default {
   name: "EventsDivisionsView",
@@ -180,42 +158,40 @@ export default {
     EventsDivisionsCreateDialog,
     EventsDivisionsEditDialog,
     EventsDivisionsListMenu,
-    EventsDivisionsContestantsListTable,
-    EventsDivisionsPrintDialog,
-    EventsDivisionsContestantsResultsList,
-    EventsDivisionsContestantsResultsCreateDialog
+    EventsContestantsListTable,
+    // EventsDivisionsPrintDialog,
+    EventsDivisionsAssignmentDialog
   },
 
   data: () => ({
-    activeTab: "contestants",
     eventsDivisionsShowCreateDialog: false,
     eventsDivisionsShowEditDialog: false,
     eventsDivisionsShowPrintDialog: false,
-    eventsDivisionsContestantsResultsShowCreateDialog: false
+    eventsDivisionsShowAssignmentDialog: false,
+    division: null
   }),
 
   computed: {
     ...mapState("events/divisions", {
-      eventsDivisionsStateRemoveOneIsLoading: "removeOneIsLoading",
-      eventsDivisionsStateSelected: "selected"
-    }),
-    hasEventsDivisionsSelected() {
-      return Object.keys(this.eventsDivisionsStateSelected).length > 0
-    }
+      eventsDivisionsStateRemoveOneIsLoading: "removeOneIsLoading"
+    })
   },
 
   methods: {
     ...mapActions("events/divisions", {
       eventsDivisionsActionsRemoveOne: "removeOne"
     }),
+    eventsDivisionsOpenAssignmentDialog() {
+      this.eventsDivisionsShowAssignmentDialog = true
+    },
+    setSelectedDivision(division) {
+      this.division = division
+    },
     eventsDivisionsOpenCreateDialog() {
       this.eventsDivisionsShowCreateDialog = true
     },
     eventsDivisionsOpenEditDialog() {
       this.eventsDivisionsShowEditDialog = true
-    },
-    eventsDivisionsContestantsResultsOpenCreateDialog() {
-      this.eventsDivisionsContestantsResultsShowCreateDialog = true
     },
     eventsDivisionsOpenPrintDialog() {
       this.eventsDivisionsShowPrintDialog = true

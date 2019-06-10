@@ -31,7 +31,7 @@
     "participants": "Deltakere",
     "createMember": "Opprett klubbmedlem",
     "manageParticipants": "Håndter deltakere",
-    "divisions": "Divisjoner",
+    "divisions": "Standplasser",
     "createDivision": "Opprett divisjon",
     "results": "Resultater",
     "inputResults": "Fyll inn resultater",
@@ -147,7 +147,7 @@
             class="page-info_item"
           >
             <h5 class="h5">
-              <!-- <date-with-tooltip :date="eventsStateSelected.startsAt" /> -->
+              {{ eventsStateSelected.startsAt | moment("DD MMM, YY") }}
             </h5>
             <small class="small">
               {{ $t("startsAt") }}
@@ -159,7 +159,7 @@
             class="page-info_item"
           >
             <h5 class="h5">
-              <!-- <date-with-tooltip :date="eventsStateSelected.endsAt" /> -->
+              {{ eventsStateSelected.endsAt | moment("DD MMM, YY") }}
             </h5>
             <small class="small">
               {{ $t("endsAt") }}
@@ -221,6 +221,30 @@
             />
           </div>
         </el-tab-pane>
+
+        <el-tab-pane
+          name="startlist"
+          label="Startliste"
+        >
+          <div class="content">
+            <events-startlist-list-table
+              v-if="!eventsStateSelectedIsLoading"
+              :event="eventsStateSelected"
+            />
+          </div>
+        </el-tab-pane>
+
+        <el-tab-pane
+          name="results"
+          label="Resultater"
+        >
+          <div class="content p-0">
+            <events-results-view
+              v-if="!eventsStateSelectedIsLoading"
+              :event="eventsStateSelected"
+            />
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </el-main>
 
@@ -260,6 +284,8 @@ import EventsParticipantsEditDialog from "~/containers/EventsParticipantsEditDia
 import EventsDivisionsView from "~/containers/EventsDivisionsView"
 import EventsEditDialog from "~/containers/EventsEditDialog"
 import ClubsMembersCreateDialog from "~/containers/ClubsMembersCreateDialog"
+import EventsStartlistListTable from "~/containers/EventsStartlistListTable"
+import EventsResultsView from "~/containers/EventsResultsView"
 
 export default {
   name: "EventsViewScreen",
@@ -272,7 +298,9 @@ export default {
     ClubsMembersCreateDialog,
     EventsDivisionsView,
     EventsEditDialog,
-    EventsParticipantsEditDialog
+    EventsParticipantsEditDialog,
+    EventsStartlistListTable,
+    EventsResultsView
   },
 
   data: () => ({

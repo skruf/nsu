@@ -1,4 +1,4 @@
-import { eventsService } from "~/services"
+import eventsService from "~/services/events.service"
 import extend from "~/state/extensions"
 import { queryHelper } from "~/utils"
 import { eventsCategoriesFixture } from "~/fixtures"

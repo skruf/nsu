@@ -1,15 +1,16 @@
-import RxDB from "rxdb"
+import RxDB, { RxDatabase, RxCollectionCreator } from "rxdb"
 import RxDBSchemaCheckModule from "rxdb/plugins/schema-check"
 import RxDBErrorMessagesModule from "rxdb/plugins/error-messages"
-import configs from "./collections"
+import configs, { DatabaseCollections } from "./collections"
 import router from "~/screens"
 // import log from "electron-log"
+
+type Database = RxDatabase<DatabaseCollections>
 
 RxDB.plugin(RxDBErrorMessagesModule)
 RxDB.plugin(RxDBSchemaCheckModule)
 
-let db = null
-let adapter = null
+let adapter: string
 
 if(process.env.NODE_ENV === "test") {
   adapter = "memory"
@@ -19,7 +20,20 @@ if(process.env.NODE_ENV === "test") {
   RxDB.plugin(require("pouchdb-adapter-idb"))
 }
 
-const configureCollection = async (config) => {
+type CollectionConfig = {
+  collection: RxCollectionCreator,
+  middlewares?: {
+    [key: string]: {
+      handle: () => void,
+      parallel: boolean
+    }
+  }
+}
+
+const configureCollection = async (
+  db: Database,
+  config: CollectionConfig
+): Promise<void> => {
   const timestamp = { type: "string", format: "date-time" }
   config.collection.schema.properties.updatedAt = timestamp
   config.collection.schema.properties.createdAt = { ...timestamp, index: true }
@@ -32,11 +46,11 @@ const configureCollection = async (config) => {
   }
 }
 
-export default async () => {
-  if(db) return db
+export let db: Database = null
 
+export const init = async (): Promise<void> => {
   try {
-    db = await RxDB.create({
+    db = await RxDB.create<DatabaseCollections>({
       name: "nsu",
       adapter: adapter,
       password: "nsu2020nsu2020nsu2020",
@@ -52,7 +66,7 @@ export default async () => {
     // }
 
     await Promise.all(configs.map(
-      (config) => configureCollection(config))
+      (config) => configureCollection(db, config))
     )
   } catch(e) {
     router.push({
@@ -60,6 +74,10 @@ export default async () => {
       params: { error: e.message }
     })
   }
+}
 
-  return db
+export default {
+  get() {
+    return db
+  }
 }

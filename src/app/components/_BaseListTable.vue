@@ -41,13 +41,13 @@
 </style>
 
 <template>
-  <div class="events-participants-list-table">
-    <search-form
+  <div class="base-list-table">
+    <!-- <search-form
       v-model="searchFilter"
       class="mb-5"
       :placeholder="$t('searchFormPlaceholder')"
       @submit="submitSearchFilter"
-    />
+    /> -->
 
     <div v-loading="isLoading">
       <el-table
@@ -60,83 +60,7 @@
         @row-click="tableRowClick"
         @sort-change="tableSortChange"
       >
-        <el-table-column
-          type="selection"
-          width="40"
-        />
-
-        <el-table-column
-          prop="number"
-          sortable="custom"
-          label="Number"
-          width="100px"
-          :sort-orders="tableSortOrders"
-        >
-          <template slot-scope="scope">
-            <h6 class="h6">
-              {{ scope.row.number }}
-            </h6>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="member"
-          width="50px"
-        >
-          <template slot-scope="scope">
-            <avatar
-              size="small"
-              :first-name="scope.row.member.firstName"
-              :last-name="scope.row.member.lastName"
-            />
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="memberId"
-          sortable="custom"
-          :label="$t('column1Label')"
-          :sort-orders="tableSortOrders"
-        >
-          <template slot-scope="scope">
-            <h6 class="h6">
-              {{ scope.row.member.firstName }} {{ scope.row.member.lastName }}
-            </h6>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="memberId"
-          sortable="custom"
-          :label="$t('column2Label')"
-          :sort-orders="tableSortOrders"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.member.club.name }}
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="weapons"
-          :label="$t('column3Label')"
-          :sort-orders="tableSortOrders"
-        >
-          <template slot-scope="scope">
-            <el-tooltip placement="top">
-              <ul slot="content">
-                <li
-                  v-for="(weapon, index) in scope.row.weapons"
-                  :key="index"
-                >
-                  {{ weapon.class.name }} ({{ weapon.calibre }})
-                </li>
-              </ul>
-              <el-tag size="mini">
-                {{ scope.row.weapons.length }} {{ $t('column3Label') }}
-              </el-tag>
-            </el-tooltip>
-          </template>
-        </el-table-column>
+        <slot name="columns" />
 
         <el-table-column
           width="50"
@@ -148,7 +72,7 @@
           >
             <div
               class="table-actions"
-              :class="{ 'disabled': !eventsParticipantsHasSelection }"
+              :class="{ 'disabled': !hasSelection }"
             >
               <el-dropdown
                 trigger="click"
@@ -228,11 +152,6 @@
         @current-change="pageCurrentChange"
       />
     </div>
-
-    <events-participants-view-dialog
-      :shown.sync="eventsParticipantsShowViewDialog"
-      :events-participants-id="eventsParticipantsViewId"
-    />
   </div>
 </template>
 
@@ -241,19 +160,20 @@ import Vue from "vue"
 import { db } from "~/db"
 import SearchForm from "~/components/SearchForm"
 import Avatar from "~/components/Avatar"
-import EventsParticipantsViewDialog from "~/containers/EventsParticipantsViewDialog"
 
 export default Vue.extend({
-  name: "EventsParticipantsListTable",
+  name: "BaseListTable",
 
   components: {
-    SearchForm,
-    Avatar,
-    EventsParticipantsViewDialog
+    SearchForm
   },
 
   props: {
-    event: { type: Object, required: true }
+    event: { type: Object, required: true },
+
+    observer: { type: Function, required: true },
+    collection: { type: String, required: true },
+    filter: { type: Object, required: true }
   },
 
   data: () => ({
@@ -274,40 +194,42 @@ export default Vue.extend({
   }),
 
   computed: {
-    eventsParticipantsHasSelection() {
+    hasSelection() {
       return this.tableSelection.length > 0
     }
   },
 
   created() {
-    const observer = async (results) => {
-      this.isLoading = true
-      this.pageTotal = await db.events_participants.count()
-      this.tableData = await Promise.all(
-        results.map(async (participant) => {
-          participant.member = await participant.memberId_
-          participant.member.club = await participant.member.clubId_
-          participant.weapons = await db.events_participants_weapons.find({
-            participantId: participant.id
-          }).exec()
-          participant.weapons = await Promise.all(
-            participant.weapons.map(async (weapon) => {
-              weapon.class = await weapon.classId_
-              return weapon
-            })
-          )
-          return participant
-        })
-      )
-      this.isLoading = false
-    }
+    // const observer = async (results) => {
+    //   this.isLoading = true
+    //   this.pageTotal = await db.events_participants.count()
+    //   this.tableData = await Promise.all(
+    //     // switchmap
+    //     // catcherror of
+    //     results.map(async (participant) => {
+    //       participant.member = await participant.memberId_
+    //       participant.member.club = await participant.member.clubId_
+    //       participant.weapons = await db.events_participants_weapons.find({
+    //         participantId: participant.id
+    //       }).exec()
+    //       participant.weapons = await Promise.all(
+    //         participant.weapons.map(async (weapon) => {
+    //           weapon.class = await weapon.classId_
+    //           return weapon
+    //         })
+    //       )
+    //       return participant
+    //     })
+    //   )
+    //   this.isLoading = false
+    // }
 
     const errorHandler = (e) => {
       this.$notify({ type: "error", title: "Oops!", message: e.message })
     }
 
-    this.sub = db.events_participants.find({ eventId: this.event.id })
-      .$.subscribe(observer, errorHandler)
+    this.sub = db[this.collection].find(this.filter)
+      .$.subscribe(this.observer, errorHandler)
   },
 
   beforeDestroy() {

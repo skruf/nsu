@@ -199,9 +199,7 @@ export default {
       formRules: {
         title: { required: true, message: this.$t("formItem1Error") },
         dates: { required: true, message: this.$t("formItem2Error") },
-        category: { required: true, message: this.$t("formItem3Error") },
-        organizerId: { required: true, message: this.$t("formItem4Error") },
-        rangeId: { required: true, message: this.$t("formItem5Error") }
+        category: { required: true, message: this.$t("formItem3Error") }
       }
     }
   },
@@ -274,6 +272,7 @@ export default {
           })
           this.close()
         } catch(e) {
+          console.error(e.message)
           this.$notify({
             type: "error",
             title: "Oops!",

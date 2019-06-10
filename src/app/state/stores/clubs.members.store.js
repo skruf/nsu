@@ -1,4 +1,4 @@
-import { clubsMembersService } from "~/services"
+import clubsMembersService from "~/services/clubs.members.service"
 import extend from "~/state/extensions"
 import { countriesFixture } from "~/fixtures"
 

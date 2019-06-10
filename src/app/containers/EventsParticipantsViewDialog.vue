@@ -32,19 +32,19 @@
 
     <template v-if="hasEventsParticipant">
       <div
-        v-loading="eventsParticipantsStateSelectedIsLoading"
+        v-loading="isLoading"
         class="dialog_content flex flex-1"
       >
         <div class="info-grid">
           <div
-            v-if="eventsParticipantsStateSelected.member.country"
+            v-if="participant.member.country"
             class="info-grid_item"
           >
             <h6 class="h6 info-grid_item_key">
               {{ $t("country") }}:
             </h6>
             <p class="info-grid_item_value">
-              {{ eventsParticipantsStateSelected.member.country }}
+              {{ participant.member.country }}
             </p>
           </div>
 
@@ -53,7 +53,7 @@
               {{ $t("club") }}:
             </h6>
             <p class="info-grid_item_value">
-              {{ eventsParticipantsStateSelected.member.club.name }}
+              {{ participant.member.club.name }}
             </p>
           </div>
 
@@ -63,7 +63,7 @@
             </h6>
             <ul class="info-grid_item_value">
               <li
-                v-for="(weapon, index) in eventsParticipantsStateSelected.weapons"
+                v-for="(weapon, index) in participant.weapons"
                 :key="index"
               >
                 {{ weapon.class.name }} ({{ weapon.calibre }})
@@ -86,7 +86,8 @@
   </el-dialog>
 </template>
 
-<script>
+<script lang="ts">
+import DB from "~/db"
 import { mapActions, mapState } from "vuex"
 
 export default {
@@ -99,7 +100,9 @@ export default {
 
   data: function() {
     return {
-      visible: this.shown
+      visible: this.shown,
+      participant: {},
+      isLoading: false
     }
   },
 
@@ -110,12 +113,12 @@ export default {
     }),
 
     hasEventsParticipant() {
-      return Object.keys(this.eventsParticipantsStateSelected).length > 0
+      return Object.keys(this.participant).length > 0
     },
 
     eventsParticipantsFullName() {
       if(this.hasEventsParticipant) {
-        return `${this.eventsParticipantsStateSelected.member.firstName} ${this.eventsParticipantsStateSelected.member.lastName}`
+        return `${this.participant.member.firstName} ${this.participant.member.lastName}`
       }
       return ""
     }
@@ -134,8 +137,25 @@ export default {
     }),
 
     async eventsParticipantsViewDialogOpen() {
-      await this.eventsParticipantsActionsSelect({
-        id: this.eventsParticipantsId
+      const db = await DB.get()
+      const query = db.events_participants.findOne({ id: this.eventsParticipantsId })
+
+      this.sub = query.$.subscribe(async (participant) => {
+        participant.member = await participant.memberId_
+        participant.member.club = await participant.member.clubId_
+
+        participant.weapons = await db.events_participants_weapons.find({
+          participantId: participant.id
+        }).exec()
+
+        participant.weapons = await Promise.all(
+          participant.weapons.map(async (weapon) => {
+            weapon.class = await weapon.classId_
+            return weapon
+          })
+        )
+
+        this.participant = participant
       })
     },
 

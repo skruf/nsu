@@ -1,5 +1,10 @@
 {
+  "id": "",
   "stand": "",
+  "total": 0,
+  "hits": [],
+  "notes": [],
+  "eventId": "",
   "divisionId": "",
   "participantId": "",
   "weaponId": ""

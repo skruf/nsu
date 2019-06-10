@@ -69,23 +69,16 @@
 
     <div class="flex min-h-full w-full">
       <div
-        v-loading="clubsStateListIsLoading"
+        v-loading="clubsIsLoading"
         class="p-5 dialog_sidebar"
       >
         <h5 class="h5 pb-2">
           {{ $t("selectClub") }}
         </h5>
 
-        <!-- <search-form
-          v-model="clubsSearch"
-          class="small py-2"
-          :placeholder="$t('clubsSearchFormPlaceholder')"
-          @submit="clubsSearchSubmit"
-        /> -->
-
         <ul>
           <li
-            v-for="club in clubsStateList"
+            v-for="club in clubs"
             :key="club.id"
             class="mt-2 card card-clickable"
             :class="{ 'is-active': isClubActive(club) }"
@@ -97,19 +90,12 @@
       </div>
 
       <div
-        v-loading="clubsIsLoading"
+        v-loading="membersIsLoading"
         class="flex-1 p-5 overflow-y-scroll"
       >
         <h5 class="h5 pb-2">
           {{ $t("addClubsMembers") }}
         </h5>
-
-        <!-- <search-form
-          v-model="membersSearch"
-          class="small py-2"
-          :placeholder="$t('clubsMembersSearchFormPlaceholder')"
-          @submit="membersSearchSubmit"
-        /> -->
 
         <ul>
           <li
@@ -212,10 +198,12 @@
   </el-dialog>
 </template>
 
-<script>
-import { mapActions, mapState, mapMutations } from "vuex"
-import Avatar from "~/components/Avatar"
+<script lang="ts">
+import { eventsParticipantsStub, eventsParticipantsWeaponsStub } from "~/stubs"
 import EventsParticipantsAddDialog from "~/containers/EventsParticipantsAddDialog"
+import Avatar from "~/components/Avatar"
+import { db } from "~/db"
+import { filterInput } from "~/utils"
 
 export default {
   name: "EventsParticipantsManagerDialog",
@@ -223,8 +211,6 @@ export default {
   components: {
     Avatar,
     EventsParticipantsAddDialog
-    // SearchForm,
-    // EventsParticipantsCreateDialog
   },
 
   props: {
@@ -238,52 +224,25 @@ export default {
       clubsMembersSortOrders: [ "descending", "ascending" ],
       eventsParticipantsShowCreateDialog: false,
       eventsParticipantsSelectedMember: {},
-      clubsSearch: "",
-      membersSearch: "",
-      participantsSearch: "",
-      participantsToAdd: []
+      participantsToAdd: [],
+      clubId: null,
+      sub: null,
+      eventsParticipants: [],
+      eventsParticipantsIsLoading: false,
+      clubs: [],
+      clubsIsLoading: false,
+      members: [],
+      membersIsLoading: false
     }
   },
 
   computed: {
-    ...mapState("clubs", {
-      clubsStateListIsLoading: "listIsLoading",
-      clubsStateList: "list",
-      clubsStateSelectedIsLoading: "selectedIsLoading",
-      clubsStateSelected: "selected"
-    }),
-
-    ...mapState("clubs/members", {
-      clubsMembersStateList: "list",
-      clubsMembersStateListIsLoading: "listIsLoading"
-    }),
-
-    ...mapState("events/participants", {
-      eventsParticipantsStateList: "list",
-      eventsParticipantsStateListIsLoading: "listIsLoading",
-      eventsParticipantsActionsCreateManyIsLoading: "createManyIsLoading"
-    }),
-
     filteredParticipants() {
-      return this.clubsMembersStateList.filter(
+      return this.members.filter(
         ({ id }) => ![
-          ...this.eventsParticipantsStateList.map(({ memberId }) => memberId),
+          ...this.eventsParticipants.map(({ memberId }) => memberId),
           ...this.participantsToAdd.map(({ memberId }) => memberId)
         ].includes(id)
-      )
-    },
-
-    clubsIsLoading() {
-      return (
-        this.clubsStateSelectedIsLoading ||
-        this.clubsMembersStateListIsLoading
-      )
-    },
-
-    eventsParticipantsIsLoading() {
-      return (
-        this.eventsParticipantsStateListIsLoading ||
-        this.eventsParticipantsActionsCreateManyIsLoading
       )
     }
   },
@@ -296,28 +255,28 @@ export default {
   },
 
   methods: {
-    ...mapMutations("events/participants", {
-      eventsParticipantsMutationsSetListFilter: "SET_LIST_FILTER"
-    }),
-    ...mapActions("events/participants", {
-      eventsParticipantsActionsList: "list",
-      eventsParticipantsActionsCreateMany: "createMany"
-    }),
-    ...mapActions("clubs", {
-      clubsActionsList: "list",
-      clubsActionsSelect: "select"
-    }),
-    ...mapActions("clubs/members", {
-      clubsMembersActionsList: "list"
-    }),
-    ...mapMutations("clubs/members", {
-      clubsMembersMutationsSetListFilter: "SET_LIST_FILTER"
-    }),
-
     async open() {
-      this.eventsParticipantsMutationsSetListFilter({ eventId: this.event.id })
-      await this.eventsParticipantsActionsList()
-      await this.clubsActionsList()
+      try {
+        this.eventsParticipantsIsLoading = true
+        db.events_participants.find({
+          eventId: this.event.id
+        }).$.subscribe((eventsParticipants) => {
+          this.eventsParticipants = eventsParticipants
+          this.eventsParticipantsIsLoading = false
+        })
+
+        this.clubsIsLoading = true
+        db.clubs.find().$.subscribe((clubs) => {
+          this.clubs = clubs
+          this.clubsIsLoading = false
+        })
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     },
 
     addParticipant(participant) {
@@ -329,16 +288,19 @@ export default {
     },
 
     isClubActive(club) {
-      if(this.clubsStateSelected && club.id === this.clubsStateSelected.id) {
-        return true
-      }
+      return club.id === this.clubId
     },
 
     async fetchClubsMemebersList(club) {
+      this.clubId = club.id
+      this.membersIsLoading = true
       try {
-        await this.clubsActionsSelect({ id: club.id })
-        this.clubsMembersMutationsSetListFilter({ clubId: club.id })
-        await this.clubsMembersActionsList()
+        db.clubs_members.find({
+          clubId: club.id
+        }).$.subscribe((members) => {
+          this.members = members
+          this.membersIsLoading = false
+        })
       } catch(e) {
         this.$notify({
           type: "error",
@@ -353,13 +315,21 @@ export default {
       this.eventsParticipantsShowCreateDialog = true
     },
 
-    clubsSearchSubmit() {},
-    membersSearchSubmit() {},
-    participantsSearchSubmit() {},
-
     async save() {
       try {
-        await this.eventsParticipantsActionsCreateMany(this.participantsToAdd)
+        await Promise.all(
+          this.participantsToAdd.map(async (input) => {
+            const data = filterInput(input, eventsParticipantsStub)
+            const participant = await db.events_participants.insert(data)
+            return Promise.all(
+              input.weapons.map((weaponInput) => {
+                const weaponData = filterInput(weaponInput, eventsParticipantsWeaponsStub)
+                weaponData.participantId = participant.id
+                return db.events_participants_weapons.insert(weaponData)
+              })
+            )
+          })
+        )
         this.$notify({
           type: "success",
           title: this.$t("success"),

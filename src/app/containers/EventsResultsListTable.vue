@@ -126,7 +126,13 @@
           label="Treff"
         >
           <template slot-scope="scope">
-            <!-- {{ scope.row.hits.join(" ") }} -->
+            <span
+              v-for="(hit, index) in scope.row.hits.reverse()"
+              :key="index"
+              style="margin-right: 1px;"
+            >
+              {{ hit.sum }}
+            </span>
           </template>
         </el-table-column>
 

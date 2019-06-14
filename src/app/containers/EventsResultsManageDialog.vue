@@ -203,7 +203,7 @@ export default Vue.extend({
         this.contestants = contestants
         contestants.forEach((contestant) => {
           if(contestant.total) {
-            this.forms[contestant.id] = contestant.hits
+            this.forms[contestant.id] = contestant.hits.reverse()
           } else {
             this.forms[contestant.id] = []
             for(let i = 13; i > 0; i--) {

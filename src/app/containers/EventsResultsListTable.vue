@@ -6,15 +6,14 @@
     "column2Label": "Club",
     "column3Label": "Weapons",
     "column4Label": "Added On",
-    "removeSelected": "Remove selected",
-    "editParticipant": "Edit participant",
-    "removeParticipant": "Remove participant",
+    "removeSelected": "Remove selected results",
+    "removeResult": "Remove result",
     "tablePlaceholderText": "No results yet.",
     "tablePlaceholderButton": "Add new results?",
-    "eventsParticipantsRemoveOneConfirmation": "This will remove %{member} from the event permanently. Continue?",
-    "eventsParticipantsActionsRemoveOneSuccess": "%{member} was removed from the event",
-    "eventsParticipantsRemoveManyConfirmation": "This will remove %{members} participants from the event permanently. Continue?",
-    "eventsParticipantsActionsRemoveManySuccess": "%{members} participants were removed from the event"
+    "removeOneConfirmation": "This will remove the results of %{member} permanently. Continue?",
+    "removeOneSuccess": "%{member} was removed from the event",
+    "removeManyConfirmation": "This will remove the results of %{members} participants permanently. Continue?",
+    "removeManySuccess": "%{members} results were removed"
   },
   "no": {
     "searchFormPlaceholder": "Søk etter deltakere med fornavn eller etternavn",
@@ -22,15 +21,14 @@
     "column2Label": "Klubb",
     "column3Label": "Våpen",
     "column4Label": "Lagt til",
-    "removeSelected": "Slett valgte",
-    "editParticipant": "Rediger deltaker",
-    "removeParticipant": "Slett deltaker",
+    "removeSelected": "Slett valgte resultater",
+    "removeResult": "Slett resultater",
     "tablePlaceholderText": "Ingen resultater enda",
     "tablePlaceholderButton": "Legg til nye resultater?",
-    "eventsParticipantsRemoveOneConfirmation": "Dette vil fjerne %{member} fra stevnet permanent. Fortsett?",
-    "eventsParticipantsActionsRemoveOneSuccess": "%{member} ble fjernet fra stevnet",
-    "eventsParticipantsRemoveManyConfirmation": "Dette vil fjerne %{members} deltakere fra stevnet permanent. Fortsett?",
-    "eventsParticipantsActionsRemoveManySuccess": "%{members} deltakere ble fjernet fra stevnet"  }
+    "removeOneConfirmation": "Dette vil fjerne %{member} sine resultater permanent. Fortsett?",
+    "removeOneSuccess": "%{member} sine resultater ble fjernet",
+    "removeManyConfirmation": "Dette vil fjerne %{members} sine resultater permanent. Fortsett?",
+    "removeManySuccess": "%{members} sine resultater ble fjernet"  }
 }
 </i18n>
 
@@ -60,13 +58,13 @@
         @row-click="tableRowClick"
         @sort-change="tableSortChange"
       >
-        <!-- <el-table-column
+        <el-table-column
           type="selection"
           width="40"
-        /> -->
+        />
 
         <el-table-column
-          width="120"
+          width="60"
           label="Rank"
         >
           <template slot-scope="scope">
@@ -79,7 +77,7 @@
         <el-table-column
           prop="total"
           label="Totalt"
-          width="120"
+          width="60px"
         >
           <template slot-scope="scope">
             <h6 class="h6">
@@ -89,7 +87,7 @@
         </el-table-column>
 
         <el-table-column
-          width="70"
+          width="60px"
           label="Nr"
         >
           <template slot-scope="scope">
@@ -128,7 +126,66 @@
           label="Treff"
         >
           <template slot-scope="scope">
-            {{ scope.row.hits.join(" ") }}
+            <!-- {{ scope.row.hits.join(" ") }} -->
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          width="50"
+          align="right"
+        >
+          <template
+            slot="header"
+            slot-scope="scope"
+          >
+            <div
+              class="table-actions"
+              :class="{ 'disabled': !hasTableSelection }"
+            >
+              <el-dropdown
+                trigger="click"
+                @command="dispatchTableActions"
+              >
+                <span class="el-dropdown-link">
+                  <i class="table-button el-icon-more" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item
+                    class="dropdown-menu-delete"
+                    :command="{
+                      handler: 'removeMany',
+                      payload: tableSelection
+                    }"
+                  >
+                    <i class="el-icon-delete el-icon--left" />
+                    {{ $t("removeSelected") }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+          </template>
+
+          <template slot-scope="scope">
+            <el-dropdown
+              trigger="click"
+              @command="dispatchTableActions"
+            >
+              <span class="el-dropdown-link">
+                <i class="table-button el-icon-more" />
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  class="dropdown-menu-delete"
+                  :command="{
+                    handler: 'removeOne',
+                    payload: scope.row
+                  }"
+                >
+                  <i class="el-icon-delete el-icon--left" />
+                  {{ $t("removeResult") }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
 
@@ -200,7 +257,7 @@ export default Vue.extend({
   }),
 
   computed: {
-    eventsParticipantsHasSelection() {
+    hasTableSelection() {
       return this.tableSelection.length > 0
     }
   },
@@ -251,12 +308,11 @@ export default Vue.extend({
         .find({ classId: this.weaponClass.id })
         .exec()
 
-      const participantIds = weapons.map(({ participantId }) => participantId)
-
+      const weaponIds = weapons.map(({ id }) => id)
       return db.events_contestants
         .find()
-        .where("participantId")
-        .in(participantIds)
+        .where("weaponId")
+        .in(weaponIds)
         .where("total")
         .gt(0)
         .sort(sort)
@@ -358,83 +414,89 @@ export default Vue.extend({
 
     eventsParticipantsOpenEditDialog(participant) {
       this.$emit("eventsParticipantsOpenEditDialog", participant)
+    },
+
+    async removeOne(contestant) {
+      const fullName = `${contestant.participant.member.firstName} ${contestant.participant.member.lastName}`
+
+      try {
+        await this.$confirm(
+          this.$t("removeOneConfirmation", {
+            member: fullName
+          }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+      } catch(e) {
+        return
+      }
+
+      try {
+        await contestant.atomicSet("total", 0)
+        await contestant.atomicSet("hits", [])
+
+        this.$notify({
+          type: "success",
+          title: this.$t("success"),
+          message: this.$t("removeOneSuccess", {
+            member: fullName
+          })
+        })
+      } catch(e) {
+        this.$notify({
+          title: "Oops!",
+          message: e.message,
+          type: "error"
+        })
+      }
+    },
+
+    async removeMany(contestants) {
+      const count = contestants.length
+
+      try {
+        await this.$confirm(
+          this.$t("removeManyConfirmation", {
+            members: count
+          }),
+          this.$t("warning"), {
+            confirmButtonText: this.$t("confirmButtonText"),
+            cancelButtonText: this.$t("cancel"),
+            customClass: "dangerous-confirmation",
+            type: "warning"
+          }
+        )
+      } catch(e) {
+        return
+      }
+
+      try {
+        await Promise.all(
+          contestants.map(async (contestant) => {
+            await contestant.atomicSet("total", 0)
+            await contestant.atomicSet("hits", [])
+          })
+        )
+
+        this.$notify({
+          type: "success",
+          title: this.$t("success"),
+          message: this.$t("removeManySuccess", {
+            members: count
+          })
+        })
+      } catch(e) {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
     }
-
-    // async eventsParticipantsRemoveOne(participant) {
-    //   const fullName = `${participant.member.firstName} ${participant.member.lastName}`
-    //
-    //   try {
-    //     await this.$confirm(
-    //       this.$t("eventsParticipantsRemoveOneConfirmation", {
-    //         member: fullName
-    //       }),
-    //       this.$t("warning"), {
-    //         confirmButtonText: this.$t("confirmButtonText"),
-    //         cancelButtonText: this.$t("cancel"),
-    //         customClass: "dangerous-confirmation",
-    //         type: "warning"
-    //       }
-    //     )
-    //   } catch(e) {
-    //     return
-    //   }
-    //
-    //   try {
-    //     await participant.remove()
-    //     this.$notify({
-    //       type: "success",
-    //       title: this.$t("success"),
-    //       message: this.$t("eventsParticipantsActionsRemoveOneSuccess", {
-    //         member: fullName
-    //       })
-    //     })
-    //   } catch(e) {
-    //     this.$notify({
-    //       title: "Oops!",
-    //       message: e.message,
-    //       type: "error"
-    //     })
-    //   }
-    // },
-
-    // async eventsParticipantsRemoveMany() {
-    //   const count = this.tableSelection.length
-    //
-    //   try {
-    //     await this.$confirm(
-    //       this.$t("eventsParticipantsRemoveManyConfirmation", {
-    //         members: count
-    //       }),
-    //       this.$t("warning"), {
-    //         confirmButtonText: this.$t("confirmButtonText"),
-    //         cancelButtonText: this.$t("cancel"),
-    //         customClass: "dangerous-confirmation",
-    //         type: "warning"
-    //       }
-    //     )
-    //   } catch(e) {
-    //     return
-    //   }
-    //
-    //   try {
-    //     await Promise.all(
-    //       this.tableSelection.map((participant) => participant.remove())
-    //     )
-    //     this.$notify({
-    //       type: "success",
-    //       title: this.$t("success"),
-    //       message: this.$t("eventsParticipantsActionsRemoveManySuccess", {
-    //         members: count
-    //       })
-    //     })
-    //   } catch(e) {
-    //     this.$notify({
-    //       type: "error",
-    //       title: "Oops!",
-    //       message: e.message
-    //     })
-    //   }
-    // }
   }
 })
 </script>

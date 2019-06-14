@@ -40,7 +40,16 @@ const schema: RxJsonSchema = {
     hits: {
       type: "array",
       items: {
-        type: "number"
+        // type: "number"
+        type: "object",
+        properties: {
+          hit: {
+            type: "number"
+          },
+          sum: {
+            type: "number"
+          }
+        }
       }
     },
     contestantId: {

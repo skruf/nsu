@@ -67,9 +67,9 @@
               </div>
             </div>
 
-            <div class="notes">
+            <!-- <div class="notes">
               Notes
-            </div>
+            </div> -->
           </div>
         </li>
 
@@ -89,12 +89,12 @@
           >
             <div class="flex mx-8 w-full">
               <el-form-item
-                v-for="(hit, index) in forms[contestant.id]"
-                :key="index"
+                v-for="form in forms[contestant.id]"
+                :key="form.hit"
                 class="mx-1 mb-0 hit"
               >
                 <el-input-number
-                  v-model="hit.sum"
+                  v-model="form.sum"
                   :controls="false"
                   :min="0"
                   :max="10"
@@ -103,7 +103,7 @@
               </el-form-item>
             </div>
 
-            <div class="notes">
+            <!-- <div class="notes">
               <el-tooltip
                 placement="top"
                 tabindex="-1"
@@ -115,7 +115,7 @@
                   3
                 </el-tag>
               </el-tooltip>
-            </div>
+            </div> -->
           </el-form>
         </li>
       </ul>
@@ -202,7 +202,14 @@ export default Vue.extend({
       const observer = async (contestants) => {
         this.contestants = contestants
         contestants.forEach((contestant) => {
-          this.forms[contestant.id] = Array.from(Array(13), () => ({ sum: 0 }))
+          if(contestant.total) {
+            this.forms[contestant.id] = contestant.hits
+          } else {
+            this.forms[contestant.id] = []
+            for(let i = 13; i > 0; i--) {
+              this.forms[contestant.id].push({ hit: i, sum: 0 })
+            }
+          }
         })
         this.isLoading = false
       }
@@ -228,9 +235,10 @@ export default Vue.extend({
     },
 
     getTotal(hits) {
-      return hits
-        .sort((a, b) => b - a)
-        .slice(0, 13)
+      return [ ...hits ]
+        .sort((a, b) => b.sum - a.sum)
+        .slice(0, 10)
+        .map(({ sum }) => sum)
         .reduce((acc, v) => acc + v)
     },
 
@@ -240,13 +248,13 @@ export default Vue.extend({
 
     async save() {
       try {
-        const c = await Promise.all(
+        const contestants = await Promise.all(
           this.contestants.map((contestant) => {
-            const form = this.forms[contestant.id]
-            const hits = form.map((hit) => hit.sum)
+            const hits = this.forms[contestant.id]
+            const total = this.getTotal(hits)
             return contestant.atomicUpdate((data) => {
               data.hits = hits
-              data.total = this.getTotal(hits)
+              data.total = total
               return data
             })
           })
@@ -256,7 +264,7 @@ export default Vue.extend({
           type: "success",
           title: this.$t("success"),
           message: this.$t("saveSuccess", {
-            count: c.length
+            count: contestants.length
           })
         })
         this.close()

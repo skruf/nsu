@@ -7,7 +7,7 @@ export type EventsContestantsProperties = {
   id: string
   stand: number
   total: number
-  hits: number[]
+  hits: { hit: number, sum: number }[]
   notes: string[]
   eventId: string
   divisionId: string
@@ -53,7 +53,15 @@ const schema: RxJsonSchema = {
     hits: {
       type: "array",
       items: {
-        type: "number"
+        type: "object",
+        properties: {
+          hit: {
+            type: "number"
+          },
+          sum: {
+            type: "number"
+          }
+        }
       }
     },
     notes: {

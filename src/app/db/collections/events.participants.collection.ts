@@ -1,15 +1,16 @@
 import { RxJsonSchema, RxCollection, RxDocument } from "rxdb"
 import { destroyMany } from "~/db/queries"
-import DB from "~/db"
 import { getId, getTimestamp } from "~/utils"
+import { db } from "~/db"
 
 export type EventsParticipantsProperties = {
   id: string
-  number: number
+  number: number | string
   memberId: string
   eventId: string
   createdAt: string
   updatedAt: string
+  weapons?: []
 }
 
 type EventsParticipantsMethods = {}
@@ -29,7 +30,7 @@ export type EventsParticipantsCollection = RxCollection<
 const schema: RxJsonSchema = {
   title: "Events participants schema",
   description: "Events participants",
-  version: 0,
+  version: 1,
   type: "object",
   properties: {
     id: {
@@ -42,7 +43,8 @@ const schema: RxJsonSchema = {
     },
     memberId: {
       type: "string",
-      ref: "clubs_members"
+      ref: "clubs_members",
+      index: true
     },
     eventId: {
       type: "string",
@@ -64,14 +66,29 @@ const statics: EventsParticipantsStatics = {
   }
 }
 
-const preInsert = async (data: EventsParticipantsProperties) => {
-  const db = await DB.get()
-  const participants = await db.events_participants.find({
-    eventId: data.eventId
-  }).exec()
-  const numbers = participants.map(({ number }) => number)
+const migrationStrategies = {
+  1: async (participant: EventsParticipantsProperties) => {
+    if(typeof participant.number === "string") {
+      participant.number = parseInt(participant.number, 10)
+    }
+
+    await Promise.all(
+      participant.weapons.map((weapon) => {
+        return db.events_participants_weapons.insert({
+          calibre: weapon.calibre,
+          classId: weapon.classId,
+          participantId: participant.id
+        })
+      })
+    )
+
+    delete participant.weapons
+    return participant
+  }
+}
+
+const preInsert = (data: EventsParticipantsProperties) => {
   const timestamp = getTimestamp()
-  data.number = (Math.max(...numbers) | 0) + 1
   data.id = getId()
   data.createdAt = timestamp
   data.updatedAt = timestamp
@@ -91,7 +108,8 @@ export default {
     name: "events_participants",
     schema: schema,
     methods: methods,
-    statics: statics
+    statics: statics,
+    migrationStrategies: migrationStrategies
   },
   middlewares: {
     preRemove: {

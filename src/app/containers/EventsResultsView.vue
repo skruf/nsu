@@ -1,6 +1,7 @@
 <template>
   <div class="events-results-view flex h-full w-full">
     <events-class-list-menu
+      ref="eventsClassListMenu"
       :event="event"
       @selectClass="setSelectedClass"
     />
@@ -72,6 +73,9 @@ export default Vue.extend({
     },
     openEventsResultsManageDialog() {
       this.showEventsResultsManageDialog = true
+    },
+    refresh() {
+      this.$refs.eventsClassListMenu.refresh()
     }
   }
 })

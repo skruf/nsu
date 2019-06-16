@@ -40,12 +40,12 @@
 
 <template>
   <div class="events-results-list-table">
-    <search-form
+    <!-- <search-form
       v-model="searchFilter"
       class="mb-5"
       :placeholder="$t('searchFormPlaceholder')"
       @submit="submitSearchFilter"
-    />
+    /> -->
 
     <div v-loading="isLoading">
       <el-table
@@ -392,8 +392,8 @@ export default Vue.extend({
       this.refresh()
     },
 
-    tableSortChange({ field, order }) {
-      this.tableSortField = field
+    tableSortChange({ prop, order }) {
+      this.tableSortField = prop
       this.tableSortOrder = order
       this.refresh()
     },

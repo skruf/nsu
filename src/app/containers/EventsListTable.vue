@@ -104,9 +104,9 @@
           </template>
         </el-table-column>
 
+        <!-- prop="clubId"
+        sortable="custom" -->
         <el-table-column
-          prop="rangeId"
-          sortable="custom"
           :label="$t('column3Label')"
           :sort-orders="eventsSortOrders"
         >
@@ -121,11 +121,15 @@
         </el-table-column>
 
         <el-table-column
-          prop="category"
+          prop="categoryId"
           sortable="custom"
           :label="$t('column4Label')"
           :sort-orders="eventsSortOrders"
-        />
+        >
+          <template slot-scope="scope">
+            {{ scope.row.category.name }}
+          </template>
+        </el-table-column>
 
         <el-table-column
           width="50"

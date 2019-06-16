@@ -317,9 +317,17 @@ export default {
 
     async save() {
       try {
+        const participants = await db.events_participants.find({
+          eventId: this.event.id
+        }).exec()
+        const numbers = participants.map(({ number }) => number)
+        let number = (Math.max(...numbers) | 0) + 1
+
         await Promise.all(
           this.participantsToAdd.map(async (input) => {
             const data = filterInput(input, eventsParticipantsStub)
+            data.number = number
+            number += 1
             const participant = await db.events_participants.insert(data)
             return Promise.all(
               input.weapons.map((weaponInput) => {

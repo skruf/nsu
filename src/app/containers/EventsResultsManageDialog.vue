@@ -131,38 +131,21 @@
       </el-button>
       <el-button
         class="block"
-        type="text"
-        @click="preview"
-      >
-        {{ $t("preview") }}
-      </el-button>
-      <el-button
-        class="block"
         type="primary"
         @click="save"
       >
         {{ $t("save") }}
       </el-button>
     </template>
-
-    <!-- <events-divisions-contestants-results-preview-dialog
-      :results="results"
-      :shown.sync="showPreviewDialog"
-    /> -->
   </el-dialog>
 </template>
 
 <script lang="ts">
 import Vue from "vue"
 import { db } from "~/db"
-// import EventsResultsPreviewDialog from "~/components/EventsResultsPreviewDialog"
 
 export default Vue.extend({
   name: "EventsResultsManageDialog",
-
-  components: {
-    // EventsResultsPreviewDialog
-  },
 
   props: {
     shown: { type: Boolean, default: false },
@@ -200,17 +183,25 @@ export default Vue.extend({
       this.isLoading = true
 
       const observer = async (contestants) => {
-        this.contestants = contestants
-        contestants.forEach((contestant) => {
-          if(contestant.total) {
-            this.forms[contestant.id] = contestant.hits.reverse()
-          } else {
-            this.forms[contestant.id] = []
-            for(let i = 13; i > 0; i--) {
-              this.forms[contestant.id].push({ hit: i, sum: 0 })
+        this.contestants = await Promise.all(
+          contestants.map(
+            async (contestant) => {
+              contestant.participant = await contestant.participantId_
+
+              if(contestant.total) {
+                this.forms[contestant.id] = contestant.hits.reverse()
+              } else {
+                this.forms[contestant.id] = []
+                for(let i = 13; i > 0; i--) {
+                  this.forms[contestant.id].push({ hit: i, sum: 0 })
+                }
+              }
+
+              return contestant
             }
-          }
-        })
+          )
+        )
+
         this.isLoading = false
       }
 
@@ -248,6 +239,7 @@ export default Vue.extend({
 
     async save() {
       try {
+        this.isLoading = true
         const contestants = await Promise.all(
           this.contestants.map((contestant) => {
             const hits = this.forms[contestant.id]
@@ -259,6 +251,7 @@ export default Vue.extend({
             })
           })
         )
+        this.isLoading = false
 
         this.$notify({
           type: "success",

@@ -98,18 +98,19 @@
         </el-form-item>
 
         <el-form-item
-          prop="category"
+          prop="categoryId"
           :label="$t('formItem3Label')"
         >
           <el-select
-            v-model="form.category"
+            v-model="form.categoryId"
             :placeholder="$t('formItem3Placeholder')"
+            :loading="categoriesIsLoading"
           >
             <el-option
-              v-for="(category, index) in eventsStateCategories"
-              :key="index"
-              :label="category"
-              :value="category"
+              v-for="category in categories"
+              :key="category.id"
+              :label="category.name"
+              :value="category.id"
             />
           </el-select>
         </el-form-item>
@@ -182,6 +183,7 @@
 </template>
 
 <script>
+import { db } from "~/db"
 import { mapActions, mapState } from "vuex"
 import { eventsStub } from "~/stubs"
 
@@ -200,17 +202,17 @@ export default {
       formRules: {
         title: { required: true, message: this.$t("formItem1Error") },
         dates: { required: true, message: this.$t("formItem2Error") },
-        category: { required: true, message: this.$t("formItem3Error") },
-        organizerId: { required: true, message: this.$t("formItem4Error") },
-        rangeId: { required: true, message: this.$t("formItem5Error") }
-      }
+        categoryId: { required: true, message: this.$t("formItem3Error") }
+      },
+      categories: [],
+      categoriesSub: null,
+      categoriesIsLoading: false
     }
   },
 
   computed: {
     ...mapState("events", {
-      eventsStateEditIsLoading: "editIsLoading",
-      eventsStateCategories: "categories"
+      eventsStateEditIsLoading: "editIsLoading"
     }),
 
     ...mapState("clubs", {
@@ -240,8 +242,27 @@ export default {
           this.event.endsAt
         ]
       }
+
       await this.clubsActionsList()
       await this.rangesActionsList()
+
+      const categoriesObserver = async (categories) => {
+        this.categoriesIsLoading = true
+        this.categories = categories
+        this.categoriesIsLoading = false
+      }
+
+      const categoriesError = (e) => {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
+
+      this.categoriesSub = db.events_categories
+        .find()
+        .$.subscribe(categoriesObserver, categoriesError)
     },
 
     ...mapActions("events", {
@@ -281,6 +302,7 @@ export default {
             })
           })
           this.close()
+          this.clear()
         } catch(e) {
           this.$notify({
             type: "error",
@@ -296,7 +318,6 @@ export default {
     },
 
     close() {
-      this.clear()
       this.visible = false
       this.$emit("update:shown", false)
     }

@@ -38,14 +38,6 @@ const populate = async (doc) => {
   return participant
 }
 
-// const filterInput = (item) => ({
-//   memberId: item.memberId,
-//   eventId: item.eventId,
-//   weapons: item.weapons && item.weapons.map(
-//     (w) => ({ ...w, id: getId() })
-//   )
-// })
-
 const list = async (filter = {}, options = {}) => {
   const result = await findMany("events_participants", filter, options)
   result.items = await Promise.all(

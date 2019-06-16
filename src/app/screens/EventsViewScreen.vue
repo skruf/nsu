@@ -166,9 +166,12 @@
             </small>
           </div>
 
-          <div class="page-info_item">
+          <div
+            v-if="eventsStateSelected.category"
+            class="page-info_item"
+          >
             <h5 class="h5">
-              {{ eventsStateSelected.category }}
+              {{ eventsStateSelected.category.name }}
             </h5>
             <small class="small">
               {{ $t("category") }}
@@ -179,7 +182,10 @@
     </el-header>
 
     <el-main>
-      <el-tabs v-model="activeTab">
+      <el-tabs
+        v-model="activeTab"
+        @tab-click="refreshTabs"
+      >
         <el-tab-pane
           name="participants"
           :label="$t('participants')"
@@ -241,6 +247,7 @@
           <div class="content p-0">
             <events-results-view
               v-if="!eventsStateSelectedIsLoading"
+              ref="eventsResultsView"
               :event="eventsStateSelected"
             />
           </div>
@@ -342,6 +349,14 @@ export default {
       eventsActionsSelect: "select",
       eventsActionsRemoveOne: "removeOne"
     }),
+
+    refreshTabs() {
+      switch(this.activeTab) {
+        case "results":
+          this.$refs.eventsResultsView.refresh()
+          break
+      }
+    },
 
     dispatchActions({ handler, payload }) {
       this[handler](payload)

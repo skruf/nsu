@@ -54,20 +54,20 @@
 .el-alert--warning .el-alert__description
   color inherit
 
-#app
-  padding-top 25px
+// #app
+//   padding-top 25px
 
 </style>
 
 <template>
   <div>
-    <el-alert
+    <!-- <el-alert
       class="app-warning"
       type="warning"
       :title="$t('appWarning')"
       :closable="false"
       center
-    />
+    /> -->
 
     <el-container
       id="app"

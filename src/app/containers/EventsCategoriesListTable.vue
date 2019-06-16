@@ -1,53 +1,41 @@
 <i18n>
 {
   "en": {
-    "searchFormPlaceholder": "Search for participants by first or last name",
+    "searchFormPlaceholder": "Search for categories",
     "column1Label": "Name",
-    "column2Label": "Club",
-    "column3Label": "Weapons",
-    "column4Label": "Added On",
     "removeSelected": "Remove selected",
-    "editParticipant": "Edit participant",
-    "removeParticipant": "Remove participant",
-    "tablePlaceholderText": "No participants yet.",
-    "tablePlaceholderButton": "Add a member?",
-    "eventsParticipantsRemoveOneConfirmation": "This will remove %{member} from the event permanently. Continue?",
-    "eventsParticipantsActionsRemoveOneSuccess": "%{member} was removed from the event",
-    "eventsParticipantsRemoveManyConfirmation": "This will remove %{members} participants from the event permanently. Continue?",
-    "eventsParticipantsActionsRemoveManySuccess": "%{members} participants were removed from the event"
+    "edit": "Edit category",
+    "remove": "Remove category",
+    "tablePlaceholderText": "No categories yet.",
+    "tablePlaceholderButton": "Create category?",
+    "removeOneConfirmation": "This will remove %{category} and all its events permanently. Continue?",
+    "removeOneSuccess": "%{category} was removed",
+    "removeManyConfirmation": "This will remove %{categories} and all their events permanently. Continue?",
+    "removeManySuccess": "%{categories} was removed"
   },
   "no": {
-    "searchFormPlaceholder": "Søk etter deltakere med fornavn eller etternavn",
-    "column1Label": "Deltaker",
-    "column2Label": "Klubb",
-    "column3Label": "Våpen",
-    "column4Label": "Lagt til",
+    "searchFormPlaceholder": "Søk etter kategorier",
+    "column1Label": "Navn",
     "removeSelected": "Slett valgte",
-    "editParticipant": "Rediger deltaker",
-    "removeParticipant": "Slett deltaker",
-    "tablePlaceholderText": "Ingen deltakere enda",
-    "tablePlaceholderButton": "Legg til ett medlem?",
-    "eventsParticipantsRemoveOneConfirmation": "Dette vil fjerne %{member} fra stevnet permanent. Fortsett?",
-    "eventsParticipantsActionsRemoveOneSuccess": "%{member} ble fjernet fra stevnet",
-    "eventsParticipantsRemoveManyConfirmation": "Dette vil fjerne %{members} deltakere fra stevnet permanent. Fortsett?",
-    "eventsParticipantsActionsRemoveManySuccess": "%{members} deltakere ble fjernet fra stevnet"  }
+    "edit": "Rediger kategori",
+    "remove": "Slett kategori",
+    "tablePlaceholderText": "Ingen kategorier enda",
+    "tablePlaceholderButton": "Legg til kategori?",
+    "removeOneConfirmation": "Dette vil fjerne %{category} og alle stevner i denne kategorien permanent. Fortsett?",
+    "removeOneSuccess": "%{category} ble fjernet",
+    "removeManyConfirmation": "Dette vil fjerne %{categories} og alle stevner i disse kategoriene permanent. Fortsett?",
+    "removeManySuccess": "%{categories} ble fjernet"  }
 }
 </i18n>
 
-<style lang="stylus">
-  .participant_attributes
-    .small:not(:last-child):after
-      content "•"
-</style>
-
 <template>
-  <div class="base-list-table">
-    <!-- <search-form
+  <div class="events-categories-list-table">
+    <search-form
       v-model="searchFilter"
       class="mb-5"
       :placeholder="$t('searchFormPlaceholder')"
       @submit="submitSearchFilter"
-    /> -->
+    />
 
     <div v-loading="isLoading">
       <el-table
@@ -60,7 +48,23 @@
         @row-click="tableRowClick"
         @sort-change="tableSortChange"
       >
-        <slot name="columns" />
+        <el-table-column
+          type="selection"
+          width="40"
+        />
+
+        <el-table-column
+          prop="name"
+          sortable="custom"
+          label="Navn"
+          :sort-orders="tableSortOrders"
+        >
+          <template slot-scope="scope">
+            <h6 class="h6">
+              {{ scope.row.name }}
+            </h6>
+          </template>
+        </el-table-column>
 
         <el-table-column
           width="50"
@@ -72,7 +76,7 @@
           >
             <div
               class="table-actions"
-              :class="{ 'disabled': !hasSelection }"
+              :class="{ 'disabled': !tableHasSelection }"
             >
               <el-dropdown
                 trigger="click"
@@ -85,7 +89,7 @@
                   <el-dropdown-item
                     class="dropdown-menu-delete"
                     :command="{
-                      handler: 'eventsParticipantsRemoveMany'
+                      handler: 'removeMany'
                     }"
                   >
                     <i class="el-icon-delete el-icon--left" />
@@ -107,24 +111,24 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
                   :command="{
-                    handler: 'eventsParticipantsOpenEditDialog',
+                    handler: 'openEditDialog',
                     payload: scope.row
                   }"
                 >
                   <i class="el-icon-edit el-icon--left" />
-                  {{ $t("editParticipant") }}
+                  {{ $t("edit") }}
                 </el-dropdown-item>
 
                 <el-dropdown-item
                   divided
                   class="dropdown-menu-delete"
                   :command="{
-                    handler: 'eventsParticipantsRemoveOne',
+                    handler: 'removeOne',
                     payload: scope.row
                   }"
                 >
                   <i class="el-icon-delete el-icon--left" />
-                  {{ $t("removeParticipant") }}
+                  {{ $t("remove") }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -135,7 +139,7 @@
           {{ $t("tablePlaceholderText") }}
           <el-button
             type="text"
-            @click="eventsParticipantsOpenManageDialog"
+            @click="openCreateDialog"
           >
             {{ $t("tablePlaceholderButton") }}
           </el-button>
@@ -146,7 +150,7 @@
         layout="total, sizes, prev, pager, next"
         :page-size="pageSize"
         :current-page="pageCurrent"
-        :page-sizes="[ 1, 2, 15, 30, 45, 60, pageTotal ]"
+        :page-sizes="[ 15, 30, 45, 60, pageTotal ]"
         :total="pageTotal"
         @size-change="pageSizeChange"
         @current-change="pageCurrentChange"
@@ -159,27 +163,15 @@
 import Vue from "vue"
 import { db } from "~/db"
 import SearchForm from "~/components/SearchForm"
-import Avatar from "~/components/Avatar"
 
 export default Vue.extend({
-  name: "BaseListTable",
+  name: "EvetsnCategoriesListTable",
 
   components: {
     SearchForm
   },
 
-  props: {
-    event: { type: Object, required: true },
-
-    observer: { type: Function, required: true },
-    collection: { type: String, required: true },
-    filter: { type: Object, required: true }
-  },
-
   data: () => ({
-    eventsParticipantsViewId: "",
-    eventsParticipantsShowViewDialog: false,
-    eventsParticipants: [],
     tableData: [],
     tableSelection: [],
     tableSortOrders: [ "descending", "ascending" ],
@@ -194,42 +186,26 @@ export default Vue.extend({
   }),
 
   computed: {
-    hasSelection() {
+    tableHasSelection() {
       return this.tableSelection.length > 0
     }
   },
 
   created() {
-    // const observer = async (results) => {
-    //   this.isLoading = true
-    //   this.pageTotal = await db.events_participants.count()
-    //   this.tableData = await Promise.all(
-    //     // switchmap
-    //     // catcherror of
-    //     results.map(async (participant) => {
-    //       participant.member = await participant.memberId_
-    //       participant.member.club = await participant.member.clubId_
-    //       participant.weapons = await db.events_participants_weapons.find({
-    //         participantId: participant.id
-    //       }).exec()
-    //       participant.weapons = await Promise.all(
-    //         participant.weapons.map(async (weapon) => {
-    //           weapon.class = await weapon.classId_
-    //           return weapon
-    //         })
-    //       )
-    //       return participant
-    //     })
-    //   )
-    //   this.isLoading = false
-    // }
+    const observer = async (categories) => {
+      this.isLoading = true
+      this.pageTotal = await db.events_categories.count()
+      this.tableData = categories
+      this.isLoading = false
+    }
 
     const errorHandler = (e) => {
       this.$notify({ type: "error", title: "Oops!", message: e.message })
     }
 
-    this.sub = db[this.collection].find(this.filter)
-      .$.subscribe(this.observer, errorHandler)
+    this.sub = db.events_categories
+      .find()
+      .$.subscribe(observer, errorHandler)
   },
 
   beforeDestroy() {
@@ -245,41 +221,21 @@ export default Vue.extend({
 
       this.isLoading = true
 
-      const participants = await db.events_participants
-        .find({ eventId: this.event.id })
-        .exec()
-
       const regexp = new RegExp(`${value}`, "i")
-      const participantMemberIds = participants.map(({ memberId }) => memberId)
-      const members = await db.clubs_members
-        .find({
-          $or: [
-            { firstName: { $regex: regexp } },
-            { lastName: { $regex: regexp } }
-          ]
-        })
-        .where("id")
-        .in(participantMemberIds)
+      const categories = await db.events_categories
+        .find({ name: { $regex: regexp } })
         .exec()
 
-      const memberIds = members.map(({ id }) => id)
-      const filteredParticipants = await db.events_participants
-        .find({ eventId: this.event.id })
-        .where("memberId")
-        .in(memberIds)
-        .exec()
-
-      this.sub.next(filteredParticipants)
+      this.sub.next(categories)
     },
 
     async refresh() {
       this.isLoading = true
-      const filter = { eventId: this.event.id }
       const sort = `${this.tableSortOrder === "descending" ? '-' : ''}${this.tableSortField}`
       const skip = (this.pageCurrent - 1) * this.pageSize
 
-      const res = await db.events_participants
-        .find(filter)
+      const res = await db.events_categories
+        .find()
         .sort(sort)
         .skip(skip)
         .limit(this.pageSize)
@@ -310,10 +266,9 @@ export default Vue.extend({
       this.tableSelection = selection
     },
 
-    tableRowClick(participant, column, e) {
+    tableRowClick(category, column, e) {
       if(!e.target.className.includes("table-button")) {
-        this.eventsParticipantsViewId = participant.id
-        this.eventsParticipantsShowViewDialog = true
+        this.openEditDialog(category)
       }
     },
 
@@ -321,21 +276,19 @@ export default Vue.extend({
       this[handler](payload)
     },
 
-    eventsParticipantsOpenManageDialog() {
-      this.$emit("eventsParticipantsOpenManageDialog")
+    openCreateDialog() {
+      this.$emit("openCreateDialog")
     },
 
-    eventsParticipantsOpenEditDialog(participant) {
-      this.$emit("eventsParticipantsOpenEditDialog", participant)
+    openEditDialog(category) {
+      this.$emit("openEditDialog", category)
     },
 
-    async eventsParticipantsRemoveOne(participant) {
-      const fullName = `${participant.member.firstName} ${participant.member.lastName}`
-
+    async removeOne(category) {
       try {
         await this.$confirm(
-          this.$t("eventsParticipantsRemoveOneConfirmation", {
-            member: fullName
+          this.$t("removeOneConfirmation", {
+            category: category.name
           }),
           this.$t("warning"), {
             confirmButtonText: this.$t("confirmButtonText"),
@@ -349,12 +302,12 @@ export default Vue.extend({
       }
 
       try {
-        await participant.remove()
+        await category.remove()
         this.$notify({
           type: "success",
           title: this.$t("success"),
-          message: this.$t("eventsParticipantsActionsRemoveOneSuccess", {
-            member: fullName
+          message: this.$t("removeOneSuccess", {
+            category: category.name
           })
         })
       } catch(e) {
@@ -366,13 +319,13 @@ export default Vue.extend({
       }
     },
 
-    async eventsParticipantsRemoveMany() {
+    async removeMany() {
       const count = this.tableSelection.length
 
       try {
         await this.$confirm(
-          this.$t("eventsParticipantsRemoveManyConfirmation", {
-            members: count
+          this.$t("removeManyConfirmation", {
+            categories: count
           }),
           this.$t("warning"), {
             confirmButtonText: this.$t("confirmButtonText"),
@@ -387,12 +340,12 @@ export default Vue.extend({
 
       try {
         await Promise.all(
-          this.tableSelection.map((participant) => participant.remove())
+          this.tableSelection.map((category) => category.remove())
         )
         this.$notify({
           type: "success",
           title: this.$t("success"),
-          message: this.$t("eventsParticipantsActionsRemoveManySuccess", {
+          message: this.$t("removeManySuccess", {
             members: count
           })
         })

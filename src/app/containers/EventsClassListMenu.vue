@@ -64,37 +64,8 @@ export default Vue.extend({
     selected: null
   }),
 
-  async created() {
-    this.isLoading = true
-
-    const observer = async (list) => {
-      this.list = list
-      this.isLoading = false
-    }
-
-    const errorHandler = (e) => {
-      this.$notify({
-        type: "error",
-        title: "Oops!",
-        message: e.message
-      })
-    }
-
-    const contestants = await db.events_contestants
-      .find({ eventId: this.event.id })
-      .exec()
-
-    const weaponIds = contestants.map(({ weaponId }) => weaponId)
-    const weapons = await db.events_participants_weapons.find()
-      .where("id")
-      .in(weaponIds)
-      .exec()
-
-    const classIds = weapons.map(({ classId }) => classId)
-    this.sub = db.classes.find()
-      .where("id")
-      .in(classIds)
-      .$.subscribe(observer, errorHandler)
+  created() {
+    this.refresh()
   },
 
   beforeDestroy() {
@@ -109,6 +80,39 @@ export default Vue.extend({
 
     isActive(weaponClass) {
       return this.selected && this.selected.id === weaponClass.id
+    },
+
+    async refresh() {
+      this.isLoading = true
+
+      const observer = (list) => {
+        this.list = list
+        this.isLoading = false
+      }
+
+      const errorHandler = (e) => {
+        this.$notify({
+          type: "error",
+          title: "Oops!",
+          message: e.message
+        })
+      }
+
+      const contestants = await db.events_contestants
+        .find({ eventId: this.event.id })
+        .exec()
+
+      const weaponIds = contestants.map(({ weaponId }) => weaponId)
+      const weapons = await db.events_participants_weapons.find()
+        .where("id")
+        .in(weaponIds)
+        .exec()
+
+      const classIds = weapons.map(({ classId }) => classId)
+      this.sub = db.classes.find()
+        .where("id")
+        .in(classIds)
+        .$.subscribe(observer, errorHandler)
     }
   }
 })

@@ -67,7 +67,7 @@
 
     <events-edit-dialog
       :shown.sync="eventsShowEditDialog"
-      :item="eventsEditItem"
+      :event="eventsEditItem"
     />
   </el-container>
 </template>

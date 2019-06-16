@@ -87,7 +87,7 @@
         </h4>
 
         <div class="flex my-4">
-          <div class="font-semibold">
+          <div class="font-bold">
             <div>Dato</div>
             <div>Klokkeslett</div>
             <div>Distanse</div>
@@ -162,7 +162,6 @@
 <script>
 import { mapActions, mapState } from "vuex"
 import { eventsContestantsStub } from "~/stubs"
-import { parseTimeInput } from "~/utils/time"
 import Avatar from "~/components/Avatar"
 import EventsContestantsForm from "~/components/EventsContestantsForm"
 
@@ -182,7 +181,6 @@ export default {
   data: function() {
     return {
       visible: this.shown,
-      eventsDivisionsForm: {},
       eventsContestantsForms: []
     }
   },
@@ -199,9 +197,6 @@ export default {
     }),
     showEventsContestantsForms() {
       return this.eventsContestantsForms.length > 0
-    },
-    starts() {
-      return parseTimeInput(this.eventsDivisionsForm.startsAt)
     },
     isLoading() {
       return (
@@ -233,8 +228,13 @@ export default {
       await this.eventsContestantsActionsList({
         divisionId: this.division.id
       })
+
       await this.eventsParticipantsActionsList({
-        eventId: this.division.eventId
+        eventId: this.division.eventId,
+        options: {
+          limit: false,
+          skip: false
+        }
       })
 
       this.eventsContestantsForms = []
@@ -274,9 +274,6 @@ export default {
           await this.eventsContestantsActionsEditMany(toEdit)
         }
 
-        console.log(toCreate)
-        console.log(toEdit)
-
         this.$notify({
           type: "success",
           title: this.$t("success"),
@@ -287,7 +284,6 @@ export default {
         this.close()
         // this.clear()
       } catch(e) {
-        console.error(e)
         this.$notify({
           type: "error",
           title: "Oops!",

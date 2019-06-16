@@ -226,6 +226,7 @@ export default Vue.extend({
               division: data.name
             })
           })
+          this.$emit("update:division", data)
           this.close()
           this.clear()
         } catch(e) {

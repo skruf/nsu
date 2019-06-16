@@ -1,7 +1,7 @@
 import { RxJsonSchema, RxCollection, RxDocument } from "rxdb"
 import { destroyMany } from "~/db/queries"
 
-type Properties = {
+export type EventsDivisionsProperties = {
   id: string
   name: string
   day: string
@@ -11,26 +11,29 @@ type Properties = {
   eventId: string
   createdAt: string
   updatedAt: string
+  startsAt?: string
+  endsAt: string
+  interval: string
 }
 
-type Methods = {}
-type Statics = {}
+type EventsDivisionsMethods = {}
+type EventsDivisionsStatics = {}
 
 export type EventsDivisionsDocument = RxDocument<
-  Properties,
-  Methods
+  EventsDivisionsProperties,
+  EventsDivisionsMethods
 >
 
 export type EventsDivisionsCollection = RxCollection<
-  Properties,
-  Methods,
-  Statics
+  EventsDivisionsProperties,
+  EventsDivisionsMethods,
+  EventsDivisionsStatics
 >
 
 const schema: RxJsonSchema = {
   title: "Events divisions schema",
   description: "Events divisions",
-  version: 0,
+  version: 1,
   type: "object",
   properties: {
     id: {
@@ -68,10 +71,23 @@ const schema: RxJsonSchema = {
   ]
 }
 
-const methods: Methods = {}
-const statics: Statics = {}
+const methods: EventsDivisionsMethods = {}
+const statics: EventsDivisionsStatics = {}
 
-const preRemove = async (data: Properties) => {
+const migrationStrategies = {
+  1: (division: EventsDivisionsProperties) => {
+    const datetime = division.day.split("T")
+    division.day = datetime[0]
+    division.time = datetime[1]
+    delete division.startsAt
+    delete division.endsAt
+    delete division.interval
+    division.stands = 5
+    return division
+  }
+}
+
+const preRemove = async (data: EventsDivisionsProperties) => {
   await destroyMany("events_contestants", {
     divisionId: data.id
   })
@@ -82,7 +98,8 @@ export default {
     name: "events_divisions",
     schema: schema,
     methods: methods,
-    statics: statics
+    statics: statics,
+    migrationStrategies: migrationStrategies
   },
   middlewares: {
     preRemove: {

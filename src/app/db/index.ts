@@ -33,7 +33,7 @@ type CollectionConfig = {
 const configureCollection = async (
   db: Database,
   config: CollectionConfig
-): Promise<void> => {
+): Promise<any> => {
   const timestamp = { type: "string", format: "date-time" }
   config.collection.schema.properties.updatedAt = timestamp
   config.collection.schema.properties.createdAt = { ...timestamp, index: true }
@@ -44,11 +44,17 @@ const configureCollection = async (
     const { handle, parallel } = config.middlewares[middleware]
     collection[middleware](handle, parallel)
   }
+
+  // const needsMigration = await collection.migrationNeeded()
+  // console.log(`${config.collection.name}: ${needsMigration}`)
+  // if(needsMigration === true) {
+  //   return collection
+  // }
 }
 
 export let db: Database = null
 
-export const init = async (): Promise<void> => {
+export const init = async (): Promise<any> => {
   try {
     db = await RxDB.create<DatabaseCollections>({
       name: "nsu",
@@ -58,16 +64,13 @@ export const init = async (): Promise<void> => {
       queryChangeDetection: false
     })
 
-    // if(
-    //   process.env.NODE_ENV !== "test" ||
-    //   process.env.NODE_ENV !== "development"
-    // ) {
-    //   db.$.subscribe((event) => { log.info(event) })
-    // }
-
+    // const collections = await Promise.all(configs.map(
     await Promise.all(configs.map(
       (config) => configureCollection(db, config))
     )
+
+    // const migrations = collections.filter((collection) => !!collection)
+    // if(migrations) return migrations
   } catch(e) {
     router.push({
       name: "ErrorScreen",

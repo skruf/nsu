@@ -11,6 +11,11 @@ export default new Router({
       component: require("./EventsListScreen").default
     },
     {
+      path: "/events/categories",
+      name: "EventsCategoriesListScreen",
+      component: require("./EventsCategoriesListScreen").default
+    },
+    {
       path: "/events/:eventId",
       name: "EventsViewScreen",
       component: require("./EventsViewScreen").default
@@ -30,11 +35,6 @@ export default new Router({
       name: "RangesListScreen",
       component: require("./RangesListScreen").default
     },
-    // {
-    //   path: "/ranges/:rangeId",
-    //   name: "RangesViewScreen",
-    //   component: require("./RangesViewScreen").default
-    // },
     {
       path: "/classes",
       name: "ClassesListScreen",

@@ -1,21 +1,24 @@
 import { RxJsonSchema, RxCollection, RxDocument } from "rxdb"
+import { db } from "~/db"
 import { destroyMany } from "~/db/queries"
 import { ClubsDocument } from "~/db/collections/clubs.collection"
 import { RangesDocument } from "~/db/collections/ranges.collection"
+import { EventsCategoriesDocument } from "~/db/collections/events.categories.collection"
 
 export type EventsProperties = {
   id: string
   title: string
   startsAt: string
   endsAt: string
-  category: string
   approbated?: boolean
+  categoryId?: string
   organizerId?: string
   rangeId?: string
   createdAt: string
   updatedAt: string
   club?: ClubsDocument
   range?: RangesDocument
+  category: EventsCategoriesDocument
 }
 
 type EventsMethods = {}
@@ -35,7 +38,7 @@ export type EventsCollection = RxCollection<
 const schema: RxJsonSchema = {
   title: "Events schema",
   description: "Events",
-  version: 0,
+  version: 1,
   type: "object",
   properties: {
     id: {
@@ -55,13 +58,14 @@ const schema: RxJsonSchema = {
       type: "string",
       format: "date-time"
     },
-    category: {
-      type: "string",
-      index: true
-    },
     approbated: {
       type: "boolean",
       default: false
+    },
+    categoryId: {
+      type: "string",
+      ref: "events_categories",
+      index: true
     },
     organizerId: {
       type: "string",
@@ -77,12 +81,28 @@ const schema: RxJsonSchema = {
     "title",
     "startsAt",
     "endsAt",
-    "category"
+    "categoryId"
   ]
 }
 
 const methods: EventsMethods = {}
 const statics: EventsStatics = {}
+
+const migrationStrategies = {
+  1: async (event: EventsProperties) => {
+    const query = { name: event.category }
+
+    let category = await db.events_categories.findOne(query).exec()
+    if(!!category) {
+      category = await db.events_categories.insert(query)
+    }
+
+    event.categoryId = category.id
+    delete event.category
+
+    return event
+  }
+}
 
 const preRemove = async (data: EventsProperties) => {
   await destroyMany("events_divisions", {
@@ -98,7 +118,8 @@ export default {
     name: "events",
     schema: schema,
     methods: methods,
-    statics: statics
+    statics: statics,
+    migrationStrategies: migrationStrategies
   },
   middlewares: {
     preRemove: {

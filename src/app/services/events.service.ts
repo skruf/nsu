@@ -7,12 +7,14 @@ import { filterInput } from "~/utils"
 import { EventsDocument, EventsProperties } from "~/db/collections/events.collection"
 
 const populate = async (doc: EventsDocument): Promise<EventsProperties> => {
-  let club = await doc.populate("organizerId")
-  let range = await doc.populate("rangeId")
+  const club = await doc.populate("organizerId")
+  const range = await doc.populate("rangeId")
+  const category = await doc.populate("categoryId")
 
   const event = doc.toJSON()
   if(club) event.club = club.toJSON()
   if(range) event.range = range.toJSON()
+  event.category = category.toJSON()
 
   return event
 }

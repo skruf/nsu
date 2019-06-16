@@ -134,7 +134,6 @@
         </el-menu-item>
         <el-menu-item
           index="1-4"
-          disabled
           @click="navTo('/events/categories')"
         >
           {{ $t("categories") }}

@@ -18,6 +18,10 @@ import eventsCollection, {
   EventsCollection,
   EventsDocument
 } from "./events.collection"
+import eventsCategoriesCollection, {
+  EventsCategoriesCollection,
+  EventsCategoriesDocument
+} from "./events.categories.collection"
 import eventsParticipantsCollection, {
   EventsParticipantsCollection,
   EventsParticipantsDocument
@@ -46,6 +50,7 @@ export interface DatabaseCollections {
     ClubsCollection |
     ClubsMembersCollection |
     EventsCollection |
+    EventsCategoriesCollection |
     EventsParticipantsCollection |
     EventsParticipantsWeaponsCollection |
     EventsDivisionsCollection |
@@ -60,6 +65,7 @@ export type DatabaseDocument = (
   ClubsDocument |
   ClubsMembersDocument |
   EventsDocument |
+  EventsCategoriesDocument |
   EventsParticipantsDocument |
   EventsParticipantsWeaponsDocument |
   EventsDivisionsDocument |
@@ -73,6 +79,7 @@ export default [
   clubsCollection,
   clubsMembersCollection,
   eventsCollection,
+  eventsCategoriesCollection,
   eventsParticipantsCollection,
   eventsParticipantsWeaponsCollection,
   eventsDivisionsCollection,

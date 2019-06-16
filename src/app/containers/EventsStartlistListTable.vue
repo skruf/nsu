@@ -9,8 +9,7 @@
     "removeSelected": "Remove selected",
     "editParticipant": "Edit participant",
     "removeParticipant": "Remove participant",
-    "tablePlaceholderText": "No participants yet.",
-    "tablePlaceholderButton": "Add a member?",
+    "tablePlaceholderText": "No participants yet. Add a division with participants first.",
     "eventsParticipantsRemoveOneConfirmation": "This will remove %{member} from the event permanently. Continue?",
     "eventsParticipantsActionsRemoveOneSuccess": "%{member} was removed from the event",
     "eventsParticipantsRemoveManyConfirmation": "This will remove %{members} participants from the event permanently. Continue?",
@@ -25,8 +24,7 @@
     "removeSelected": "Slett valgte",
     "editParticipant": "Rediger deltaker",
     "removeParticipant": "Slett deltaker",
-    "tablePlaceholderText": "Ingen deltakere enda",
-    "tablePlaceholderButton": "Legg til ett medlem?",
+    "tablePlaceholderText": "Ingen deltakere enda. Legg til en standplassliste med deltakere først.",
     "eventsParticipantsRemoveOneConfirmation": "Dette vil fjerne %{member} fra stevnet permanent. Fortsett?",
     "eventsParticipantsActionsRemoveOneSuccess": "%{member} ble fjernet fra stevnet",
     "eventsParticipantsRemoveManyConfirmation": "Dette vil fjerne %{members} deltakere fra stevnet permanent. Fortsett?",
@@ -145,12 +143,6 @@
 
         <template slot="empty">
           {{ $t("tablePlaceholderText") }}
-          <el-button
-            type="text"
-            @click="eventsParticipantsOpenManageDialog"
-          >
-            {{ $t("tablePlaceholderButton") }}
-          </el-button>
         </template>
       </el-table>
 
@@ -330,8 +322,8 @@ export default Vue.extend({
       this.refresh()
     },
 
-    tableSortChange({ field, order }) {
-      this.tableSortField = field
+    tableSortChange({ prop, order }) {
+      this.tableSortField = prop
       this.tableSortOrder = order
       this.refresh()
     },

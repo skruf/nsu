@@ -46,9 +46,15 @@ export default (options) => {
 
     actions.list = async function({ commit, state }, filter) {
       commit("SET_LIST_LOADING", true)
-      const cfg = queryHelper(state)
+
+      let options = queryHelper(state)
+      if(filter && filter.options && Object.keys(filter.options).length > 0) {
+        options = filter.options
+        delete filter.options
+      }
+
       const query = filter || state.listFilter
-      const results = await config.list(query, cfg)
+      const results = await config.list(query, options)
       commit("SET_LIST", results.items)
       commit("SET_COUNT", results.count)
       commit("SET_LIST_LOADING", false)

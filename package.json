@@ -9,7 +9,7 @@
   },
   "main": "src/main.js",
   "scripts": {
-    "dev": "NODE_ENV=development concurrently 'npm run dev:frontend' 'npm run dev:backend' 'npm run vuetools'",
+    "dev": "NODE_ENV=development concurrently 'npm run dev:frontend' 'npm run dev:backend'",
     "dev:frontend": "parcel ./src/app/index.html -d build/",
     "dev:backend": "electron .",
     "build:beta": "NODE_ENV=beta parcel build ./src/app/index.html -d build/ --public-url ./",
@@ -23,8 +23,7 @@
     "tests:watch": "jest --watch",
     "tests:coverage": "jest --verbose --coverage",
     "lint": "eslint --ext .js,.vue src",
-    "lint:fix": "eslint --ext .js,.vue --fix src",
-    "vuetools": "./node_modules/.bin/vue-devtools"
+    "lint:fix": "eslint --ext .js,.vue --fix src"
   },
   "posthtml": {
     "recognizeSelfClosing": true
@@ -87,6 +86,7 @@
     "@babel/core": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
     "@types/jest": "^24.0.13",
+    "@types/node": "^12.0.8",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "@typescript-eslint/parser": "^1.9.0",
     "@vue/component-compiler-utils": "^3.0.0",

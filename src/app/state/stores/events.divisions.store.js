@@ -1,4 +1,4 @@
-import { eventsDivisionsService } from "~/services"
+import eventsDivisionsService from "~/services/events.divisions.service"
 import extend from "~/state/extensions"
 
 const state = {

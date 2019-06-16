@@ -20,7 +20,7 @@
     label-position="top"
     :model="localForm"
   >
-    <div class="w-48">
+    <div class="w-48 mb-5">
       {{ form.stand }}
     </div>
 

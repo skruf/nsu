@@ -222,7 +222,7 @@
         layout="total, sizes, prev, pager, next"
         :page-size="pageSize"
         :current-page="pageCurrent"
-        :page-sizes="[ 1, 2, 15, 30, 45, 60, pageTotal ]"
+        :page-sizes="[ 15, 30, 45, 60, pageTotal ]"
         :total="pageTotal"
         @size-change="pageSizeChange"
         @current-change="pageCurrentChange"
@@ -282,7 +282,7 @@ export default Vue.extend({
   created() {
     const observer = async (results) => {
       this.isLoading = true
-      this.pageTotal = await db.events_participants.count()
+      // this.pageTotal = await db.events_participants.count()
       this.tableData = await Promise.all(
         results.map(async (participant) => {
           participant.member = await participant.memberId_
@@ -378,8 +378,8 @@ export default Vue.extend({
       this.refresh()
     },
 
-    tableSortChange({ field, order }) {
-      this.tableSortField = field
+    tableSortChange({ prop, order }) {
+      this.tableSortField = prop
       this.tableSortOrder = order
       this.refresh()
     },

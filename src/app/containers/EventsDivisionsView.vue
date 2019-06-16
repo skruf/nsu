@@ -131,7 +131,7 @@
     <events-divisions-edit-dialog
       v-if="division"
       :shown.sync="eventsDivisionsShowEditDialog"
-      :division="division"
+      :division.sync="division"
     />
 
     <!--

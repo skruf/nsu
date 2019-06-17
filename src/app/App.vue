@@ -81,9 +81,9 @@
         :open.sync="isSidebarOpen"
       />
 
-      <app-onboarding-dialog
+      <!-- <app-onboarding-dialog
         :shown.sync="appOnboardingShowDialog"
-      />
+      /> -->
 
       <router-view />
     </el-container>
@@ -91,20 +91,20 @@
 </template>
 
 <script lang="ts">
-import AppOnboardingDialog from "~/components/AppOnboardingDialog"
+// import AppOnboardingDialog from "~/components/AppOnboardingDialog"
 import AppSidebar from "~/components/AppSidebar"
 
 export default {
   name: "Nsu",
 
   components: {
-    AppOnboardingDialog,
+    // AppOnboardingDialog,
     AppSidebar
   },
 
   data: () => ({
-    isSidebarOpen: true,
-    appOnboardingShowDialog: true
+    isSidebarOpen: true
+    // appOnboardingShowDialog: true
   }),
 
   watch: {

@@ -68,7 +68,9 @@ const statics: EventsParticipantsStatics = {
 
 const migrationStrategies = {
   1: async (participant: EventsParticipantsProperties) => {
-    if(typeof participant.number === "string") {
+    if(!participant.number) {
+      participant.number = 0
+    } else if(typeof participant.number === "string") {
       participant.number = parseInt(participant.number, 10)
     }
 

@@ -127,7 +127,7 @@
         >
           <template slot-scope="scope">
             <span
-              v-for="(hit, index) in scope.row.hits.reverse()"
+              v-for="(hit, index) in scope.row.hits"
               :key="index"
               style="margin-right: 1px;"
             >
@@ -227,7 +227,6 @@
 <script lang="ts">
 import Vue from "vue"
 import { db } from "~/db"
-import SearchForm from "~/components/SearchForm"
 import Avatar from "~/components/Avatar"
 // import EventsParticipantsViewDialog from "~/containers/EventsParticipantsViewDialog"
 
@@ -235,7 +234,6 @@ export default Vue.extend({
   name: "EventsResultsListTable",
 
   components: {
-    SearchForm,
     Avatar
     // EventsParticipantsViewDialog
   },
@@ -316,7 +314,7 @@ export default Vue.extend({
 
       const weaponIds = weapons.map(({ id }) => id)
       return db.events_contestants
-        .find()
+        .find({ eventId: this.event.id })
         .where("weaponId")
         .in(weaponIds)
         .where("total")

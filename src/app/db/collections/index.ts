@@ -43,6 +43,8 @@ import eventsContestantsResultsCollection, {
   EventsContestantsResultsDocument
 } from "./events.contestants.results.collection"
 
+import eventsDivisionsContestantsCollection from "./events.divisions.contestants"
+
 export interface DatabaseCollections {
   [x: string]: (
     RangesCollection |
@@ -84,5 +86,6 @@ export default [
   eventsParticipantsWeaponsCollection,
   eventsDivisionsCollection,
   eventsContestantsCollection,
-  eventsContestantsResultsCollection
+  eventsContestantsResultsCollection,
+  eventsDivisionsContestantsCollection
 ]

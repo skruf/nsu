@@ -189,7 +189,7 @@ export default Vue.extend({
               contestant.participant = await contestant.participantId_
 
               if(contestant.total) {
-                this.forms[contestant.id] = contestant.hits.reverse()
+                this.forms[contestant.id] = contestant.hits
               } else {
                 this.forms[contestant.id] = []
                 for(let i = 13; i > 0; i--) {

@@ -90,6 +90,8 @@ const statics: EventsStatics = {}
 
 const migrationStrategies = {
   1: async (event: EventsProperties) => {
+    console.log("--------")
+    console.log("events")
     const query = { name: event.category }
 
     let category = await db.events_categories.findOne(query).exec()
@@ -100,6 +102,7 @@ const migrationStrategies = {
     event.categoryId = category.id
     delete event.category
 
+    console.log("--------")
     return event
   }
 }

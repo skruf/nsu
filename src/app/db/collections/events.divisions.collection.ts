@@ -76,6 +76,8 @@ const statics: EventsDivisionsStatics = {}
 
 const migrationStrategies = {
   1: (division: EventsDivisionsProperties) => {
+    console.log("--------")
+    console.log("events.divisions")
     const datetime = division.day.split("T")
     division.day = datetime[0]
     division.time = datetime[1]
@@ -83,6 +85,7 @@ const migrationStrategies = {
     delete division.endsAt
     delete division.interval
     division.stands = 5
+    console.log("--------")
     return division
   }
 }

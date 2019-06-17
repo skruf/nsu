@@ -68,6 +68,9 @@ const statics: EventsParticipantsStatics = {
 
 const migrationStrategies = {
   1: async (participant: EventsParticipantsProperties) => {
+    console.log("--------")
+    console.log("events.participants")
+
     if(!participant.number) {
       participant.number = 0
     } else if(typeof participant.number === "string") {
@@ -85,6 +88,8 @@ const migrationStrategies = {
     )
 
     delete participant.weapons
+
+    console.log("--------")
     return participant
   }
 }

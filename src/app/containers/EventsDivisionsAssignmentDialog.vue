@@ -66,19 +66,15 @@
           </div>
         </div>
 
-        <div
+        <events-contestants-form
           v-for="(contestantForm, index) in eventsContestantsForms"
           :key="contestantForm.id"
-          class="flex items-center"
-        >
-          <events-contestants-form
-            ref="eventsContestantsForms"
-            class="w-full"
-            :index="index + 1"
-            :form.sync="eventsContestantsForms[index]"
-            :participants="eventsParticipantsStateList"
-          />
-        </div>
+          ref="eventsContestantsForms"
+          class="flex items-center w-full"
+          :index="index + 1"
+          :form.sync="eventsContestantsForms[index]"
+          :participants="eventsParticipantsStateList"
+        />
       </div>
 
       <div class="px-5 dialog_sidebar">
@@ -195,9 +191,6 @@ export default {
       eventsParticipantsStateListIsLoading: "listIsLoading",
       eventsParticipantsStateList: "list"
     }),
-    showEventsContestantsForms() {
-      return this.eventsContestantsForms.length > 0
-    },
     isLoading() {
       return (
         this.eventsContestantsStateCreateManyIsLoading ||
@@ -226,7 +219,11 @@ export default {
 
     async open() {
       await this.eventsContestantsActionsList({
-        divisionId: this.division.id
+        divisionId: this.division.id,
+        options: {
+          limit: false,
+          skip: false
+        }
       })
 
       await this.eventsParticipantsActionsList({
@@ -282,7 +279,7 @@ export default {
           })
         })
         this.close()
-        // this.clear()
+        this.eventsContestantsForms = []
       } catch(e) {
         this.$notify({
           type: "error",
@@ -291,10 +288,6 @@ export default {
         })
       }
     },
-
-    // clear() {
-    //   this.$refs.eventsDivisionsForm.clear()
-    // },
 
     close() {
       this.visible = false

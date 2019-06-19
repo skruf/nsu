@@ -1,5 +1,4 @@
 import { RxJsonSchema, RxCollection, RxDocument } from "rxdb"
-import { db } from "~/db"
 import { destroyMany } from "~/db/queries"
 import { ClubsDocument } from "~/db/collections/clubs.collection"
 import { RangesDocument } from "~/db/collections/ranges.collection"
@@ -89,16 +88,7 @@ const statics: EventsStatics = {}
 
 const migrationStrategies = {
   1: async (event: EventsProperties) => {
-    console.log("--------")
-    console.log("1111111111111")
-    // if(event.category) {
-    //   const query = { name: event.category }
-    //   let category = await db.events_categories.findOne(query).exec()
-    //   if(!!category) category = await db.events_categories.insert(query)
-    //   event.categoryId = category.id
-    // }
     delete event.category
-    console.log("--------")
     return event
   }
 }

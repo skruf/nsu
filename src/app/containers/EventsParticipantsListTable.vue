@@ -68,8 +68,8 @@
         <el-table-column
           prop="number"
           sortable="custom"
-          label="Number"
-          width="100px"
+          label="Nr"
+          width="80px"
           :sort-orders="tableSortOrders"
         >
           <template slot-scope="scope">

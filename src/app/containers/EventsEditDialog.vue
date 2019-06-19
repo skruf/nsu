@@ -201,8 +201,7 @@ export default {
       form: { ...eventsStub, dates: [] },
       formRules: {
         title: { required: true, message: this.$t("formItem1Error") },
-        dates: { required: true, message: this.$t("formItem2Error") },
-        categoryId: { required: true, message: this.$t("formItem3Error") }
+        dates: { required: true, message: this.$t("formItem2Error") }
       },
       categories: [],
       categoriesSub: null,

@@ -14,7 +14,7 @@ const populate = async (doc: EventsDocument): Promise<EventsProperties> => {
   const event = doc.toJSON()
   if(club) event.club = club.toJSON()
   if(range) event.range = range.toJSON()
-  event.category = category.toJSON()
+  if(category) event.category = category.toJSON()
 
   return event
 }

@@ -38,7 +38,7 @@ export type EventsCollection = RxCollection<
 const schema: RxJsonSchema = {
   title: "Events schema",
   description: "Events",
-  version: 1,
+  version: 8,
   type: "object",
   properties: {
     id: {
@@ -80,8 +80,7 @@ const schema: RxJsonSchema = {
   required: [
     "title",
     "startsAt",
-    "endsAt",
-    "categoryId"
+    "endsAt"
   ]
 }
 
@@ -91,17 +90,14 @@ const statics: EventsStatics = {}
 const migrationStrategies = {
   1: async (event: EventsProperties) => {
     console.log("--------")
-    console.log("events")
-    const query = { name: event.category }
-
-    let category = await db.events_categories.findOne(query).exec()
-    if(!!category) {
-      category = await db.events_categories.insert(query)
-    }
-
-    event.categoryId = category.id
+    console.log("1111111111111")
+    // if(event.category) {
+    //   const query = { name: event.category }
+    //   let category = await db.events_categories.findOne(query).exec()
+    //   if(!!category) category = await db.events_categories.insert(query)
+    //   event.categoryId = category.id
+    // }
     delete event.category
-
     console.log("--------")
     return event
   }

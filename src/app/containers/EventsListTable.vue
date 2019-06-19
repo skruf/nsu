@@ -127,7 +127,7 @@
           :sort-orders="eventsSortOrders"
         >
           <template slot-scope="scope">
-            {{ scope.row.category.name }}
+            {{ scope.row.category ? scope.row.category.name : "N/A" }}
           </template>
         </el-table-column>
 

@@ -22,10 +22,7 @@ import eventsCategoriesCollection, {
   EventsCategoriesCollection,
   EventsCategoriesDocument
 } from "./events.categories.collection"
-import eventsParticipantsCollection, {
-  EventsParticipantsCollection,
-  EventsParticipantsDocument
-} from "./events.participants.collection"
+
 import eventsParticipantsWeaponsCollection, {
   EventsParticipantsWeaponsCollection,
   EventsParticipantsWeaponsDocument
@@ -44,6 +41,11 @@ import eventsContestantsResultsCollection, {
 } from "./events.contestants.results.collection"
 
 import eventsDivisionsContestantsCollection from "./events.divisions.contestants"
+
+import eventsParticipantsCollection, {
+  EventsParticipantsCollection,
+  EventsParticipantsDocument
+} from "./events.participants.collection"
 
 export interface DatabaseCollections {
   [x: string]: (
@@ -82,10 +84,11 @@ export default [
   clubsMembersCollection,
   eventsCollection,
   eventsCategoriesCollection,
-  eventsParticipantsCollection,
   eventsParticipantsWeaponsCollection,
   eventsDivisionsCollection,
   eventsContestantsCollection,
   eventsContestantsResultsCollection,
-  eventsDivisionsContestantsCollection
+  eventsDivisionsContestantsCollection,
+
+  eventsParticipantsCollection
 ]

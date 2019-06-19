@@ -52,17 +52,12 @@
         :data="tableData"
         :default-sort="{ prop: tableSortField, order: tableSortOrder }"
         row-key="id"
-        class="table-clickable"
+        class="no-hover"
         empty-text
         @selection-change="tableSelectionChange"
         @row-click="tableRowClick"
         @sort-change="tableSortChange"
       >
-        <el-table-column
-          type="selection"
-          width="40"
-        />
-
         <el-table-column
           width="70"
           label="Nr"
@@ -156,11 +151,6 @@
         @current-change="pageCurrentChange"
       />
     </div>
-
-    <!-- <events-participants-view-dialog
-      :shown.sync="eventsParticipantsShowViewDialog"
-      :events-participants-id="eventsParticipantsViewId"
-    /> -->
   </div>
 </template>
 
@@ -169,7 +159,6 @@ import Vue from "vue"
 import { db } from "~/db"
 import SearchForm from "~/components/SearchForm"
 import Avatar from "~/components/Avatar"
-// import EventsParticipantsViewDialog from "~/containers/EventsParticipantsViewDialog"
 
 export default Vue.extend({
   name: "EventsStartlistListTable",
@@ -177,7 +166,6 @@ export default Vue.extend({
   components: {
     SearchForm,
     Avatar
-    // EventsParticipantsViewDialog
   },
 
   props: {
@@ -241,7 +229,7 @@ export default Vue.extend({
   },
 
   beforeDestroy() {
-    this.sub.unsubscribe()
+    if(this.sub) this.sub.unsubscribe()
   },
 
   methods: {
@@ -350,82 +338,6 @@ export default Vue.extend({
     eventsParticipantsOpenEditDialog(participant) {
       this.$emit("eventsParticipantsOpenEditDialog", participant)
     }
-
-    // async eventsParticipantsRemoveOne(participant) {
-    //   const fullName = `${participant.member.firstName} ${participant.member.lastName}`
-    //
-    //   try {
-    //     await this.$confirm(
-    //       this.$t("eventsParticipantsRemoveOneConfirmation", {
-    //         member: fullName
-    //       }),
-    //       this.$t("warning"), {
-    //         confirmButtonText: this.$t("confirmButtonText"),
-    //         cancelButtonText: this.$t("cancel"),
-    //         customClass: "dangerous-confirmation",
-    //         type: "warning"
-    //       }
-    //     )
-    //   } catch(e) {
-    //     return
-    //   }
-    //
-    //   try {
-    //     await participant.remove()
-    //     this.$notify({
-    //       type: "success",
-    //       title: this.$t("success"),
-    //       message: this.$t("eventsParticipantsActionsRemoveOneSuccess", {
-    //         member: fullName
-    //       })
-    //     })
-    //   } catch(e) {
-    //     this.$notify({
-    //       title: "Oops!",
-    //       message: e.message,
-    //       type: "error"
-    //     })
-    //   }
-    // },
-
-    // async eventsParticipantsRemoveMany() {
-    //   const count = this.tableSelection.length
-    //
-    //   try {
-    //     await this.$confirm(
-    //       this.$t("eventsParticipantsRemoveManyConfirmation", {
-    //         members: count
-    //       }),
-    //       this.$t("warning"), {
-    //         confirmButtonText: this.$t("confirmButtonText"),
-    //         cancelButtonText: this.$t("cancel"),
-    //         customClass: "dangerous-confirmation",
-    //         type: "warning"
-    //       }
-    //     )
-    //   } catch(e) {
-    //     return
-    //   }
-    //
-    //   try {
-    //     await Promise.all(
-    //       this.tableSelection.map((participant) => participant.remove())
-    //     )
-    //     this.$notify({
-    //       type: "success",
-    //       title: this.$t("success"),
-    //       message: this.$t("eventsParticipantsActionsRemoveManySuccess", {
-    //         members: count
-    //       })
-    //     })
-    //   } catch(e) {
-    //     this.$notify({
-    //       type: "error",
-    //       title: "Oops!",
-    //       message: e.message
-    //     })
-    //   }
-    // }
   }
 })
 </script>

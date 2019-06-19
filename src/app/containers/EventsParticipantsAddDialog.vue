@@ -53,7 +53,6 @@
         <el-form-item
           prop="classId"
           class="w-1/2 mr-2"
-          :label="$t('formItem1Label')"
         >
           <el-select
             v-model="form.classId"
@@ -73,7 +72,6 @@
         <el-form-item
           prop="calibre"
           class="w-1/2 mx-2"
-          :label="$t('formItem2Label')"
         >
           <el-input
             v-model="form.calibre"
@@ -82,7 +80,8 @@
         </el-form-item>
 
         <el-button
-          class="self-center mt-5"
+          class="self-center text-center w-10"
+          style="margin-bottom: 18px;"
           type="text"
           size="mini"
           @click="removeWeapon(index)"

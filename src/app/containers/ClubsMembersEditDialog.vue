@@ -17,7 +17,7 @@
     "formItem5Placeholder": "Select a country",
     "formItem6Label": "Club",
     "formItem6Placeholder": "Please select a club",
-    "formItem6Error": "Select a club",
+    "formItem6Error": "Club is a required field",
     "clubsMembersActionsEditOneSuccess": "%{fullName} was successfully updated in the database"
   },
   "no": {
@@ -120,13 +120,8 @@
         </el-form-item>
 
         <el-form-item
-          v-if="clubNotProvided"
-          prop="club"
+          prop="clubId"
           :label="$t('formItem6Label')"
-          :rules="{
-            required: true,
-            message: $t('formItem6Error')
-          }"
         >
           <el-select
             v-model="form.clubId"
@@ -172,7 +167,7 @@ export default {
 
   props: {
     shown: { type: Boolean, default: false },
-    club: { type: Object, required: false, default: () => {} },
+    club: { type: Object, required: false, default: () => null },
     clubMember: { type: Object, default: () => clubsMembersStub }
   },
 
@@ -183,7 +178,8 @@ export default {
       formRules: {
         firstName: { required: true, message: this.$t('formItem1Error') },
         lastName: { required: true, message: this.$t('formItem2Error') },
-        email: { required: true, message: this.$t('formItem3Error') }
+        email: { required: true, message: this.$t('formItem3Error') },
+        clubId: { required: true, message: this.$t('formItem6Error') }
       }
     }
   },
@@ -197,11 +193,7 @@ export default {
     ...mapState("clubs/members", {
       clubsMembersStateEditIsLoading: "editIsLoading",
       clubsMembersStateCountries: "countries"
-    }),
-
-    clubNotProvided() {
-      return !this.club.id
-    }
+    })
   },
 
   watch: {
@@ -214,9 +206,8 @@ export default {
   methods: {
     async open() {
       this.form = { ...this.clubMember }
-      if(this.clubNotProvided) {
-        await this.clubsActionsList()
-      }
+      if(this.club) this.form.clubId = this.club.id
+      await this.clubsActionsList()
     },
 
     ...mapActions("clubs/members", {
@@ -237,19 +228,17 @@ export default {
           })
         }
 
-        if(!this.clubNotProvided) {
-          this.form.clubId = this.club.id
-        }
-
         try {
           await this.clubsMembersActionsEditOne(this.form)
-          const fullName = `${this.form.firstName} ${this.form.lastName}`
           this.$notify({
             type: "success",
             title: this.$t("title"),
-            message: this.$t("clubsMembersActionsEditOneSuccess", { fullName })
+            message: this.$t("clubsMembersActionsEditOneSuccess", {
+              fullName: `${this.form.firstName} ${this.form.lastName}`
+            })
           })
           this.close()
+          this.clear()
         } catch(e) {
           this.$notify({
             title: "Oops!",
@@ -265,7 +254,6 @@ export default {
     },
 
     close() {
-      this.clear()
       this.visible = false
       this.$emit("update:shown", false)
     }

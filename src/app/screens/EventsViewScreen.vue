@@ -200,6 +200,13 @@
           </div>
 
           <el-footer height="auto">
+            <!-- <el-button
+              type="text"
+              @click="eventsOpenPrintDialog"
+            >
+              <i class="el-icon-printer el-icon--left" />
+              Skriv ut
+            </el-button> -->
             <el-button
               type="text"
               @click="clubsMembersOpenCreateDialog"
@@ -235,6 +242,7 @@
           <div class="content">
             <events-startlist-list-table
               v-if="!eventsStateSelectedIsLoading"
+              ref="eventsStartlistListTable"
               :event="eventsStateSelected"
             />
           </div>
@@ -280,11 +288,8 @@
 </template>
 
 <script>
-import moment from "moment"
 import { mapActions, mapState } from "vuex"
 import BreadcrumbBar from "~/components/BreadcrumbBar"
-// import DateWithTooltip from "~/components/DateWithTooltip"
-
 import EventsParticipantsListTable from "~/containers/EventsParticipantsListTable"
 import EventsParticipantsManagerDialog from "~/containers/EventsParticipantsManagerDialog"
 import EventsParticipantsEditDialog from "~/containers/EventsParticipantsEditDialog"
@@ -299,7 +304,6 @@ export default {
 
   components: {
     BreadcrumbBar,
-    // DateWithTooltip,
     EventsParticipantsListTable,
     EventsParticipantsManagerDialog,
     ClubsMembersCreateDialog,
@@ -325,13 +329,6 @@ export default {
       eventsStateSelectedIsLoading: "selectedIsLoading",
       eventsStateSelected: "selected"
     }),
-
-    eventsSelectedDuration() {
-      if(!Object.keys(this.eventsStateSelected).length) return
-      const { startsAt, endsAt } = this.eventsStateSelected
-      return moment.duration(moment(endsAt).diff(startsAt)).humanize()
-    },
-
     eventsIsLoading() {
       return (
         this.eventsStateSelectedIsLoading ||
@@ -352,6 +349,9 @@ export default {
 
     refreshTabs() {
       switch(this.activeTab) {
+        case "startlist":
+          this.$refs.eventsStartlistListTable.refresh()
+          break
         case "results":
           this.$refs.eventsResultsView.refresh()
           break
@@ -374,14 +374,6 @@ export default {
       const { range } = this.eventsStateSelected
       window.open(`https://www.google.com/maps/@${range.lat},${range.lng},15z`)
     },
-
-    // eventsOpenPrintDialog() {
-    //   this.$notify({
-    //     type: "warning",
-    //     title: "Oops!",
-    //     message: "Denne funksjonen er ikke implementert enda"
-    //   })
-    // },
 
     eventsOpenEditDialog() {
       this.eventsShowEditDialog = true

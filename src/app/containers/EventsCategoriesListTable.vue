@@ -209,7 +209,7 @@ export default Vue.extend({
   },
 
   beforeDestroy() {
-    this.sub.unsubscribe()
+    if(this.sub) this.sub.unsubscribe()
   },
 
   methods: {

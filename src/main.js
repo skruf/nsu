@@ -138,13 +138,18 @@ ipcMain.on("APP_STARTED", (event) => {
 })
 
 ipcMain.on("PRINT_WINDOW", (event, fileName) => {
-  win.webContents.printToPDF({}, (error, data) => {
+  const random = new Date().getUTCMilliseconds()
+  win.webContents.printToPDF({
+    landscape: true
+  }, (error, data) => {
     if(error) throw error
     const documents = app.getPath("documents")
-    const path = `${documents}/${fileName}.pdf`
+    const path = `${documents}/${fileName}-${random}.pdf`
     fs.writeFile(path, data, (error) => {
       if(error) throw error
-      shell.openExternal(`file://${path}`)
+      shell.openExternal(`file://${path}`, {
+        activate: true
+      })
     })
   })
 })

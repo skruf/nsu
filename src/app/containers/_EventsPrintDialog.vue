@@ -15,7 +15,7 @@
 
 <template>
   <el-dialog
-    custom-class="events-divisions-print-dialog"
+    custom-class="events-print-dialog"
     :fullscreen="true"
     :visible.sync="visible"
     @close="close"
@@ -54,7 +54,7 @@
 import { mapState } from "vuex"
 
 export default {
-  name: "EventsDivisionsPrintDialog",
+  name: "EventsPrintDialog",
 
   props: {
     shown: { type: Boolean, default: false }
@@ -67,11 +67,8 @@ export default {
   },
 
   computed: {
-    ...mapState("events/divisions/contestants", {
-      eventsDivisionsContestantsStateList: "list"
-    }),
-    ...mapState("events/divisions", {
-      eventsDivisionsStateSelected: "selected"
+    ...mapState("events", {
+      eventsStateSelected: "selected"
     })
   },
 

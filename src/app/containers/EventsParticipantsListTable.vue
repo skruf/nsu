@@ -282,7 +282,10 @@ export default Vue.extend({
   created() {
     const observer = async (results) => {
       this.isLoading = true
-      // this.pageTotal = await db.events_participants.count()
+      const participants = await db.events_participants.find({
+        eventId: this.event.id
+      }).exec()
+      this.pageTotal = participants.length
       this.tableData = await Promise.all(
         results.map(async (participant) => {
           participant.member = await participant.memberId_
@@ -311,7 +314,7 @@ export default Vue.extend({
   },
 
   beforeDestroy() {
-    this.sub.unsubscribe()
+    if(this.sub) this.sub.unsubscribe()
   },
 
   methods: {

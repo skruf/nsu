@@ -46,6 +46,11 @@
     <div class="nav-buttons">
       <el-button
         type="text"
+        icon="el-icon-printer"
+        @click="print"
+      />
+      <el-button
+        type="text"
         icon="el-icon-arrow-left"
         @click="navBack"
       />
@@ -59,6 +64,7 @@
 </template>
 
 <script>
+import kebabcase from "~/utils/kebabcase"
 import { Breadcrumb, BreadcrumbItem } from "element-ui"
 
 export default {
@@ -74,6 +80,10 @@ export default {
   },
 
   methods: {
+    print() {
+      const fileName = kebabcase(this.paths[this.paths.length - 1].label)
+      window.electron.ipcRenderer.send("PRINT_WINDOW", `${fileName}`)
+    },
     navBack() {
       this.$router.go(-1)
     },

@@ -61,7 +61,8 @@ export default Vue.extend({
   data: () => ({
     isLoading: false,
     list: [],
-    selected: null
+    selected: null,
+    sub: null
   }),
 
   created() {
@@ -69,7 +70,7 @@ export default Vue.extend({
   },
 
   beforeDestroy() {
-    this.sub.unsubscribe()
+    if(this.sub) this.sub.unsubscribe()
   },
 
   methods: {

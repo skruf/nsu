@@ -32,6 +32,23 @@
       v-loading="isLoading"
       class="dialog_content"
     >
+      <el-form
+        class=""
+        label-position="top"
+        :model="participantNumberForm"
+      >
+        <el-form-item
+          prop="participantNumberForm"
+          label="Nr"
+        >
+          <el-input
+            v-model="participantNumberForm"
+            type="number"
+            placeholder="Nr"
+          />
+        </el-form-item>
+      </el-form>
+
       <div class="flex mb-2 justify-between">
         <h6 class="h6">
           Add weapons
@@ -58,13 +75,13 @@
       </div>
 
       <el-form
-        v-for="(form, index) in forms"
+        v-for="(form, index) in weaponForms"
         :key="index"
-        ref="forms"
+        ref="weaponForms"
         label-position="top"
         class="flex"
         :model="form"
-        :rules="formRules"
+        :rules="weaponFormRules"
       >
         <el-form-item
           prop="classId"
@@ -144,8 +161,9 @@ export default {
   data: () => ({
     visible: false,
     isLoading: false,
-    forms: [],
-    formRules: {
+    participantNumberForm: 0,
+    weaponForms: [],
+    weaponFormRules: {
       classId: { required: true, message: "Choose a class" },
       calibre: { required: true, message: "Enter a calibre" }
     },
@@ -188,13 +206,13 @@ export default {
     addWeapon() {
       const form = { ...eventsParticipantsWeaponsStub }
       form.participantId = this.participant.id
-      this.forms.push(form)
+      this.weaponForms.push(form)
     },
 
     removeWeapon(weapon) {
-      if(this.forms.length !== 1) {
-        this.forms.splice(
-          this.forms.findIndex((form) => form.id === weapon.id), 1
+      if(this.weaponForms.length !== 1) {
+        this.weaponForms.splice(
+          this.weaponForms.findIndex((form) => form.id === weapon.id), 1
         )
         if(weapon.exists) {
           this.weaponsToRemove.push(weapon)
@@ -207,21 +225,23 @@ export default {
         participantId: this.participant.id
       })
 
+      this.participantNumberForm = this.participant.number
+
       this.sub = query.$.subscribe((weapons) => {
         this.weaponDocs = weapons
-        this.forms = weapons.map((doc) => {
+        this.weaponForms = weapons.map((doc) => {
           const weapon = doc.toJSON()
           weapon.existing = true
           return weapon
         })
       })
 
-      if(this.forms.length === 0) this.addWeapon()
+      if(this.weaponForms.length === 0) this.addWeapon()
       await this.classesActionsList()
     },
 
     validate() {
-      return Promise.all(this.$refs.forms.map(
+      return Promise.all(this.$refs.weaponForms.map(
         (form) => new Promise((resolve, reject) => {
           form.validate((isValid) => {
             isValid ? resolve() : reject(new Error())
@@ -242,12 +262,12 @@ export default {
       }
 
       try {
-        const toCreate = this.forms.filter((form) => !form.existing)
+        const toCreate = this.weaponForms.filter((form) => !form.existing)
         const created = await Promise.all(toCreate.map(
           (weapon) => db.events_participants_weapons.insert(weapon)
         ))
 
-        const toEdit = this.forms.filter((form) => !!form.existing)
+        const toEdit = this.weaponForms.filter((form) => !!form.existing)
         const edited = await Promise.all(toEdit.map((weapon) => {
           delete weapon.existing
           const doc = this.weaponDocs.find((d) => d.id === weapon.id)
@@ -259,6 +279,11 @@ export default {
         ))
 
         this.sub.next([ ...created, ...edited ])
+
+        const number = parseInt(this.participantNumberForm, 10)
+        if(number !== this.participant.number) {
+          await this.participant.atomicSet("number", number)
+        }
 
         this.$notify({
           type: "success",

@@ -178,6 +178,10 @@ export default Vue.extend({
     }
   },
 
+  beforeDestroy() {
+    if(this.sub) this.sub.unsubscribe()
+  },
+
   methods: {
     async setContestants() {
       this.isLoading = true

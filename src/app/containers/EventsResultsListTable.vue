@@ -52,10 +52,9 @@
         :data="tableData"
         :default-sort="{ prop: tableSortField, order: tableSortOrder }"
         row-key="id"
-        class="table-clickable"
+        class="no-hover"
         empty-text
         @selection-change="tableSelectionChange"
-        @row-click="tableRowClick"
         @sort-change="tableSortChange"
       >
         <el-table-column
@@ -206,7 +205,7 @@
         </template>
       </el-table>
 
-      <el-pagination
+      <!-- <el-pagination
         layout="total, sizes, prev, pager, next"
         :page-size="pageSize"
         :current-page="pageCurrent"
@@ -214,7 +213,7 @@
         :total="pageTotal"
         @size-change="pageSizeChange"
         @current-change="pageCurrentChange"
-      />
+      /> -->
     </div>
 
     <!-- <events-participants-view-dialog
@@ -277,7 +276,7 @@ export default Vue.extend({
   },
 
   beforeDestroy() {
-    this.sub.unsubscribe()
+    if(this.sub) this.sub.unsubscribe()
   },
 
   methods: {
@@ -305,8 +304,8 @@ export default Vue.extend({
     },
 
     async getQuery() {
-      const sort = `${this.tableSortOrder === "descending" ? '-' : ''}${this.tableSortField}`
-      const skip = (this.pageCurrent - 1) * this.pageSize
+      // const sort = `${this.tableSortOrder === "descending" ? '-' : ''}${this.tableSortField}`
+      // const skip = (this.pageCurrent - 1) * this.pageSize
 
       const weapons = await db.events_participants_weapons
         .find({ classId: this.weaponClass.id })
@@ -319,9 +318,9 @@ export default Vue.extend({
         .in(weaponIds)
         .where("total")
         .gt(0)
-        .sort(sort)
-        .skip(skip)
-        .limit(this.pageSize)
+        // .sort(sort)
+        // .skip(skip)
+        // .limit(this.pageSize)
     },
 
     async refresh() {
@@ -400,20 +399,12 @@ export default Vue.extend({
       this.tableSelection = selection
     },
 
-    tableRowClick(participant, column, e) {
-      if(!e.target.className.includes("table-button")) {
-        this.eventsParticipantsViewId = participant.id
-        this.eventsParticipantsShowViewDialog = true
-      }
-    },
-
     dispatchTableActions({ handler, payload }) {
       this[handler](payload)
     },
 
     openEventsResultsManageDialog() {
       this.$emit("openEventsResultsManageDialog")
-      // this.showEventsResultsManageDialog = true
     },
 
     eventsParticipantsOpenEditDialog(participant) {

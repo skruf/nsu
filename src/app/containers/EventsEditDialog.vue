@@ -287,8 +287,8 @@ export default {
         }
 
         const data = { ...this.form }
-        data.startsAt = data.dates[0].toISOString()
-        data.endsAt = data.dates[1].toISOString()
+        if(typeof data.dates[0] !== "string") data.startsAt = data.dates[0].toISOString()
+        if(typeof data.dates[1] !== "string") data.endsAt = data.dates[1].toISOString()
         delete data.dates
 
         try {

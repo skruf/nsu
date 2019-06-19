@@ -102,7 +102,8 @@ export default {
     return {
       visible: this.shown,
       participant: {},
-      isLoading: false
+      isLoading: false,
+      sub: null
     }
   },
 
@@ -129,6 +130,10 @@ export default {
       this.visible = shown
       this.$emit("update:shown", shown)
     }
+  },
+
+  beforeDestroy() {
+    if(this.sub) this.sub.unsubscribe()
   },
 
   methods: {

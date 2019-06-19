@@ -121,13 +121,8 @@
         </el-form-item>
 
         <el-form-item
-          v-if="clubNotProvided"
           prop="clubId"
           :label="$t('formItem6Label')"
-          :rules="{
-            required: true,
-            message: $t('formItem6Error')
-          }"
         >
           <el-select
             v-model="form.clubId"
@@ -174,7 +169,7 @@ export default {
 
   props: {
     shown: { type: Boolean, default: false },
-    club: { type: Object, required: false, default: () => {} }
+    club: { type: Object, required: false, default: () => null }
   },
 
   data: function() {
@@ -184,7 +179,8 @@ export default {
       formRules: {
         firstName: { required: true, message: this.$t('formItem1Error') },
         lastName: { required: true, message: this.$t('formItem2Error') },
-        email: { required: true, message: this.$t('formItem3Error') }
+        email: { required: true, message: this.$t('formItem3Error') },
+        clubId: { required: true, message: this.$t('formItem6Error') }
       }
     }
   },
@@ -198,11 +194,7 @@ export default {
     ...mapState("clubs/members", {
       clubsMembersStateCreateIsLoading: "createIsLoading",
       clubsMembersStateCountries: "countries"
-    }),
-
-    clubNotProvided() {
-      return !(this.club && this.club.id)
-    }
+    })
   },
 
   watch: {
@@ -214,9 +206,8 @@ export default {
 
   methods: {
     async open() {
-      if(this.clubNotProvided) {
-        await this.clubsActionsList()
-      }
+      await this.clubsActionsList()
+      if(this.club) this.form.clubId = this.club.id
     },
 
     ...mapActions("clubs/members", {
@@ -237,21 +228,17 @@ export default {
           })
         }
 
-        if(!this.clubNotProvided) {
-          this.form.clubId = this.club.id
-        }
-
         try {
           await this.clubsMembersActionsCreate(this.form)
-          const fullName = `${this.form.firstName} ${this.form.lastName}`
           this.$notify({
             type: "success",
             title: this.$t("title"),
             message: this.$t("clubsMembersActionsCreateSuccess", {
-              fullName
+              fullName: `${this.form.firstName} ${this.form.lastName}`
             })
           })
           this.close()
+          this.clear()
         } catch(e) {
           this.$notify({
             title: "Oops!",
@@ -267,7 +254,6 @@ export default {
     },
 
     close() {
-      this.clear()
       this.visible = false
       this.$emit("update:shown", false)
     }

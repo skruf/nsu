@@ -38,7 +38,7 @@ export type EventsCollection = RxCollection<
 const schema: RxJsonSchema = {
   title: "Events schema",
   description: "Events",
-  version: 8,
+  version: 1,
   type: "object",
   properties: {
     id: {

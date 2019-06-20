@@ -59,6 +59,11 @@
         @sort-change="tableSortChange"
       >
         <el-table-column
+          type="selection"
+          width="40"
+        />
+
+        <el-table-column
           width="70"
           label="Nr"
         >
@@ -136,6 +141,63 @@
           </template>
         </el-table-column>
 
+        <el-table-column
+          width="50"
+          align="right"
+        >
+          <template
+            slot="header"
+            slot-scope="scope"
+          >
+            <div
+              class="table-actions"
+              :class="{ 'disabled': !tableHasSelection }"
+            >
+              <el-dropdown
+                trigger="click"
+                @command="dispatchTableActions"
+              >
+                <span class="el-dropdown-link">
+                  <i class="table-button el-icon-more" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item
+                    :command="{
+                      handler: 'eventsContestantsOpenPrintDialog',
+                      payload: tableSelection
+                    }"
+                  >
+                    <i class="el-icon-printer el-icon--left" />
+                    Print
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+          </template>
+
+          <template slot-scope="scope">
+            <el-dropdown
+              trigger="click"
+              @command="dispatchTableActions"
+            >
+              <span class="el-dropdown-link">
+                <i class="table-button el-icon-more" />
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  :command="{
+                    handler: 'eventsContestantsOpenPrintDialog',
+                    payload: [ scope.row ]
+                  }"
+                >
+                  <i class="el-icon-printer el-icon--left" />
+                  Print
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+        </el-table-column>
+
         <template slot="empty">
           {{ $t("tablePlaceholderText") }}
         </template>
@@ -151,6 +213,11 @@
         @current-change="pageCurrentChange"
       />
     </div>
+
+    <events-contestants-print-dialog
+      :shown.sync="eventsContestantsShowPrintDialog"
+      :contestants="eventsContestants"
+    />
   </div>
 </template>
 
@@ -159,13 +226,15 @@ import Vue from "vue"
 import { db } from "~/db"
 import SearchForm from "~/components/SearchForm"
 import Avatar from "~/components/Avatar"
+import EventsContestantsPrintDialog from "~/containers/EventsContestantsPrintDialog"
 
 export default Vue.extend({
   name: "EventsStartlistListTable",
 
   components: {
     SearchForm,
-    Avatar
+    Avatar,
+    EventsContestantsPrintDialog
   },
 
   props: {
@@ -187,11 +256,14 @@ export default Vue.extend({
     searchFilter: "",
     isLoading: false,
     sub: null,
-    filter: null
+    filter: null,
+
+    eventsContestantsShowPrintDialog: false,
+    eventsContestants: []
   }),
 
   computed: {
-    eventsParticipantsHasSelection() {
+    tableHasSelection() {
       return this.tableSelection.length > 0
     }
   },
@@ -337,6 +409,11 @@ export default Vue.extend({
 
     eventsParticipantsOpenEditDialog(participant) {
       this.$emit("eventsParticipantsOpenEditDialog", participant)
+    },
+
+    eventsContestantsOpenPrintDialog(contestants) {
+      this.eventsContestants = contestants
+      this.eventsContestantsShowPrintDialog = true
     }
   }
 })

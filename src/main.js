@@ -6,9 +6,7 @@ const path = require("path")
 const url = require("url")
 const fs = require("fs")
 
-const IS_PROD = process.env.NODE_ENV === "production"
 const IS_DEV = process.env.NODE_ENV === "development"
-
 if(IS_DEV) require("electron-reload")(__dirname)
 
 let win
@@ -164,7 +162,7 @@ ipcMain.on("PRINT_WINDOW", (event, fileName) => {
   }, (error, data) => {
     if(error) throw error
     const documents = app.getPath("documents")
-    const path = `${documents}/${fileName}-${random}.pdf`
+    const path = `${documents}/${fileName}_${random}.pdf`
     fs.writeFile(path, data, (error) => {
       if(error) throw error
       shell.openExternal(`file://${path}`, {

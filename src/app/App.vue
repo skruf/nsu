@@ -1,29 +1,8 @@
-<i18n>
-{
-  "en": {
-    "appWarning": "This is a preview of the software and therefore errors might occur."
-  },
-  "no": {
-    "appWarning": "Dette er en forhåndsvisning av programvaren og feil kan derfor oppstå."
-  }
-}
-</i18n>
-
 <style lang="stylus">
 #app
   flex 1
   min-height 100vh
   display flex
-  // &:before
-  //   content ""
-  //   height 4px
-  //   width 100%
-  //   background-image var(--accent-border)
-  //   position absolute
-  //   top 0
-  //   left 0
-  //   right 0
-  //   z-index 1
 
 .titlebar
   -webkit-user-select none
@@ -54,21 +33,10 @@
 .el-alert--warning .el-alert__description
   color inherit
 
-// #app
-//   padding-top 25px
-
 </style>
 
 <template>
   <div>
-    <!-- <el-alert
-      class="app-warning"
-      type="warning"
-      :title="$t('appWarning')"
-      :closable="false"
-      center
-    /> -->
-
     <el-container
       id="app"
       :class="{
@@ -81,30 +49,23 @@
         :open.sync="isSidebarOpen"
       />
 
-      <!-- <app-onboarding-dialog
-        :shown.sync="appOnboardingShowDialog"
-      /> -->
-
       <router-view />
     </el-container>
   </div>
 </template>
 
 <script lang="ts">
-// import AppOnboardingDialog from "~/components/AppOnboardingDialog"
 import AppSidebar from "~/components/AppSidebar"
 
 export default {
   name: "Nsu",
 
   components: {
-    // AppOnboardingDialog,
     AppSidebar
   },
 
   data: () => ({
     isSidebarOpen: true
-    // appOnboardingShowDialog: true
   }),
 
   watch: {
@@ -117,39 +78,36 @@ export default {
   },
 
   created() {
-    // this.$electron.ipcRenderer.send("APP_STARTED")
+    electron.ipcRenderer.send("APP_STARTED")
 
     if(localStorage.isSidebarOpen !== undefined) {
       this.isSidebarOpen = localStorage.isSidebarOpen === "true"
     }
-    if(localStorage.appOnboardingShowDialog !== undefined) {
-      this.appOnboardingShowDialog = localStorage.appOnboardingShowDialog === "true"
-    }
 
-    // this.$electron.ipcRenderer.on("SET_UPDATE_STATUS", (e, status) => {
-    //   let title = "Update"
-    //   let message
-    //
-    //   switch(status) {
-    //     case "UPDATE_CHECKING":
-    //       message = "Checking for updates"
-    //       break
-    //     case "UPDATE_AVAILABLE":
-    //       message = "A new update is available!"
-    //       break
-    //     case "UPDATE_NOT_AVAILABLE":
-    //       message = "Update not available"
-    //       break
-    //     case "UPDATE_ERROR":
-    //       message = "An error occurred while attempting to update"
-    //       break
-    //     case "UPDATE_DOWNLOADED":
-    //       message = "Update was successfully downloaded"
-    //       break
-    //   }
-    //
-    //   this.$notify.info({ title, message })
-    // })
+    electron.ipcRenderer.on("SET_UPDATE_STATUS", (e, status) => {
+      let title = "Oppdatering"
+      let message
+
+      switch(status) {
+        case "UPDATE_CHECKING":
+          message = "Ser etter oppdateringer"
+          break
+        case "UPDATE_AVAILABLE":
+          message = "En ny oppdatering er tilgjengelig!"
+          break
+        case "UPDATE_NOT_AVAILABLE":
+          message = "Oppdateringen var ikke tilgjengelig"
+          break
+        case "UPDATE_ERROR":
+          message = "En feil oppstod under oppdatering"
+          break
+        case "UPDATE_DOWNLOADED":
+          message = "Oppdateringen ble lastet ned. Installerer og restarter om 5 sekunder."
+          break
+      }
+
+      this.$notify.info({ title, message })
+    })
   }
 }
 </script>

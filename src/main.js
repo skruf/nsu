@@ -61,7 +61,7 @@ const createWindow = async () => {
   }]
 
   if(!IS_PROD) {
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
 
     menuItems.push({
       label: "Developer",
@@ -130,7 +130,13 @@ autoUpdater.on("error", (event, error) => {
 // })
 autoUpdater.on("update-downloaded", () => {
   win.webContents.send("SET_UPDATE_STATUS", "UPDATE_DOWNLOADED")
-  // autoUpdater.quitAndInstall()
+  const t = setTimeout(() => {
+    autoUpdater.quitAndInstall()
+    clearTimeout(t)
+  }, 5000)
+})
+ipcMain.on("CHECK_FOR_UPDATES", (event) => {
+  autoUpdater.checkForUpdates()
 })
 
 ipcMain.on("APP_STARTED", (event) => {
@@ -152,8 +158,4 @@ ipcMain.on("PRINT_WINDOW", (event, fileName) => {
       })
     })
   })
-})
-
-ipcMain.on("CHECK_FOR_UPDATES", (event) => {
-  autoUpdater.checkForUpdates()
 })

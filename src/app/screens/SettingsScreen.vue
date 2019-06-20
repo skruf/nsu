@@ -63,29 +63,34 @@
         </el-form-item>
       </el-form>
 
-      Version: {{ appVersion }}
-
-      <el-button
-        type="primary"
-        @click="checkForUpdates"
-      >
-        Check for updates
-      </el-button>
+      Versjon: {{ appVersion }}
     </el-main>
 
-    <el-footer height="auto">
+    <el-footer
+      height="auto"
+      class="flex justify-between"
+    >
       <el-button
         type="text"
-        @click="cancel"
+        @click="checkForUpdates"
       >
-        {{ $t("cancel") }}
+        Se etter oppdateringer
       </el-button>
-      <el-button
-        type="primary"
-        @click="save"
-      >
-        {{ $t("save") }}
-      </el-button>
+
+      <div>
+        <el-button
+          type="text"
+          @click="cancel"
+        >
+          {{ $t("cancel") }}
+        </el-button>
+        <el-button
+          type="primary"
+          @click="save"
+        >
+          {{ $t("save") }}
+        </el-button>
+      </div>
     </el-footer>
   </el-container>
 </template>
@@ -113,12 +118,12 @@ export default {
 
   created() {
     this.form.locale = i18n.locale
-    this.appVersion = this.$electron.remote.app.getVersion()
+    this.appVersion = electron.remote.app.getVersion()
   },
 
   methods: {
     checkForUpdates() {
-      this.$electron.ipcRenderer.send("CHECK_FOR_UPDATES")
+      electron.ipcRenderer.send("CHECK_FOR_UPDATES")
     },
     save() {
       this.$refs.form.validate((isValid) => {

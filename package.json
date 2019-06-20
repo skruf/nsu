@@ -42,6 +42,7 @@
     },
     "files": [
       "src/main.js",
+      "src/sentry.js",
       "src/preload.js",
       "build/*"
     ],

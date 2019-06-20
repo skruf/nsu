@@ -1,6 +1,6 @@
 {
   "name": "Stevnebehandler",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Thomas Laaver <tholav@gmail.com>",
   "description": "Resultat- og stevne- behandler",
   "repository": {
@@ -17,7 +17,8 @@
     "pack:beta": "npm run build:beta && cross-env NODE_ENV=beta electron-builder --dir",
     "pack:prod": "npm run build:prod && cross-env NODE_ENV=production electron-builder --dir",
     "deploy:beta": "npm run build:beta && cross-env NODE_ENV=beta electron-builder",
-    "deploy:prod": "npm run build:prod && cross-env NODE_ENV=production electron-builder --publish always",
+    "deploy:prod": "npm run build:prod && cross-env NODE_ENV=production electron-builder",
+    "publish": "npm run build:prod && cross-env NODE_ENV=production electron-builder --publish always",
     "postinstall": "patch-package && electron-builder install-app-deps",
     "tests": "jest --verbose",
     "tests:watch": "jest --watch",
@@ -60,10 +61,13 @@
     },
     "publish": {
       "provider": "github",
-      "private": true
+      "private": true,
+      "owner": "skruf",
+      "repo": "nsu"
     }
   },
   "dependencies": {
+    "@sentry/electron": "^0.17.1",
     "electron-log": "^3.0.5",
     "electron-updater": "^4.0.6",
     "electron-window-state": "^5.0.3",

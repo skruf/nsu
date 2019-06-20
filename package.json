@@ -17,7 +17,7 @@
     "pack:beta": "npm run build:beta && cross-env NODE_ENV=beta electron-builder --dir",
     "pack:prod": "npm run build:prod && cross-env NODE_ENV=production electron-builder --dir",
     "deploy:beta": "npm run build:beta && cross-env NODE_ENV=beta electron-builder",
-    "deploy:prod": "npm run build:prod && cross-env NODE_ENV=production electron-builder",
+    "deploy:prod": "npm run build:prod && cross-env NODE_ENV=production electron-builder --publish always",
     "postinstall": "patch-package && electron-builder install-app-deps",
     "tests": "jest --verbose",
     "tests:watch": "jest --watch",

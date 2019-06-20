@@ -60,7 +60,7 @@ const createWindow = async () => {
     ]
   }]
 
-  // if(IS_DEV) {
+  if(IS_DEV) {
     win.webContents.openDevTools()
 
     menuItems.push({
@@ -72,7 +72,7 @@ const createWindow = async () => {
         { label: "Devtools", accelerator: "CmdOrCtrl+Alt+I", click() { win.webContents.openDevTools() } }
       ]
     })
-  // }
+  }
 
   const menu = Menu.buildFromTemplate(menuItems)
   Menu.setApplicationMenu(menu)

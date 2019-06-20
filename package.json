@@ -1,6 +1,6 @@
 {
   "name": "Stevnebehandler",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "author": "Thomas Laaver <tholav@gmail.com>",
   "description": "Resultat- og stevne- behandler",
   "repository": {
@@ -12,8 +12,8 @@
     "dev": "cross-env NODE_ENV=development concurrently 'npm run dev:frontend' 'npm run dev:backend'",
     "dev:frontend": "parcel ./src/app/index.html -d build/",
     "dev:backend": "electron .",
-    "build:beta": "cross-env NODE_ENV=beta parcel build ./src/app/index.html -d build/ --public-url ./",
-    "build:prod": "cross-env NODE_ENV=production parcel build ./src/app/index.html -d build/ --public-url ./",
+    "build:beta": "npm run clean && cross-env NODE_ENV=beta parcel build ./src/app/index.html -d build/ --public-url ./",
+    "build:prod": "npm run clean && cross-env NODE_ENV=production parcel build ./src/app/index.html -d build/ --public-url ./",
     "pack:beta": "npm run build:beta && cross-env NODE_ENV=beta electron-builder --dir",
     "pack:prod": "npm run build:prod && cross-env NODE_ENV=production electron-builder --dir",
     "deploy:beta": "npm run build:beta && cross-env NODE_ENV=beta electron-builder",
@@ -24,7 +24,8 @@
     "tests:watch": "jest --watch",
     "tests:coverage": "jest --verbose --coverage",
     "lint": "eslint --ext .js,.vue src",
-    "lint:fix": "eslint --ext .js,.vue --fix src"
+    "lint:fix": "eslint --ext .js,.vue --fix src",
+    "clean": "rimraf ./build ./cache"
   },
   "posthtml": {
     "recognizeSelfClosing": true
@@ -61,7 +62,6 @@
     },
     "publish": {
       "provider": "github",
-      "private": true,
       "owner": "skruf",
       "repo": "nsu"
     }
@@ -80,7 +80,6 @@
     "rxjs": "^6.5.1",
     "uuid": "^3.3.2",
     "vue": "^2.6.10",
-    "vue-hot-reload-api": "^2.3.3",
     "vue-i18n": "^8.11.2",
     "vue-moment": "^4.0.0",
     "vue-router": "^3.0.6",

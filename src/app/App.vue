@@ -78,13 +78,13 @@ export default {
   },
 
   created() {
-    electron.ipcRenderer.send("APP_STARTED")
+    window.electron.ipcRenderer.send("APP_STARTED")
 
     if(localStorage.isSidebarOpen !== undefined) {
       this.isSidebarOpen = localStorage.isSidebarOpen === "true"
     }
 
-    electron.ipcRenderer.on("SET_UPDATE_STATUS", (e, status) => {
+    window.electron.ipcRenderer.on("SET_UPDATE_STATUS", (e, status) => {
       let title = "Oppdatering"
       let message
 
@@ -96,13 +96,13 @@ export default {
           message = "En ny oppdatering er tilgjengelig!"
           break
         case "UPDATE_NOT_AVAILABLE":
-          message = "Oppdateringen var ikke tilgjengelig"
+          message = "Du har den nyeste versjonen"
           break
         case "UPDATE_ERROR":
           message = "En feil oppstod under oppdatering"
           break
         case "UPDATE_DOWNLOADED":
-          message = "Oppdateringen ble lastet ned. Installerer og restarter om 5 sekunder."
+          message = "En oppdatering ble lastet ned. Installerer og restarter om 5 sekunder."
           break
       }
 

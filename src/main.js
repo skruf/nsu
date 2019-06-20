@@ -121,6 +121,7 @@ autoUpdater.on("update-not-available", (event, info) => {
   })
 })
 autoUpdater.on("error", (event, error) => {
+  log.error(error)
   win.webContents.send("SET_UPDATE_STATUS", {
     type: "UPDATE_ERROR",
     message: error

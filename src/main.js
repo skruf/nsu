@@ -60,8 +60,8 @@ const createWindow = async () => {
     ]
   }]
 
-  if(!IS_PROD) {
-    // win.webContents.openDevTools()
+  // if(IS_DEV) {
+    win.webContents.openDevTools()
 
     menuItems.push({
       label: "Developer",
@@ -72,7 +72,7 @@ const createWindow = async () => {
         { label: "Devtools", accelerator: "CmdOrCtrl+Alt+I", click() { win.webContents.openDevTools() } }
       ]
     })
-  }
+  // }
 
   const menu = Menu.buildFromTemplate(menuItems)
   Menu.setApplicationMenu(menu)
@@ -88,7 +88,7 @@ app.on("ready", () => {
 
   createWindow()
 
-  if(IS_PROD) {
+  if(!IS_DEV) {
     require("./sentry")
     autoUpdater.checkForUpdates()
   }
@@ -106,16 +106,27 @@ autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = "info"
 
 autoUpdater.on("checking-for-update", () => {
-  win.webContents.send("SET_UPDATE_STATUS", "UPDATE_CHECKING")
+  win.webContents.send("SET_UPDATE_STATUS", {
+    type: "UPDATE_CHECKING"
+  })
 })
 autoUpdater.on("update-available", (event, info) => {
-  win.webContents.send("SET_UPDATE_STATUS", "UPDATE_AVAILABLE")
+  win.webContents.send("SET_UPDATE_STATUS", {
+    type: "UPDATE_AVAILABLE",
+    message: info
+  })
 })
 autoUpdater.on("update-not-available", (event, info) => {
-  win.webContents.send("SET_UPDATE_STATUS", "UPDATE_NOT_AVAILABLE")
+  win.webContents.send("SET_UPDATE_STATUS", {
+    type: "UPDATE_NOT_AVAILABLE",
+    message: info
+  })
 })
 autoUpdater.on("error", (event, error) => {
-  win.webContents.send("SET_UPDATE_STATUS", "UPDATE_ERROR")
+  win.webContents.send("SET_UPDATE_STATUS", {
+    type: "UPDATE_ERROR",
+    message: error
+  })
 })
 // autoUpdater.on("download-progress", (progress) => {
 //   try {
@@ -129,7 +140,10 @@ autoUpdater.on("error", (event, error) => {
 //   }
 // })
 autoUpdater.on("update-downloaded", () => {
-  win.webContents.send("SET_UPDATE_STATUS", "UPDATE_DOWNLOADED")
+  win.webContents.send("SET_UPDATE_STATUS", {
+    type: "UPDATE_DOWNLOADED"
+  })
+
   const t = setTimeout(() => {
     autoUpdater.quitAndInstall()
     clearTimeout(t)

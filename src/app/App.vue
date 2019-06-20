@@ -88,7 +88,9 @@ export default {
       let title = "Oppdatering"
       let message
 
-      switch(status) {
+      console.log(status)
+
+      switch(status.type) {
         case "UPDATE_CHECKING":
           message = "Ser etter oppdateringer"
           break

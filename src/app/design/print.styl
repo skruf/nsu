@@ -6,7 +6,6 @@
   .el-pagination,
   .el-footer,
   .breadcrumb-bar,
-  .avatar,
   .page-controls,
   .el-table-column--selection,
   .el-dropdown,
@@ -33,15 +32,19 @@
     white-space nowrap !important
     word-break normal !important
 
+  .el-table tbody
+    border-bottom 1px solid #000
+    border-left 1px solid #000
   .el-table td
     padding 0 !important
     background none !important
-    border none !important
+    border-top 1px solid #000
+    border-right 1px solid #000
   .el-table tr,
   .el-table th
     box-shadow none !important
-    min-height 35px
     flex 1
+    border-radius 0 !important
 
   .el-table td,
   .el-table th
@@ -50,8 +53,8 @@
   .el-table__body,
   .el-table__footer,
   .el-table__header,
-  col
-    width auto !important
+  .el-table tbody,
+  .el-table thead
     flex-direction column
     flex 1
 
@@ -63,25 +66,3 @@
   .el-table__header-wrapper,
   .el-table tr
     display flex
-
-  .events-participants-list-table
-    th, td
-      &:nth-child(3)
-        display none
-
-  .events-startlist-list-table
-    th, td
-      &:nth-child(2)
-        display none
-
-  .events-divisions-contestants-list-table
-    th, td
-      &:nth-child(4)
-        display none
-
-  .events-results-list-table
-    th, td
-      &:nth-child(5)
-        display none
-      &:nth-child(7) .cell
-        overflow visible

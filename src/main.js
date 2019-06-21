@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain, shell } = require("electron")
+const { app, BrowserWindow, Menu, ipcMain, shell, dialog } = require("electron")
 const { autoUpdater } = require("electron-updater")
 const stateKeeper = require("electron-window-state")
 const log = require("electron-log")
@@ -157,17 +157,15 @@ ipcMain.on("APP_STARTED", (event) => {
 })
 
 ipcMain.on("PRINT_WINDOW", (event, fileName) => {
-  const random = new Date().getUTCMilliseconds()
-  win.webContents.printToPDF({
-    landscape: true
-  }, (error, data) => {
+  const options = { landscape: true }
+  win.webContents.printToPDF(options, (error, data) => {
     if(error) throw error
     const documents = app.getPath("documents")
-    const path = `${documents}/${fileName}_${random}.pdf`
-    fs.writeFile(path, data, (error) => {
-      if(error) throw error
-      shell.openExternal(`file://${path}`, {
-        activate: true
+    const options = { defaultPath: `${documents}/${fileName}.pdf` }
+    dialog.showSaveDialog(win, options, (path) => {
+      fs.writeFile(path, data, (error) => {
+        if(error) throw error
+        shell.openExternal(`file://${path}`, { activate: true })
       })
     })
   })

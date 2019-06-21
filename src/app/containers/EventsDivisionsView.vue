@@ -65,15 +65,6 @@
                 {{ $t("edit") }}
               </el-dropdown-item>
               <el-dropdown-item
-                :command="{
-                  handler: 'eventsDivisionsOpenPrintDialog',
-                  payload: division
-                }"
-              >
-                <i class="el-icon-printer el-icon--left" />
-                Print division
-              </el-dropdown-item>
-              <el-dropdown-item
                 divided
                 class="dropdown-menu-delete"
                 :command="{
@@ -133,12 +124,6 @@
       :shown.sync="eventsDivisionsShowEditDialog"
       :division.sync="division"
     />
-
-    <!--
-    <events-divisions-print-dialog
-      :shown.sync="eventsDivisionsShowPrintDialog"
-    />
-    -->
   </div>
 </template>
 
@@ -148,7 +133,6 @@ import EventsDivisionsCreateDialog from "~/containers/EventsDivisionsCreateDialo
 import EventsDivisionsEditDialog from "~/containers/EventsDivisionsEditDialog"
 import EventsDivisionsListMenu from "~/containers/EventsDivisionsListMenu"
 import EventsContestantsListTable from "~/containers/EventsContestantsListTable"
-// import EventsDivisionsPrintDialog from "~/containers/EventsDivisionsPrintDialog"
 import EventsDivisionsAssignmentDialog from "~/containers/EventsDivisionsAssignmentDialog"
 
 export default {
@@ -159,14 +143,12 @@ export default {
     EventsDivisionsEditDialog,
     EventsDivisionsListMenu,
     EventsContestantsListTable,
-    // EventsDivisionsPrintDialog,
     EventsDivisionsAssignmentDialog
   },
 
   data: () => ({
     eventsDivisionsShowCreateDialog: false,
     eventsDivisionsShowEditDialog: false,
-    eventsDivisionsShowPrintDialog: false,
     eventsDivisionsShowAssignmentDialog: false,
     division: null
   }),
@@ -192,9 +174,6 @@ export default {
     },
     eventsDivisionsOpenEditDialog() {
       this.eventsDivisionsShowEditDialog = true
-    },
-    eventsDivisionsOpenPrintDialog() {
-      this.eventsDivisionsShowPrintDialog = true
     },
     dispatchActions({ handler, payload }) {
       this[handler](payload)

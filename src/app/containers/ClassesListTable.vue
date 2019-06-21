@@ -57,6 +57,7 @@
         <el-table-column
           type="selection"
           width="40"
+          class-name="no-print"
         />
 
         <el-table-column
@@ -115,6 +116,7 @@
         <el-table-column
           width="50"
           align="right"
+          class-name="no-print"
         >
           <template
             slot="header"

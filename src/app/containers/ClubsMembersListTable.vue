@@ -51,11 +51,13 @@
         <el-table-column
           type="selection"
           width="40"
+          class-name="no-print"
         />
 
         <el-table-column
           prop="member"
           width="60px"
+          class-name="no-print"
         >
           <template slot-scope="scope">
             <avatar
@@ -108,6 +110,7 @@
         <el-table-column
           width="50"
           align="right"
+          class-name="no-print"
         >
           <template
             slot="header"

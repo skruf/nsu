@@ -163,6 +163,7 @@ ipcMain.on("PRINT_WINDOW", (event, fileName) => {
     const documents = app.getPath("documents")
     const options = { defaultPath: `${documents}/${fileName}.pdf` }
     dialog.showSaveDialog(win, options, (path) => {
+      if(!path) return
       fs.writeFile(path, data, (error) => {
         if(error) throw error
         shell.openExternal(`file://${path}`, { activate: true })

@@ -23,6 +23,8 @@
     custom-class="events-contestants-print-dialog"
     :fullscreen="true"
     :visible.sync="visible"
+    :append-to-body="true"
+    :lock-scroll="false"
     @open="open"
     @close="close"
   >

@@ -51,7 +51,7 @@
     "mac": {
       "icon": "./static/icons/icon.icns",
       "target": {
-        "target": "zip"
+        "target": "dmg"
       }
     },
     "win": {

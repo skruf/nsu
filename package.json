@@ -78,7 +78,8 @@
     "publish": {
       "provider": "github",
       "owner": "skruf",
-      "repo": "nsu"
+      "repo": "nsu",
+      "releaseType": "release"
     }
   },
   "dependencies": {

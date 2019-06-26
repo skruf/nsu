@@ -45,6 +45,7 @@ script:
       security unlock-keychain -p $MAC_KEYCHAIN_PASSWORD build.keychain;
       echo $MAC_DEVELOPER_CERT | base64 --decode - > keystore.p12;
       security import keystore.p12 -k build.keychain -P $MAC_KEYCHAIN_PASSWORD -T /usr/bin/codesign;
+      security set-key-partition-list -S apple-tool:,apple: -s -k $MAC_KEYCHAIN_PASSWORD build.keychain;
       npm install;
       npm run publish:mac;
     fi

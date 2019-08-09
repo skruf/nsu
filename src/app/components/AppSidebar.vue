@@ -105,7 +105,7 @@
 
     <el-menu
       default-active="1-1"
-      :collapse="!isOpen"
+      :collapse="isOpen"
     >
       <el-submenu index="1">
         <template slot="title">

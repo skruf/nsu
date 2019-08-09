@@ -19,7 +19,7 @@
     "publish": "npm run build:prod && cross-env NODE_ENV=production electron-builder --linux --win --publish always",
     "publish:mac": "npm run build:prod && cross-env NODE_ENV=production electron-builder --mac --publish always",
     "publish:win": "npm run build:prod && cross-env NODE_ENV=production electron-builder --win --publish always",
-    "postinstall": "patch-package && electron-builder install-app-deps",
+    "postinstall": "patch-package",
     "tests": "jest --verbose",
     "tests:watch": "jest --watch",
     "tests:coverage": "jest --verbose --coverage",

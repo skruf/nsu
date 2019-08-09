@@ -1,4 +1,4 @@
-<style lang="stylus">
+<style lang="stylus" scoped>
 #app
   flex 1
   min-height 100vh
@@ -13,25 +13,6 @@
   left 0
   right 0
   top 0
-
-.app-warning
-  z-index 1
-  height 25px
-  padding 0
-  border-radius 0
-  margin-bottom -25px
-  background-color #ffca66
-  color #000000
-  .el-alert__title
-    font-size 12px
-    font-weight 400
-    color inherit
-  .el-alert__closebtn
-    top 6px
-    font-size 14px
-    color inherit
-.el-alert--warning .el-alert__description
-  color inherit
 
 </style>
 
@@ -78,36 +59,36 @@ export default {
   },
 
   created() {
-    window.electron.ipcRenderer.send("APP_STARTED")
+    // window.electron.ipcRenderer.send("APP_STARTED")
 
     if(localStorage.isSidebarOpen !== undefined) {
       this.isSidebarOpen = localStorage.isSidebarOpen === "true"
     }
 
-    window.electron.ipcRenderer.on("SET_UPDATE_STATUS", (e, status) => {
-      let title = "Oppdatering"
-      let message
-
-      switch(status.type) {
-        case "UPDATE_CHECKING":
-          message = "Ser etter oppdateringer"
-          break
-        case "UPDATE_AVAILABLE":
-          message = "En ny oppdatering er tilgjengelig!"
-          break
-        case "UPDATE_NOT_AVAILABLE":
-          message = "Du har den nyeste versjonen"
-          break
-        case "UPDATE_ERROR":
-          message = "En feil oppstod under oppdatering"
-          break
-        case "UPDATE_DOWNLOADED":
-          message = "En oppdatering ble lastet ned. Installerer og restarter om 5 sekunder."
-          break
-      }
-
-      this.$notify.info({ title, message })
-    })
+    // window.electron.ipcRenderer.on("SET_UPDATE_STATUS", (e, status) => {
+    //   let title = "Oppdatering"
+    //   let message
+    //
+    //   switch(status.type) {
+    //     case "UPDATE_CHECKING":
+    //       message = "Ser etter oppdateringer"
+    //       break
+    //     case "UPDATE_AVAILABLE":
+    //       message = "En ny oppdatering er tilgjengelig!"
+    //       break
+    //     case "UPDATE_NOT_AVAILABLE":
+    //       message = "Du har den nyeste versjonen"
+    //       break
+    //     case "UPDATE_ERROR":
+    //       message = "En feil oppstod under oppdatering"
+    //       break
+    //     case "UPDATE_DOWNLOADED":
+    //       message = "En oppdatering ble lastet ned. Installerer og restarter om 5 sekunder."
+    //       break
+    //   }
+    //
+    //   this.$notify.info({ title, message })
+    // })
   }
 }
 </script>

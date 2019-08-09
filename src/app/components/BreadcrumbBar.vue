@@ -82,7 +82,8 @@ export default {
   methods: {
     print() {
       const fileName = kebabcase(this.paths[this.paths.length - 1].label)
-      window.electron.ipcRenderer.send("PRINT_WINDOW", `${fileName}`)
+      window.print()
+      // window.electron.ipcRenderer.send("PRINT_WINDOW", `${fileName}`)
     },
     navBack() {
       this.$router.go(-1)

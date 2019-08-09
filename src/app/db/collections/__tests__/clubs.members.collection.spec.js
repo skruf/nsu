@@ -1,4 +1,4 @@
-import getDb from "~/db"
+import { init } from "~/db"
 import {
   seedRanges,
   seedClubs,
@@ -7,8 +7,10 @@ import {
   seedEventsParticipants
 } from "~/utils/tests/seeders"
 
+let db = null
+
 const setup = async () => {
-  await getDb()
+  db = await init()
   const ranges = await seedRanges()
   const clubs = await seedClubs()
   const clubsMembers = await seedClubsMembers({
@@ -25,8 +27,8 @@ const setup = async () => {
 }
 
 const cleanup = async () => {
-  const db = await getDb()
   await db.remove()
+  db = null
 }
 
 describe("clubs.members.collection", () => {
@@ -34,20 +36,17 @@ describe("clubs.members.collection", () => {
   afterAll(() => cleanup())
 
   it("should be able to find club members", async () => {
-    const db = await getDb()
     const members = await db.clubs_members.find().exec()
     expect(members.length).toBeGreaterThan(1)
   })
 
   it("should be able to populate a club member's club", async () => {
-    const db = await getDb()
     const member = await db.clubs_members.findOne().exec()
     const club = await member.populate("clubId")
     expect(club.id).not.toBeFalsy()
   })
 
   it("should be able to find a club member's participants", async () => {
-    const db = await getDb()
     const member = await db.clubs_members.findOne().exec()
     const participants = await db.events_participants.find({
       memberId: member.id
@@ -57,7 +56,6 @@ describe("clubs.members.collection", () => {
   })
 
   it("removing a club member should also remove its participants", async () => {
-    const db = await getDb()
     const member = await db.clubs_members.findOne().exec()
 
     const participants1 = await db.events_participants.find({

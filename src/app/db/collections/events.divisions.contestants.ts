@@ -1,4 +1,9 @@
-const schema = {
+import { RxJsonSchema, RxCollection, RxDocument } from "rxdb"
+
+export type EventsDivisionsContestantsDocument = RxDocument<any, any>
+export type EventsDivisionsContestantsCollection = RxCollection<any, any, any>
+
+const schema: RxJsonSchema = {
   title: "Events divisions contestants schema",
   description: "Events divisions contestants",
   version: 1,
@@ -19,19 +24,19 @@ const schema = {
     memberId: {
       type: "string",
       ref: "clubs_members"
-    },
-    weapon: {
-      id: {
-        type: "string"
-      },
-      calibre: {
-        type: "string"
-      },
-      classId: {
-        type: "string",
-        ref: "classes"
-      }
     }
+    // weapon: {
+    //   id: {
+    //     type: "string"
+    //   },
+    //   calibre: {
+    //     type: "string"
+    //   },
+    //   classId: {
+    //     type: "string",
+    //     ref: "classes"
+    //   }
+    // }
   },
   required: [
     "time",

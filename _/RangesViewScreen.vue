@@ -1,6 +1,3 @@
-<style lang="stylus">
-</style>
-
 <template>
   <el-container
     id="ranges-view-screen"

@@ -1,4 +1,4 @@
-import getDb from "~/db"
+import { init } from "~/db"
 import {
   seedClasses,
   seedRanges,
@@ -9,8 +9,10 @@ import {
   seedEventsParticipantsWeapons
 } from "~/utils/tests/seeders"
 
+let db = null
+
 const setup = async () => {
-  await getDb()
+  db = await init()
   const classes = await seedClasses()
   const ranges = await seedRanges()
   const clubs = await seedClubs()
@@ -32,8 +34,8 @@ const setup = async () => {
 }
 
 const cleanup = async () => {
-  const db = await getDb()
   await db.remove()
+  db = null
 }
 
 describe("classes.collection", () => {
@@ -41,19 +43,16 @@ describe("classes.collection", () => {
   afterAll(() => cleanup())
 
   it("should be able to find classes", async () => {
-    const db = await getDb()
     const classes = await db.classes.find().exec()
     expect(classes.length).toBeGreaterThan(1)
   })
 
   it("should be able to find a class", async () => {
-    const db = await getDb()
     const weaponClass = await db.classes.findOne().exec()
     expect(weaponClass.id).not.toBeFalsy()
   })
 
   it("removing a class should also remove participants weapon's", async () => {
-    const db = await getDb()
     const weaponClass = await db.classes.findOne().exec()
 
     const weapons1 = await db.events_participants_weapons.find({

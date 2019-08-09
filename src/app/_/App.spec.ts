@@ -2,9 +2,9 @@ import VueRouter from "vue-router"
 import Element from "element-ui"
 import createLocalVue from "~/utils/tests/createLocalVue"
 import mount from "~/utils/tests/mount"
-import AppOnboardingDialog from "~/components/AppOnboardingDialog"
-import AppSidebar from "~/components/AppSidebar"
-import App from "~/App"
+import AppOnboardingDialog from "../components/AppOnboardingDialog.vue"
+import AppSidebar from "../components/AppSidebar.vue"
+import App from "../App.vue"
 
 const localVue = createLocalVue([ VueRouter, Element ])
 

@@ -40,7 +40,6 @@ const schema: RxJsonSchema = {
     hits: {
       type: "array",
       items: {
-        // type: "number"
         type: "object",
         properties: {
           hit: {

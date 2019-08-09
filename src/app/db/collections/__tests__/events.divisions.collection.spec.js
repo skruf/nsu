@@ -1,4 +1,4 @@
-import getDb from "~/db"
+import { init } from "~/db"
 import {
   seedClasses,
   seedRanges,
@@ -11,8 +11,10 @@ import {
   seedEventsContestants
 } from "~/utils/tests/seeders"
 
+let db = null
+
 const setup = async () => {
-  await getDb()
+  db = await init()
   const classes = await seedClasses()
   const ranges = await seedRanges()
   const clubs = await seedClubs()
@@ -37,13 +39,14 @@ const setup = async () => {
   await seedEventsContestants({
     divisionId: divisions[0].id,
     participantId: participants[0].id,
-    weaponId: weapons[0].id
+    weaponId: weapons[0].id,
+    eventId: events[0].id
   })
 }
 
 const cleanup = async () => {
-  const db = await getDb()
   await db.remove()
+  db = null
 }
 
 describe("events.divisions.collection", () => {
@@ -51,19 +54,16 @@ describe("events.divisions.collection", () => {
   afterAll(() => cleanup())
 
   it("should be able to find divisions", async () => {
-    const db = await getDb()
     const divisions = await db.events_divisions.find().exec()
     expect(divisions.length).toBeGreaterThan(1)
   })
 
   it("should be able to find a division", async () => {
-    const db = await getDb()
     const division = await db.events_divisions.findOne().exec()
     expect(division.id).not.toBeFalsy()
   })
 
   it("should be able to find a division's contestants", async () => {
-    const db = await getDb()
     const division = await db.events_divisions.findOne().exec()
     const contestants = await db.events_contestants.find({
       divisionId: division.id
@@ -72,7 +72,6 @@ describe("events.divisions.collection", () => {
   })
 
   it("removing a division should also remove its contestants", async () => {
-    const db = await getDb()
     const division = await db.events_divisions.findOne().exec()
 
     const contestants1 = await db.events_contestants.find({

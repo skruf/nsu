@@ -1,4 +1,4 @@
-import getDb from "~/db"
+import { init } from "~/db"
 import {
   seedClasses,
   seedRanges,
@@ -11,8 +11,10 @@ import {
   seedEventsContestants
 } from "~/utils/tests/seeders"
 
+let db = null
+
 const setup = async () => {
-  await getDb()
+  db = await init()
   const classes = await seedClasses()
   const ranges = await seedRanges()
   const clubs = await seedClubs()
@@ -37,13 +39,14 @@ const setup = async () => {
   await seedEventsContestants({
     divisionId: divisions[0].id,
     participantId: participants[0].id,
-    weaponId: weapons[0].id
+    weaponId: weapons[0].id,
+    eventId: events[0].id
   })
 }
 
 const cleanup = async () => {
-  const db = await getDb()
   await db.remove()
+  db = null
 }
 
 describe("events.participants.weapons.collection", () => {
@@ -51,27 +54,23 @@ describe("events.participants.weapons.collection", () => {
   afterAll(() => cleanup())
 
   it("should be able to find participants weapons", async () => {
-    const db = await getDb()
     const weapons = await db.events_participants_weapons.find().exec()
     expect(weapons.length).toBeGreaterThan(1)
   })
 
   it("should be able to populate a weapon's participant", async () => {
-    const db = await getDb()
     const weapon = await db.events_participants_weapons.findOne().exec()
     const participant = await weapon.populate("participantId")
     expect(participant.id).not.toBeFalsy()
   })
 
   it("should be able to populate a weapon's class", async () => {
-    const db = await getDb()
     const weapon = await db.events_participants_weapons.findOne().exec()
     const weaponClass = await weapon.populate("classId")
     expect(weaponClass.id).not.toBeFalsy()
   })
 
   it("removing a participant's weapon should also remove its contestants", async () => {
-    const db = await getDb()
     const weapon = await db.events_participants_weapons.findOne().exec()
 
     const contestants1 = await db.events_contestants.find({

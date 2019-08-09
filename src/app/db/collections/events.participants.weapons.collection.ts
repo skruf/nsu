@@ -4,12 +4,12 @@ import { getId, getTimestamp, filterInput } from "~/utils"
 import { eventsParticipantsWeaponsStub } from "~/stubs"
 
 export type EventsParticipantsWeaponsProperties = {
-  id: string
+  id?: string
   calibre: string
   classId: string
   participantId: string
-  createdAt: string
-  updatedAt: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 type EventsParticipantsWeaponsMethods = {}

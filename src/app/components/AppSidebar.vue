@@ -56,6 +56,7 @@
   width 23px
   margin-right 8px
   filter invert(.5) sepia(1) saturate(200) hue-rotate(380deg)
+  display inline
 
 .logo
   max-width 84px
@@ -104,7 +105,7 @@
 
     <el-menu
       default-active="1-1"
-      :collapse="isOpen"
+      :collapse="!isOpen"
     >
       <el-submenu index="1">
         <template slot="title">

@@ -1,4 +1,4 @@
-import getDb from "~/db"
+import { init } from "~/db"
 import {
   seedClasses,
   seedRanges,
@@ -11,8 +11,10 @@ import {
   seedEventsContestants
 } from "~/utils/tests/seeders"
 
+let db = null
+
 const setup = async () => {
-  await getDb()
+  db = await init()
   const classes = await seedClasses()
   const ranges = await seedRanges()
   const clubs = await seedClubs()
@@ -37,13 +39,14 @@ const setup = async () => {
   await seedEventsContestants({
     divisionId: divisions[0].id,
     participantId: participants[0].id,
-    weaponId: weapons[0].id
+    weaponId: weapons[0].id,
+    eventId: events[0].id
   })
 }
 
 const cleanup = async () => {
-  const db = await getDb()
   await db.remove()
+  db = null
 }
 
 describe("events.participants.collection", () => {
@@ -51,27 +54,23 @@ describe("events.participants.collection", () => {
   afterAll(() => cleanup())
 
   it("should be able to find participant's", async () => {
-    const db = await getDb()
     const participants = await db.events_participants.find().exec()
     expect(participants.length).toBeGreaterThan(1)
   })
 
   it("should be able to populate a participant's member", async () => {
-    const db = await getDb()
     const participant = await db.events_participants.findOne().exec()
     const member = await participant.populate("memberId")
     expect(member.id).not.toBeFalsy()
   })
 
   it("should be able to populate a participant's event", async () => {
-    const db = await getDb()
     const participant = await db.events_participants.findOne().exec()
     const event = await participant.populate("eventId")
     expect(event.id).not.toBeFalsy()
   })
 
   it("removing a participant should also remove its contestants", async () => {
-    const db = await getDb()
     const participant = await db.events_participants.findOne().exec()
 
     const contestants1 = await db.events_contestants.find({
@@ -88,7 +87,6 @@ describe("events.participants.collection", () => {
   })
 
   it("removing a participant should also remove its weapons", async () => {
-    const db = await getDb()
     const participant = await db.events_participants.findOne().exec()
 
     const weapons1 = await db.events_participants_weapons.find({

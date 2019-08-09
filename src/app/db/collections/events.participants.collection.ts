@@ -4,13 +4,13 @@ import { getId, getTimestamp } from "~/utils"
 import { db } from "~/db"
 
 export type EventsParticipantsProperties = {
-  id: string
+  id?: string
   number: number | string
   memberId: string
   eventId: string
-  createdAt: string
-  updatedAt: string
-  weapons?: []
+  createdAt?: string
+  updatedAt?: string
+  weapons?: any
 }
 
 type EventsParticipantsMethods = {}
@@ -75,7 +75,7 @@ const migrationStrategies = {
     }
 
     await Promise.all(
-      participant.weapons.map((weapon) => {
+      participant.weapons.map((weapon: any) => {
         return db.events_participants_weapons.insert({
           calibre: weapon.calibre,
           classId: weapon.classId,

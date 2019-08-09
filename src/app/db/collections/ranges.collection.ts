@@ -1,4 +1,4 @@
-import DB from "~/db"
+import { db } from "~/db"
 import { RxJsonSchema, RxCollection, RxDocument } from "rxdb"
 
 export type RangesProperties = {
@@ -84,13 +84,11 @@ const statics: RangesStatics = {
 }
 
 const preRemove = async (data: RangesProperties): Promise<void> => {
-  const db = await DB.get()
-
   const clubs = await db.clubs.find({ rangeId: data.id })
-  await clubs.update({ rangeId: "" })
+  await clubs.update({ $set: { rangeId: "" } })
 
   const events = await db.events.find({ rangeId: data.id })
-  await events.update({ rangeId: "" })
+  await events.update({ $set: { rangeId: "" } })
 }
 
 export default {

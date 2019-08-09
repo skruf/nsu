@@ -50,6 +50,7 @@ module.exports = {
     "no-unused-vars": "warn",
     "no-trailing-spaces": "warn",
     "@typescript-eslint/indent": 0,
-    "@typescript-eslint/no-var-requires": 0
+    "@typescript-eslint/no-var-requires": 0,
+    "array-bracket-spacing": 0
   }
 }

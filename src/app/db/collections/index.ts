@@ -40,27 +40,43 @@ import eventsContestantsResultsCollection, {
   EventsContestantsResultsDocument
 } from "./events.contestants.results.collection"
 
-import eventsDivisionsContestantsCollection from "./events.divisions.contestants"
+import eventsDivisionsContestantsCollection, {
+  EventsDivisionsContestantsDocument,
+  EventsDivisionsContestantsCollection
+} from "./events.divisions.contestants"
 
 import eventsParticipantsCollection, {
   EventsParticipantsCollection,
   EventsParticipantsDocument
 } from "./events.participants.collection"
 
-export interface DatabaseCollections {
-  [x: string]: (
-    RangesCollection |
-    ClassesCollection |
-    ClubsCollection |
-    ClubsMembersCollection |
-    EventsCollection |
-    EventsCategoriesCollection |
-    EventsParticipantsCollection |
-    EventsParticipantsWeaponsCollection |
-    EventsDivisionsCollection |
-    EventsContestantsCollection |
-    EventsContestantsResultsCollection
-  )
+export type DatabaseCollectionsNames = (
+  "ranges" |
+  "classes" |
+  "clubs" |
+  "clubs_members" |
+  "events" |
+  "events_categories" |
+  "events_participants" |
+  "events_participants_weapons" |
+  "events_divisions" |
+  "events_contestants" |
+  "events_contestants_results"
+)
+
+export type DatabaseCollections = {
+  ranges: RangesCollection,
+  classes: ClassesCollection,
+  clubs: ClubsCollection,
+  clubs_members: ClubsMembersCollection,
+  events: EventsCollection,
+  events_categories: EventsCategoriesCollection,
+  events_participants: EventsParticipantsCollection,
+  events_participants_weapons: EventsParticipantsWeaponsCollection,
+  events_divisions: EventsDivisionsCollection,
+  events_contestants: EventsContestantsCollection,
+  events_contestants_results: EventsContestantsResultsCollection,
+  events_divisions_contestants: EventsDivisionsContestantsCollection
 }
 
 export type DatabaseDocument = (
@@ -74,7 +90,8 @@ export type DatabaseDocument = (
   EventsParticipantsWeaponsDocument |
   EventsDivisionsDocument |
   EventsContestantsDocument |
-  EventsContestantsResultsDocument
+  EventsContestantsResultsDocument |
+  EventsDivisionsContestantsDocument
 )
 
 export default [
@@ -84,11 +101,10 @@ export default [
   clubsMembersCollection,
   eventsCollection,
   eventsCategoriesCollection,
+  eventsParticipantsCollection,
   eventsParticipantsWeaponsCollection,
   eventsDivisionsCollection,
   eventsContestantsCollection,
   eventsContestantsResultsCollection,
-  eventsDivisionsContestantsCollection,
-
-  eventsParticipantsCollection
+  eventsDivisionsContestantsCollection
 ]

@@ -1,12 +1,14 @@
-import getDb from "~/db"
+import { init } from "~/db"
 import {
   seedClubs,
   seedClubsMembers,
   seedEvents
 } from "~/utils/tests/seeders"
 
+let db = null
+
 const setup = async () => {
-  await getDb()
+  db = await init()
   const clubs = await seedClubs()
   await seedClubsMembers({
     clubId: clubs[0].id
@@ -17,8 +19,8 @@ const setup = async () => {
 }
 
 const cleanup = async () => {
-  const db = await getDb()
   await db.remove()
+  db = null
 }
 
 describe("clubs.collection", () => {
@@ -26,20 +28,17 @@ describe("clubs.collection", () => {
   afterAll(() => cleanup())
 
   it("should be able to find clubs", async () => {
-    const db = await getDb()
     const clubs = await db.clubs.find().exec()
     expect(clubs.length).toBeGreaterThan(1)
   })
 
   it("should be able to find a club's members", async () => {
-    const db = await getDb()
     const club = await db.clubs.findOne().exec()
     const members = await db.clubs_members.find({ clubId: club.id }).exec()
     expect(members.length).toBeGreaterThan(1)
   })
 
   it("removing a club should also remove its club's members and update events", async () => {
-    const db = await getDb()
     const club = await db.clubs.findOne().exec()
 
     const members1 = await db.clubs_members.find({ clubId: club.id }).exec()

@@ -1,7 +1,10 @@
 import { RxQuery, RxQueryOptions } from "rxdb"
-import { DatabaseCollections, DatabaseDocument } from "~/db/collections"
+import {
+  DatabaseCollections,
+  DatabaseDocument,
+  DatabaseCollectionsNames
+} from "~/db/collections"
 import { getId, getTimestamp } from "~/utils"
-// import DB from "~/db"
 import { db } from "~/db"
 
 export type QueryFilter = {
@@ -19,8 +22,16 @@ export type QueryOptions = {
 }
 
 type BuildQuery = (
-  collection: string,
-  method: string,
+  collection: DatabaseCollectionsNames,
+  method: (
+    "insert" |
+    "newDocument" |
+    "upsert" |
+    "atomicUpsert" |
+    "find" |
+    "findOne" |
+    "dump"
+  ),
   filter: QueryFilter,
   options?: QueryOptions
 ) => Promise<RxQuery<DatabaseCollections, DatabaseDocument[]>>
@@ -28,8 +39,6 @@ type BuildQuery = (
 const buildQuery: BuildQuery = async (
   collection, method, filter, options = {}
 ) => {
-  // const db: any = await DB.get()
-
   if(options.search && options.search.value) {
     const $or: any = []
 
@@ -46,7 +55,7 @@ const buildQuery: BuildQuery = async (
     }
   }
 
-  let operation = db[collection][method](filter)
+  let operation: any = db[collection][method](filter)
 
   if(options.sort) {
     // @TODO: bugfix sorting while searching
@@ -68,7 +77,7 @@ const buildQuery: BuildQuery = async (
 }
 
 type CountQuery = (
-  collection: string,
+  collection: DatabaseCollectionsNames,
   filter: QueryFilter,
   options?: QueryOptions,
   json?: boolean
@@ -86,7 +95,7 @@ export const count: CountQuery = async (
 export type QueryResult = DatabaseDocument | object
 
 type FindManyQuery = (
-  collection: string,
+  collection: DatabaseCollectionsNames,
   filter: QueryFilter,
   options?: QueryOptions,
   json?: boolean
@@ -108,7 +117,7 @@ export const findMany: FindManyQuery = async (
 }
 
 type FindOneQuery = (
-  collection: string,
+  collection: DatabaseCollectionsNames,
   filter: QueryFilter,
   json?: boolean
 ) => Promise<DatabaseDocument | object | null | any>
@@ -122,7 +131,7 @@ export const findOne: FindOneQuery = async (
 }
 
 type InsertQuery = (
-  collection: string,
+  collection: DatabaseCollectionsNames,
   data: DatabaseDocument | any,
   json?: boolean
 ) => Promise<DatabaseDocument | object | any>
@@ -139,7 +148,7 @@ export const insert: InsertQuery = async (
 }
 
 type InsertManyQuery = (
-  collection: string,
+  collection: DatabaseCollectionsNames,
   items: DatabaseDocument[] | any,
   json?: boolean
 ) => Promise<DatabaseDocument[] | object[]>
@@ -154,7 +163,7 @@ export const insertMany: InsertManyQuery = async (
 }
 
 type DestroyOneQuery = (
-  collection: string,
+  collection: DatabaseCollectionsNames,
   filter: QueryFilter
 ) => Promise<boolean | null>
 
@@ -168,7 +177,7 @@ export const destroyOne: DestroyOneQuery = async (
 }
 
 type DestroyManyQuery = (
-  collection: string,
+  collection: DatabaseCollectionsNames,
   filter: QueryFilter,
   options?: QueryOptions
 ) => Promise<any>
@@ -184,7 +193,7 @@ export const destroyMany: DestroyManyQuery = async (
 }
 
 type UpdateOneQuery = (
-  collection: string,
+  collection: DatabaseCollectionsNames,
   filter: QueryFilter,
   item: DatabaseDocument | any,
   json?: boolean
@@ -201,7 +210,7 @@ export const updateOne: UpdateOneQuery = async (
 }
 
 type UpdateManyQuery = (
-  collection: string,
+  collection: DatabaseCollectionsNames,
   items: DatabaseDocument[] | any,
   filterKey?: string,
   json?: boolean

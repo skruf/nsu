@@ -1,21 +1,22 @@
-import getDb from "~/db"
+import { init } from "~/db"
 import { clubsFixture } from "~/fixtures"
 import {
   insert, findMany, findOne, destroyOne, destroyMany
 } from "~/db/queries"
 import seed from "~/utils/tests/seed"
 
+let db = null
+
 const setup = async () => {
-  await getDb()
+  db = await init()
   return Promise.all(
     clubsFixture.map((club) => seed("clubs", club))
   )
 }
 
 const cleanup = async () => {
-  const db = await getDb()
-  // await db.destroy()
   await db.remove()
+  db = null
 }
 
 describe("database queries", () => {

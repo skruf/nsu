@@ -1,4 +1,4 @@
-<style lang="stylus">
+<style lang="stylus" scoped>
 #error-screen
   text-align center
 

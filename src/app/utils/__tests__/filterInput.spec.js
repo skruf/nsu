@@ -1,27 +1,27 @@
 import { filterInput } from "~/utils"
 
 const data = {
-  "time": "",
-  "memberId": "",
-  "divisionId": "",
-  "weapon": {
-    "id": "",
-    "classId": "",
-    "calibre": ""
+  time: "",
+  memberId: "",
+  divisionId: "",
+  weapon: {
+    id: "",
+    classId: "",
+    calibre: ""
   }
 }
 
 const input = {
   ...data,
-  "someObject": {
-    "someArray": []
+  someObject: {
+    someArray: []
   },
-  "someArray": [{
-    "someValue": "value"
+  someArray: [{
+    someValue: "value"
   }],
-  "someString": "someStringValue",
-  "someBoolean": true,
-  "someNumber": 123
+  someString: "someStringValue",
+  someBoolean: true,
+  someNumber: 123
 }
 
 describe("filterInput", () => {

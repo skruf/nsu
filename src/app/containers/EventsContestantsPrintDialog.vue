@@ -145,7 +145,7 @@ export default {
         number = `${count}-deltakere`
       }
       const fileName = `${eventTitle}-${number}-deltakerlapp`
-      window.electron.ipcRenderer.send("PRINT_WINDOW", fileName)
+      // window.electron.ipcRenderer.send("PRINT_WINDOW", fileName)
     },
     close() {
       this.visible = false

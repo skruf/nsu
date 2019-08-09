@@ -1,4 +1,4 @@
-import getDb from "~/db"
+import { init } from "~/db"
 import {
   seedClasses,
   seedRanges,
@@ -12,8 +12,10 @@ import {
   seedEventsContestantsResults
 } from "~/utils/tests/seeders"
 
+let db = null
+
 const setup = async () => {
-  await getDb()
+  db = await init()
   const classes = await seedClasses()
   const ranges = await seedRanges()
   const clubs = await seedClubs()
@@ -38,7 +40,8 @@ const setup = async () => {
   const contestants = await seedEventsContestants({
     divisionId: divisions[0].id,
     participantId: participants[0].id,
-    weaponId: weapons[0].id
+    weaponId: weapons[0].id,
+    eventId: events[0].id
   })
   await seedEventsContestantsResults({
     contestantId: contestants[0].id
@@ -46,8 +49,8 @@ const setup = async () => {
 }
 
 const cleanup = async () => {
-  const db = await getDb()
   await db.remove()
+  db = null
 }
 
 describe("events.contestants.results.collection", () => {
@@ -55,19 +58,16 @@ describe("events.contestants.results.collection", () => {
   afterAll(() => cleanup())
 
   it("should be able to find results", async () => {
-    const db = await getDb()
     const results = await db.events_contestants_results.find().exec()
     expect(results.length).toBeGreaterThan(1)
   })
 
   it("should be able to find a result", async () => {
-    const db = await getDb()
     const result = await db.events_contestants_results.findOne().exec()
     expect(result.id).not.toBeFalsy()
   })
 
   it("should be able to populate a result's contestant", async () => {
-    const db = await getDb()
     const result = await db.events_contestants_results.findOne().exec()
     const contestant = await result.populate("contestantId")
     expect(contestant.id).not.toBeFalsy()

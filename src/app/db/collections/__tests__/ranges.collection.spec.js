@@ -1,12 +1,14 @@
-import getDb from "~/db"
+import { init } from "~/db"
 import {
   seedRanges,
   seedClubs,
   seedEvents
 } from "~/utils/tests/seeders"
 
+let db = null
+
 const setup = async () => {
-  await getDb()
+  db = await init()
   const ranges = await seedRanges()
   await seedClubs({
     rangeId: ranges[0].id
@@ -17,8 +19,8 @@ const setup = async () => {
 }
 
 const cleanup = async () => {
-  const db = await getDb()
   await db.remove()
+  db = null
 }
 
 describe("ranges.collection", () => {
@@ -26,19 +28,16 @@ describe("ranges.collection", () => {
   afterAll(() => cleanup())
 
   it("should be able to find ranges", async () => {
-    const db = await getDb()
     const ranges = await db.ranges.find().exec()
     expect(ranges.length).toBeGreaterThan(1)
   })
 
   it("should be able to find a range", async () => {
-    const db = await getDb()
     const range = await db.ranges.findOne().exec()
     expect(range.id).not.toBeFalsy()
   })
 
   it("removing a range should update clubs and events", async () => {
-    const db = await getDb()
     const range = await db.ranges.findOne().exec()
 
     const clubs1 = await db.clubs.find({ rangeId: range.id }).exec()

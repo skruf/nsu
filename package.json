@@ -115,7 +115,7 @@
     "babel-eslint": "^10.0.2",
     "concurrently": "^4.1.1",
     "cross-env": "^5.2.0",
-    "electron": "^6.0.0",
+    "electron": "^13.6.6",
     "electron-builder": "^21.2.0",
     "electron-reload": "^1.4.1",
     "element-ui": "^2.11.1",
